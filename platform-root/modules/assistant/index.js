@@ -49,7 +49,16 @@ class AssistantModule extends BaseModule {
     this._input.value = ''; this._paint();
     const pending = el('div', { class: 'pf-asst__msg pf-asst__msg--ai pf-asst__pending', text: this.t('assistant.thinking') });
     this._log.append(pending); this._log.scrollTop = this._log.scrollHeight;
-    const res = await this.call(() => AI.chat(this._messages));
+    // K-8b — stamp the active directorate scope + identity onto every AI payload so the flow has the
+    // telemetry to enforce role-based compliance. Scope is read from the sealed Context getter; the
+    // assistant never reaches the fabric directly.
+    const P = globalThis.Platform || {};
+    const scope = {
+      directorate: (P.Context && P.Context.directorate && P.Context.directorate()) || 'all',
+      persona: (P.Persona && P.Persona.current && P.Persona.current()) || null,
+      userEmail: (P.Persona && P.Persona.email && P.Persona.email()) || null
+    };
+    const res = await this.call(() => AI.chat(this._messages, { scope, ...scope }));
     pending.remove();
     const reply = res.ok ? (AI.summaryOf(res) || this.t('assistant.noReply')) : this.t('assistant.failed');
     this._messages.push({ role: 'assistant', content: reply });

@@ -43,6 +43,10 @@ export const UI = {
   },
   toastSuccess(messageKey, vars, action) { return UI.toast({ messageKey, variant:'success', vars, action }); },
   toastError(result) {
+    // A-10: when the API attached a canonical errorKind, route through the taxonomy (re-auth / OTP /
+    // rate-limit behaviours + correct aria-live). Falls back to the legacy transport-kind map below.
+    const R = globalThis.Platform && globalThis.Platform.ErrorRouter;
+    if (R && result && result.errorKind) return R.handle(result);
     const kind = result && result.kind; const key = ERR_KEY[kind] ?? 'errors.api.client';
     if (key === null) return null; // aborted: silent
     const detail = (result && Array.isArray(result.errors) && result.errors[0] && result.errors[0].message) || '';

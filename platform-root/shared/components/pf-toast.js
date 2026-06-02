@@ -28,12 +28,17 @@ class PfToast extends PfBaseElement {
       .t__dismiss:focus-visible{ outline:2px solid var(--color-brand-primary); outline-offset:2px; border-radius:var(--radius-sm); }
       @keyframes slide{ from{ transform:translateY(8px); opacity:0; } to{ transform:none; opacity:1; } }
       @media (prefers-reduced-motion:reduce){ .t{ animation:none; } }
-    </style><div id="stack" role="status" aria-live="polite" aria-atomic="false"></div>`);
+    </style>
+    <div id="stack" role="status" aria-live="polite" aria-atomic="false"></div>
+    <div id="stack-assertive" role="alert" aria-live="assertive" aria-atomic="true"></div>`);
     this.bus('platform:ui:toast', (d) => this.add(d));
     this.bus('platform:ui:toast-dismiss', (d) => this.remove(d.id));
   }
   add({ id, text, variant = 'info', timeout = 5000, action = null }) {
-    const stack = this.$('#stack'); if (!stack) return;
+    // A-23 — errors land in the assertive live region so screen-reader users are interrupted; the rest
+    // stay polite. Danger/critical ⇒ assertive; everything else ⇒ polite.
+    const assertive = variant === 'danger' || variant === 'critical';
+    const stack = this.$(assertive ? '#stack-assertive' : '#stack'); if (!stack) return;
     // Cap stack: auto-dismiss the oldest when more than 3 are visible
     const visible = stack.querySelectorAll('.t');
     if (visible.length >= 3) this.remove(Number(visible[0].dataset.id));

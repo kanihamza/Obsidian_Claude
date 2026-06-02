@@ -30,16 +30,19 @@ import { Entities } from './entity-store.js';
 import { Context, goToEntity } from './context.js';
 import { Idempotency } from './idempotency.js';
 import { AuditLog } from './audit-log.js';
+import { ErrorRouter } from './error-router.js';
 
 const Platform = {
   Config:AppConfig, Endpoints, Flags:FeatureFlags, Routes:RoutesConfig,
   Personas:PERSONAS, StateSchema, BrandConfig:BRANDS,
   Log, Bus, Storage, State, Errors, Format, A11y, I18n,
   API, BaseService, Modules, Theme, Brand, Persona, Router, Nav, UI, Lifecycle,
-  Entities, Context, goToEntity, Idempotency, AuditLog,
+  Entities, Context, goToEntity, Idempotency, AuditLog, ErrorRouter,
   extend(obj) { Object.assign(Platform, obj); return Platform; }
 };
 if (typeof window !== 'undefined') window.Platform = Platform;
+// A-10 — route uncaught platform errors through the canonical taxonomy too.
+ErrorRouter.install();
 
 
 // Global keyboard shortcuts — install once at platform boot.

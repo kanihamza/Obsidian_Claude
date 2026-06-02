@@ -133,9 +133,28 @@ function normErr(e, defaultCode) {
            target: e.target || e.field || e.path || undefined };
 }
 
+/** A-10 — canonical machine-readable error taxonomy. Maps PA-provided `kind` (preferred) or the
+ *  HTTP/transport signal to the 13-row taxonomy the UI error-router and OTP handshake consume.
+ *  Attached as `result.errorKind` on every failure; the transport `kind` field is left untouched. */
+const HTTP_ERROR_KIND = {
+  401: 'AUTH_FAILED', 403: 'NOT_AUTHORIZED', 409: 'CONFLICT_IDEMPOTENT', 410: 'OTP_EXPIRED',
+  422: 'VALIDATION_FAILED', 428: 'OTP_REQUIRED', 429: 'RATE_LIMITED',
+  500: 'INTERNAL_ERROR', 502: 'UPSTREAM_TIMEOUT', 503: 'UPSTREAM_TIMEOUT', 504: 'UPSTREAM_TIMEOUT'
+};
+function deriveErrorKind(body, httpStatus, transportKind) {
+  const raw = (body && Array.isArray(body.errors) && body.errors[0] && body.errors[0].kind) || (body && body.kind);
+  if (raw && typeof raw === 'string') return raw.toUpperCase();
+  if (transportKind === 'timeout' || transportKind === 'network' || transportKind === 'unavailable') return 'UPSTREAM_TIMEOUT';
+  if (transportKind === 'duplicate') return 'CONFLICT_IDEMPOTENT';
+  if (httpStatus && HTTP_ERROR_KIND[httpStatus]) return HTTP_ERROR_KIND[httpStatus];
+  if (httpStatus >= 500) return 'INTERNAL_ERROR';
+  if (httpStatus >= 400) return 'VALIDATION_FAILED';
+  return 'INTERNAL_ERROR';
+}
+
 function reserved501(endpointKey, correlationId, durationMs) {
   return {
-    ok: false, kind: 'notImplemented', status: 501, data: null,
+    ok: false, kind: 'notImplemented', status: 501, data: null, errorKind: 'INTERNAL_ERROR',
     errors: [{ code: 'NOT_IMPLEMENTED', message: 'This flow is reserved and not implemented.', target: endpointKey }],
     body: null, headers: {}, durationMs, correlationId
   };
@@ -159,6 +178,7 @@ function normalizeBody(body, headers, durationMs, correlationId, httpStatus) {
     const realOk = !!body.ok && !httpFailed;
     return {
       ok: realOk, kind: realOk ? 'ok' : kindForStatus(status, 'server'),
+      errorKind: realOk ? undefined : deriveErrorKind(body, status, null),
       status, data: deriveData(body), errors: extractErrors(body),
       retryAfter: headers && headers['retry-after'] ? Number(headers['retry-after']) || null : null,
       body, headers, durationMs, correlationId
@@ -169,6 +189,7 @@ function normalizeBody(body, headers, durationMs, correlationId, httpStatus) {
     const realOk = !!body.success && !httpFailed;
     return {
       ok: realOk, kind: realOk ? 'ok' : kindForStatus(status, 'server'),
+      errorKind: realOk ? undefined : deriveErrorKind(body, status, null),
       status, data: deriveData(body), errors: extractErrors(body),
       retryAfter: headers && headers['retry-after'] ? Number(headers['retry-after']) || null : null,
       routeKey: body.meta && body.meta.routeKey, body, headers, durationMs, correlationId
@@ -176,13 +197,14 @@ function normalizeBody(body, headers, durationMs, correlationId, httpStatus) {
   }
   // No recognized envelope — still surface HTTP signals (429/503/etc.) instead of 'parse' if status is informative
   if (httpStatus && httpStatus >= 400) {
-    return { ok: false, kind: kindForStatus(httpStatus), status: httpStatus, data: null,
+    return { ok: false, kind: kindForStatus(httpStatus), errorKind: deriveErrorKind(body, httpStatus, null),
+      status: httpStatus, data: null,
       errors: extractErrors(body) || [{ code: 'HTTP_' + httpStatus, message: 'Service returned ' + httpStatus + '.' }],
       retryAfter: headers && headers['retry-after'] ? Number(headers['retry-after']) || null : null,
       body, headers, durationMs, correlationId };
   }
   return {
-    ok: false, kind: 'parse', status: 0, data: null,
+    ok: false, kind: 'parse', status: 0, data: null, errorKind: 'INTERNAL_ERROR',
     errors: [{ code: 'UNRECOGNIZED_ENVELOPE', message: 'Response matched neither v1 (ok) nor v4 (success).' }],
     body, headers, durationMs, correlationId
   };
@@ -208,7 +230,7 @@ async function callAPI(endpointKey, payload = {}, opts = {}) {
   const ep = Endpoints[endpointKey];
   if (!ep) {
     log('error', 'api.unknown-endpoint', { endpointKey, correlationId });
-    return { ok: false, kind: 'config', status: 0, data: null,
+    return { ok: false, kind: 'config', status: 0, data: null, errorKind: 'INTERNAL_ERROR',
       errors: [{ code: 'UNKNOWN_ENDPOINT', message: 'No registry entry for key.', target: endpointKey }],
       body: null, headers: {}, durationMs: elapsed(), correlationId };
   }
@@ -221,7 +243,7 @@ async function callAPI(endpointKey, payload = {}, opts = {}) {
   // Per-endpoint in-flight guard — rejects duplicate concurrent calls (mirrors SPA's AppState._fetching).
   if (!opts.allowConcurrent && _inflight.get(endpointKey)) {
     log('warn', 'api.duplicate-blocked', { endpointKey, correlationId });
-    return { ok: false, kind: 'duplicate', status: 0, data: null,
+    return { ok: false, kind: 'duplicate', status: 0, data: null, errorKind: 'CONFLICT_IDEMPOTENT',
       errors: [{ code: 'DUPLICATE_IN_FLIGHT', message: 'A request to this endpoint is already in flight.', target: endpointKey }],
       body: null, headers: {}, durationMs: elapsed(), correlationId };
   }
@@ -256,7 +278,7 @@ async function callAPI(endpointKey, payload = {}, opts = {}) {
     try {
       body = parseFlowBody(text);
     } catch {
-      const r = { ok: false, kind: 'parse', status: res.status, data: null,
+      const r = { ok: false, kind: 'parse', status: res.status, data: null, errorKind: 'INTERNAL_ERROR',
         errors: [{ code: 'PARSE_ERROR', message: 'Response body was not valid JSON.' }],
         body: text || null, headers, durationMs: elapsed(), correlationId };
       log('error', 'api.parse', { endpointKey, status: res.status, correlationId });
@@ -274,7 +296,7 @@ async function callAPI(endpointKey, payload = {}, opts = {}) {
     const kind = (err && (err.name === 'AbortError' || controller.signal.reason === 'timeout'))
       ? (controller.signal.reason === 'user' ? 'abort' : 'timeout')
       : 'network';
-    const r = { ok: false, kind, status: 0, data: null,
+    const r = { ok: false, kind, status: 0, data: null, errorKind: deriveErrorKind(null, 0, kind),
       errors: [{ code: kind.toUpperCase(), message: String((err && err.message) || kind) }],
       body: null, headers: {}, durationMs: elapsed(), correlationId };
     log('error', 'api.transport', { endpointKey, kind, correlationId });

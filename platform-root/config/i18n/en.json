@@ -715,7 +715,16 @@
     "sent": "Code sent to {to} · expires in {ttl}s",
     "genFailed": "Could not send a code. Try again.",
     "needCode": "Enter the code.",
-    "invalid": "Invalid or expired code."
+    "invalid": "Invalid or expired code.",
+    "required": "A one-time code is required to continue.",
+    "expired": "The code expired. Request a new one.",
+    "resend": "Resend code",
+    "verifying": "Verifying…",
+    "expiresIn": "Expires in {s}s",
+    "attemptsLeft": "{n} attempt(s) left.",
+    "failed": "Verification failed. The assignment was rolled back.",
+    "sendingCode": "Sending a code…",
+    "rollback": "Too many incorrect attempts — assignment cancelled."
   },
   "ai": {
     "toolsTitle": "Document tools",
@@ -867,5 +876,25 @@
   "sw": {
     "updateAvailable": "A new version is ready. Reload to apply.",
     "reload": "Reload"
+  },
+  "error": {
+    "auth": {
+      "failed": "Your session could not be verified. Please re-authenticate."
+    },
+    "directorate": {
+      "mismatch": "Cross-directorate action requires DG approval."
+    },
+    "rateLimited": "Too many requests. Please wait a moment and retry.",
+    "validation": "Some details need correcting before this can proceed.",
+    "notAuthorized": "You do not have authority for this action.",
+    "timeout": "The service took too long to respond. Please retry.",
+    "internal": "Something went wrong on our side. The team has been notified.",
+    "conflict": "This action was already applied."
+  },
+  "dispatch": {
+    "failed": "Dispatch failed. You can retry from the dispatch queue."
+  },
+  "info": {
+    "alreadyApplied": "Already applied — no change needed."
   }
 }
