@@ -1,0 +1,19 @@
+/* OBSIDIAN v4.0 — module assistant · @layer modules · tokens only. */
+@layer modules {
+  #module-assistant .pf-asst { display:flex; flex-direction:column; gap:var(--space-4); max-width:46rem; }
+  #module-assistant .pf-asst__log { display:flex; flex-direction:column; gap:var(--space-3);
+    min-height:40vh; max-height:60vh; overflow:auto; padding:var(--space-4);
+    background:var(--color-surface-raised); border:1px solid var(--color-border); border-radius:var(--radius-lg); }
+  #module-assistant .pf-asst__empty { text-align:center; margin:auto; }
+  #module-assistant .pf-asst__msg { display:grid; gap:var(--space-1); padding:var(--space-3);
+    border-radius:var(--radius-md); max-width:85%; }
+  #module-assistant .pf-asst__msg--user { background:var(--color-surface-sunken); justify-self:end; }
+  #module-assistant .pf-asst__msg--ai { background:var(--color-surface); border:1px solid var(--color-border); justify-self:start; }
+  #module-assistant .pf-asst__role { font-size:var(--size-caption); color:var(--color-text-muted); text-transform:uppercase; letter-spacing:var(--tracking-overline); }
+  #module-assistant .pf-asst__body { white-space:pre-wrap; line-height:var(--lh-relaxed); }
+  #module-assistant .pf-asst__pending { opacity:.7; font-style:italic; }
+  #module-assistant .pf-asst__composer { display:flex; gap:var(--space-3); align-items:flex-end; }
+  #module-assistant .pf-asst__input { flex:1; font:inherit; padding:var(--space-3);
+    border:1px solid var(--color-border-strong); border-radius:var(--radius-md);
+    background:var(--color-surface); color:var(--color-text); resize:vertical; }
+}

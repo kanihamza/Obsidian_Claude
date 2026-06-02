@@ -1,0 +1,44 @@
+/* OBSIDIAN v4.0 — approvals · master-detail review · @layer modules · scoped #module-approvals */
+@layer modules {
+  #module-approvals .pf-ap{ display:grid; grid-template-columns:360px 1fr; gap:var(--space-4);
+    min-height:60vh; }
+  #module-approvals .pf-ap__list{ background:var(--color-surface-raised); border:1px solid var(--color-border);
+    border-radius:var(--radius-lg); overflow:hidden; display:flex; flex-direction:column; }
+  #module-approvals .pf-ap__listhead{ padding:var(--space-3) var(--space-4); border-bottom:1px solid var(--color-border);
+    background:var(--color-surface-sunken); }
+  #module-approvals .pf-ap__items{ overflow-y:auto; flex:1; }
+  #module-approvals .pf-ap__item{ width:100%; text-align:left; padding:var(--space-4);
+    border-bottom:1px solid var(--color-border); cursor:pointer; display:grid; gap:var(--space-1);
+    transition:background var(--duration-fast) var(--easing-standard); }
+  #module-approvals .pf-ap__item:hover{ background:var(--color-surface-sunken); }
+  #module-approvals .pf-ap__item[aria-selected="true"]{ background:var(--dgo-status-draft-bg);
+    box-shadow:inset 4px 0 0 var(--color-brand-primary); }
+  #module-approvals .pf-ap__item .row{ display:flex; justify-content:space-between; align-items:center; }
+  #module-approvals .pf-ap__item .ttl{ font-weight:var(--fw-semibold); font-size:var(--size-body-sm); }
+  #module-approvals .pf-ap__item .from{ font-size:var(--size-caption); color:var(--color-text-muted); }
+  #module-approvals .pf-ap__item .when{ font-size:var(--size-caption); color:var(--color-text-muted); }
+  #module-approvals .pf-ap__detail{ background:var(--color-surface-raised); border:1px solid var(--color-border);
+    border-radius:var(--radius-lg); padding:var(--space-6); }
+  #module-approvals .pf-ap__dethead{ display:flex; justify-content:space-between; align-items:flex-start;
+    gap:var(--space-4); border-bottom:1px solid var(--color-border); padding-bottom:var(--space-4); margin-bottom:var(--space-4); }
+  #module-approvals .pf-ap__dethead h2{ font-size:var(--size-h2); margin:var(--space-1) 0; color:var(--color-brand-primary); }
+  #module-approvals .pf-ap__acts{ display:flex; gap:var(--space-2); flex-shrink:0; }
+  #module-approvals .pf-ap__sec{ background:var(--color-surface); border:1px solid var(--color-border);
+    border-radius:var(--radius-md); padding:var(--space-4); margin-bottom:var(--space-4); }
+  #module-approvals .pf-ap__sec h3{ font-size:var(--size-caption); text-transform:uppercase;
+    letter-spacing:var(--tracking-overline); color:var(--color-text-muted); margin-bottom:var(--space-3); }
+  #module-approvals .pf-ap__minute{ background:var(--dgo-status-replied-bg); border-color:var(--color-success); }
+  #module-approvals textarea{ width:100%; font:inherit; font-size:var(--size-body-sm); padding:var(--space-3);
+    border:1px solid var(--color-border-strong); border-radius:var(--radius-sm);
+    background:var(--color-surface); color:var(--color-text); }
+  #module-approvals .pf-ap__sign{ display:flex; align-items:center; justify-content:space-between; margin-top:var(--space-3); }
+  #module-approvals .pf-ap__docs{ display:flex; gap:var(--space-3); flex-wrap:wrap; }
+  #module-approvals .pf-ap__doc{ display:flex; align-items:center; gap:var(--space-2); padding:var(--space-2) var(--space-3);
+    border:1px solid var(--color-border); border-radius:var(--radius-sm); background:var(--color-surface-sunken);
+    font-size:var(--size-caption); }
+  @media (max-width:768px){
+    #module-approvals .pf-ap{ grid-template-columns:1fr; }
+    #module-approvals .pf-ap[data-mode="detail"] .pf-ap__list{ display:none; }
+    #module-approvals .pf-ap:not([data-mode="detail"]) .pf-ap__detail{ display:none; }
+  }
+}

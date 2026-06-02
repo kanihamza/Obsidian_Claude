@@ -1,0 +1,17 @@
+{
+  "name": "DGO Digital Ops",
+  "short_name": "DGO",
+  "description": "DGO Digital Ops — operational platform, an initiative of NITDA.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#05583B",
+  "background_color": "#FFFFFF",
+  "lang": "en",
+  "icons": [
+    { "src": "/assets/subbrands/dgo/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/assets/subbrands/dgo/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/subbrands/dgo/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

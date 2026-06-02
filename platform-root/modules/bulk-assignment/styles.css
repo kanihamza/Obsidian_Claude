@@ -1,0 +1,31 @@
+/* OBSIDIAN v4.0 — module bulk-assignment styles · @layer modules · scoped under #module-bulk-assignment.
+   Tokens only (no literal colors) per the hex audit lock. */
+@layer modules {
+  #module-bulk-assignment { display:block; }
+  #module-bulk-assignment .pf-bulk {
+    display:grid; grid-template-columns: 1fr 1fr; gap: var(--space-6, 1.5rem); align-items:start;
+  }
+  @media (max-width: 880px){ #module-bulk-assignment .pf-bulk { grid-template-columns: 1fr; } }
+  #module-bulk-assignment .pf-bulk__pane {
+    background: var(--color-surface-raised); border:1px solid var(--color-border);
+    border-radius: var(--radius-lg); padding: var(--space-4);
+  }
+  #module-bulk-assignment .pf-bulk__h { font: var(--font-display); margin:0 0 var(--space-3); }
+  #module-bulk-assignment .pf-bulk__selectall {
+    display:flex; gap: var(--space-2); align-items:center; padding: var(--space-2) 0;
+    border-bottom:1px solid var(--color-border); margin-bottom: var(--space-2);
+  }
+  #module-bulk-assignment .pf-bulk__list { max-height: 48vh; overflow:auto; display:flex; flex-direction:column; gap: var(--space-1); }
+  #module-bulk-assignment .pf-bulk__item {
+    display:flex; gap: var(--space-3); align-items:center; padding: var(--space-2) var(--space-3);
+    border:1px solid var(--color-border); border-radius: var(--radius-md); cursor:pointer;
+  }
+  #module-bulk-assignment .pf-bulk__item.is-selected { border-color: var(--color-brand-primary); background: var(--color-surface-sunken); }
+  #module-bulk-assignment .pf-bulk__item-title { flex:1; }
+  #module-bulk-assignment .pf-bulk__form { display:grid; gap: var(--space-3); }
+  #module-bulk-assignment .pf-field { display:flex; flex-direction:column; gap: var(--space-1); }
+  #module-bulk-assignment .pf-label { color: var(--color-text-muted); font-size: 0.85em; }
+  #module-bulk-assignment .pf-bulk__actions { display:flex; align-items:center; justify-content:space-between; gap: var(--space-3); margin-top: var(--space-2); }
+  #module-bulk-assignment .pf-bulk__count { color: var(--color-text-muted); }
+  #module-bulk-assignment .pf-bulk__result { display:flex; gap: var(--space-3); align-items:center; padding: var(--space-3); margin-bottom: var(--space-4); border:1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface-raised); }
+}

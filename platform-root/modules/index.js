@@ -1,0 +1,20 @@
+/** OBSIDIAN v4.0 — module registry loader. Importing this registers every module. */
+import './home/index.js';
+import './ops-hub/index.js';
+import './fasttrack/index.js';
+import './orchestrator/index.js';
+import './registry/index.js';
+import './correspondence/index.js';
+import './response-tracking/index.js';
+import './comments/index.js';
+import './approvals/index.js';
+import './executive/index.js';
+import './assignment/index.js';
+import './stats/index.js';
+import './reports/index.js';
+import './single-item-ops/index.js';
+import './bulk-assignment/index.js';
+import './assistant/index.js';
+import './diagnostics/index.js';
+import './lookup/index.js';
+import './settings/index.js';

@@ -1,0 +1,4 @@
+/* OBSIDIAN v4.0 — module diagnostics styles · @layer modules · scoped under #module-diagnostics */
+@layer modules {
+  #module-diagnostics{ display:block; }
+}

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" class="subbrand-dgo" data-theme="light">
+<head>
+  <meta charset="utf-8"><title>OBSIDIAN Tests</title>
+  <link rel="stylesheet" href="/themes/tokens.css">
+  <link rel="stylesheet" href="/themes/theme.light.css">
+  <style>body{font-family:var(--font-body);padding:24px;color:var(--color-text)} div{padding:2px 0;font-size:14px}</style>
+</head>
+<body>
+  <div id="out"></div>
+  <script type="module">
+    import { report } from './runner.js';
+    import registry from './suites/registry.test.js';
+    import i18n from './suites/i18n.test.js';
+    import format from './suites/format.test.js';
+    (async () => { registry(); await i18n(); format(); report('#out'); })();
+  </script>
+</body>
+</html>

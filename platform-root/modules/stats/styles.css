@@ -1,0 +1,4 @@
+/* OBSIDIAN v4.0 — module stats styles · @layer modules · scoped under #module-stats */
+@layer modules {
+  #module-stats{ display:block; }
+}

@@ -1,0 +1,4 @@
+/* OBSIDIAN v4.0 — module home styles · @layer modules · scoped under #module-home */
+@layer modules {
+  #module-home{ display:block; }
+}

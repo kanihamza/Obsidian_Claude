@@ -1,0 +1,4 @@
+/* OBSIDIAN v4.0 — module orchestrator styles · @layer modules · scoped under #module-orchestrator */
+@layer modules {
+  #module-orchestrator{ display:block; }
+}

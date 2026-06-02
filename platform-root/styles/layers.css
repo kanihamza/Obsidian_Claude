@@ -1,0 +1,7 @@
+/* ============================================================================
+   OBSIDIAN v4.0 — layers.css  ·  cascade layer order (loaded first, before all)
+   Every rule in every file lives inside exactly one of these layers.
+   !important is permitted ONLY in utilities.css.
+   ============================================================================ */
+@layer reset, tokens, themes, subbrand, primitives, shell, components,
+       modules, utilities, animations, responsive, print;

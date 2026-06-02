@@ -1,0 +1,4 @@
+/* OBSIDIAN v4.0 — module registry styles · @layer modules · scoped under #module-registry */
+@layer modules {
+  #module-registry{ display:block; }
+}

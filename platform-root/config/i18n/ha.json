@@ -1,0 +1,80 @@
+{
+  "common": {
+    "actions": {
+      "save": "Ajiye",
+      "cancel": "Soke",
+      "clear": "Share",
+      "close": "Rufe",
+      "delete": "Goge",
+      "edit": "Gyara",
+      "refresh": "Sabunta",
+      "submit": "Mika",
+      "search": "Nema",
+      "open": "Buɗe",
+      "back": "Komawa",
+      "next": "Na gaba",
+      "prev": "Na baya",
+      "continue": "Ci gaba",
+      "confirm": "Tabbatar"
+    },
+    "state": {
+      "empty": "Babu sakamako",
+      "loading": "Ana lodi…",
+      "error": "Kuskure",
+      "success": "Nasara"
+    }
+  },
+  "nav": {
+    "operations": "Ayyuka",
+    "governance": "Mulki",
+    "intelligence": "Bayanai",
+    "assignments": "Aiyukan da aka bayar",
+    "system": "Tsarin"
+  },
+  "module": {
+    "home": {
+      "title": "Babbar shafa"
+    },
+    "ops-hub": {
+      "title": "Cibiyar ayyuka"
+    },
+    "fasttrack": {
+      "title": "Hanya mai sauri"
+    },
+    "registry": {
+      "title": "Yi rajista"
+    },
+    "correspondence": {
+      "title": "Wasika"
+    },
+    "response-tracking": {
+      "title": "Bin amsa"
+    },
+    "comments": {
+      "title": "Sharhi"
+    },
+    "approvals": {
+      "title": "Amincewa"
+    },
+    "assignment": {
+      "title": "Aikin"
+    },
+    "stats": {
+      "title": "Lambobi"
+    },
+    "reports": {
+      "title": "Rahotanni"
+    },
+    "settings": {
+      "title": "Saituna"
+    },
+    "lookup": {
+      "title": "Bincike na tsarin"
+    }
+  },
+  "connectivity": {
+    "loading": "Ana loda bayanai…",
+    "offline": "Babu hanyar sadarwa",
+    "retry": "Sake gwadawa"
+  }
+}

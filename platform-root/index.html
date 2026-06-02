@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" class="subbrand-dgo" data-theme="light" data-density="compact">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>DGO Digital Ops</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/assets/subbrands/dgo/favicon.svg">
+  <!-- Cascade layer order MUST load before any layered rules -->
+  <link rel="stylesheet" href="/styles/layers.css">
+  <link rel="stylesheet" href="/themes/tokens.css">
+  <link rel="stylesheet" href="/themes/theme.light.css">
+  <link rel="stylesheet" href="/themes/theme.dark.css">
+  <link rel="stylesheet" href="/themes/theme.high-contrast.css">
+  <link rel="stylesheet" href="/themes/subbrand.dgo.css">
+  <link rel="stylesheet" href="/styles/reset.css">
+  <link rel="stylesheet" href="/styles/primitives.css">
+  <link rel="stylesheet" href="/styles/shell.css">
+  <link rel="stylesheet" href="/styles/components.css">
+  <link rel="stylesheet" href="/styles/utilities.css">
+  <style>
+    @layer modules {
+      .pf-empty{ display:grid; gap:var(--space-2); place-content:center; text-align:center;
+        min-height:50vh; color:var(--color-text-muted); }
+      .pf-empty__title{ font-family:var(--font-display); font-weight:var(--fw-bold);
+        font-size:var(--size-h2); color:var(--color-text); }
+    }
+  </style>
+</head>
+<body>
+  <pf-skip-link target="module-outlet"></pf-skip-link>
+  <pf-app-shell>
+    <pf-app-header slot="header"></pf-app-header>
+    <pf-connectivity-banner slot="banner"></pf-connectivity-banner>
+    <pf-app-nav slot="nav"></pf-app-nav>
+    <main slot="main" id="module-outlet" tabindex="-1" aria-live="polite"></main>
+    <pf-app-footer slot="footer"></pf-app-footer>
+  </pf-app-shell>
+  <pf-toast></pf-toast>
+  <pf-modal></pf-modal>
+
+  <script type="module">
+    import './core/platform.js';            // FIRST: establishes window.Platform
+    import './shared/components/index.js';   // components' onConnect can now subscribe to Platform.Bus
+    import './modules/index.js';             // registers all modules
+    import { boot } from './core/boot.js';
+    boot({ outlet: document.getElementById('module-outlet') });
+  </script>
+  <noscript>This platform requires JavaScript (ES modules) to run.</noscript>
+</body>
+</html>

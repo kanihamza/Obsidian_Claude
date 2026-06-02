@@ -1,0 +1,11 @@
+/* ============================================================================
+   OBSIDIAN v4.0 — subbrand.dgo.css · @layer subbrand
+   DGO Digital Ops sub-brand marker. The adopted DGO Design System v2.0 token
+   layer (themes/tokens.css + theme.*.css) IS the DGO identity by default —
+   Deep Green primary, Smart Green accent, Outfit display — so this layer no
+   longer re-declares brand colors (that would override the theme-correct
+   dark/high-contrast values). It only carries the brand-active flag.
+   ============================================================================ */
+@layer subbrand {
+  html.subbrand-dgo { --brand-active: "dgo"; }
+}

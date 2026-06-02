@@ -1,0 +1,5 @@
+/* OBSIDIAN v4.0 — comments lens · @layer modules · scoped #module-comments */
+@layer modules {
+  #module-comments{ display:block; max-width:840px; }
+  #module-comments .pf-view__head .pf-toolbar{ gap:var(--space-3); }
+}
