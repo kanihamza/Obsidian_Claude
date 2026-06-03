@@ -1,23 +1,83 @@
-/** OBSIDIAN v4.0 — core/idempotency.js · Idempotency key builder + bounded request log.
- *  Prevents accidental duplicate writes by ensuring identical retries reuse the same key.
- *  Tracks every API call in a bounded ring buffer that diagnostics + telemetry can inspect.
- *
- *  Mirrors the SPA pattern (REGEN buildIdempotencyKey / logRequest): the key incorporates
- *  the action, the target ref, a coarse time bucket (default 60s) — so two clicks within the
- *  bucket produce the same key (PA-side de-dupes), but later retries get a fresh key.
- *  A trailing UUID slice gives randomness for non-target writes. */
+// FILE: core/idempotency.js
+/** OBSIDIAN v4.0 — core/idempotency.js · Idempotency key builder + bounded request log (A-11).
+ *  Deterministic-within-bucket keys so identical retries reuse the same key and Power Automate
+ *  de-dupes server-side. Default bucket is 300000 ms (5 min) — longer than the OTP email delay so an
+ *  OTP-gated bulk retry keeps its key (register A-11). Pass bucketMs:0/false for a fully stable key. */
 
-const BUCKET_MS = 60_000;
+const DEFAULT_BUCKET_MS = 300000;
 const LOG_CAP = 500;
 const PERSIST_KEY = 'obsidian.requestLog.v1';
 const log = [];
 
-function uuidSlice(n = 8) {
-  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID().slice(0, n);
-  return Math.random().toString(36).slice(2, 2 + n);
+/** Actions that are reads — callers/api use this to avoid stamping idempotency on reads. */
+const READ_ACTIONS = new Set([
+  'fetchall', 'getdocs', 'lookups', 'init', 'refresh_emails', 'load_email_details', 'load_event_info',
+  'track', 'get_all', 'get_bootstrap', 'listdocs', 'getdoc', 'getreferences', 'list-activities', 'read'
+]);
+
+function isReadAction(action) {
+  return !!action && READ_ACTIONS.has(String(action).toLowerCase());
 }
 
-// Restore prior log on module load — survives page reloads, useful for incident debugging
+/** Deterministic stable serialization — object keys sorted recursively so two logically equal
+ *  payloads always serialize identically regardless of property insertion order. */
+function stableStringify(value) {
+  if (value === undefined) return 'null';
+  if (value === null || typeof value !== 'object') return JSON.stringify(value);
+  if (Array.isArray(value)) {
+    let out = '[';
+    for (let i = 0; i < value.length; i++) {
+      if (i > 0) out += ',';
+      out += stableStringify(value[i]);
+    }
+    return out + ']';
+  }
+  const keys = Object.keys(value).sort();
+  let out = '{';
+  let first = true;
+  for (const k of keys) {
+    if (value[k] === undefined) continue;
+    if (!first) out += ',';
+    out += JSON.stringify(k) + ':' + stableStringify(value[k]);
+    first = false;
+  }
+  return out + '}';
+}
+
+/** Lightweight deterministic 32-bit FNV-1a hash, base36 — no external packages. */
+function fnv1a(str) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
+  }
+  return (h >>> 0).toString(36);
+}
+
+/** Fingerprint of a payload, excluding volatile envelope fields that must not change identity. */
+function fingerprintOf(payload) {
+  const clone = {};
+  if (payload && typeof payload === 'object') {
+    for (const k of Object.keys(payload)) {
+      if (k === 'idempotencyKey' || k === 'correlationId' || k === 'ts' || k === 'timestamp') continue;
+      clone[k] = payload[k];
+    }
+  }
+  return fnv1a(stableStringify(clone));
+}
+
+function refOf(payload) {
+  if (!payload || typeof payload !== 'object') return '';
+  const v = payload.refId || payload.referenceId || payload.Reference_ID || payload.RefIDD || payload.target ||
+    (payload.Selected && (payload.Selected.RefIDD || payload.Selected.ID)) || '';
+  return String(v || '');
+}
+
+function token(s) {
+  return String(s || '').replace(/[^a-zA-Z0-9_-]+/g, '');
+}
+
+// Restore prior log on module load — survives reloads, useful for incident debugging.
 (function _restore() {
   try {
     const raw = globalThis.localStorage && localStorage.getItem(PERSIST_KEY);
@@ -27,7 +87,6 @@ function uuidSlice(n = 8) {
   } catch (_) { /* private mode / corrupted — skip */ }
 })();
 
-// Persist every N writes — debounced batching to avoid hammering localStorage on every API call
 let _persistTimer = null;
 function _persistSoon() {
   if (_persistTimer) return;
@@ -39,19 +98,46 @@ function _persistSoon() {
 }
 
 export const Idempotency = {
-  /** Build a deterministic-within-bucket idempotency key for an action + target. */
-  build({ action, refId, target, payload }) {
-    const a = String(action || 'unknown').toLowerCase().replace(/[^a-z0-9_]+/g, '-');
-    const r = String(refId || target || (payload && (payload.RefIDD || payload.referenceId)) || '').replace(/[^a-zA-Z0-9_-]+/g, '');
-    const bucket = Math.floor(Date.now() / BUCKET_MS);
-    // The random suffix is a safety net for actions without a clear target (otherwise two unrelated
-    // writes in the same bucket would collide).
-    const tail = r ? '' : '-' + uuidSlice();
-    return `obsidian.${a}.${r || 'na'}.${bucket}${tail}`;
+  DEFAULT_BUCKET_MS,
+  isReadAction,
+  stableStringify,
+  fingerprint: fingerprintOf,
+
+  /** Build a deterministic idempotency key. Preserves a provided key verbatim.
+   *  bucketMs 0/false disables the time bucket so the key is stable for an identical payload. */
+  build({ endpointKey, action, operation, refId, referenceId, target, payload, bucketMs, key } = {}) {
+    if (key) return String(key);
+    const verb = token(String(action || operation || (payload && (payload.action || payload.operation)) || 'write').toLowerCase());
+    const ep = token(endpointKey || '');
+    const ref = token(refId || referenceId || target || refOf(payload));
+    const fp = fingerprintOf(payload || {});
+    const disabled = bucketMs === 0 || bucketMs === false;
+    const ms = (typeof bucketMs === 'number' && bucketMs > 0) ? bucketMs : DEFAULT_BUCKET_MS;
+    const bucket = disabled ? 'stable' : String(Math.floor(Date.now() / ms));
+    return ['obsidian', ep || 'na', verb || 'write', ref || 'na', fp, bucket].join('.');
   },
 
-  /** Record a request entry in the ring buffer for diagnostics. */
-  record({ endpointKey, action, key, ok, status, durationMs, errorMessage }) {
+  /** Normalize an idempotency input. Returns { idempotencyKey, source, bucketMs, fingerprint }.
+   *  Preserves a provided key (source 'provided'); otherwise derives one (source 'derived'). */
+  normalizeInput({ endpointKey, action, operation, refId, referenceId, target, payload, opts, bucketMs, key } = {}) {
+    const provided = key || (payload && payload.idempotencyKey) || (opts && opts.idempotencyKey) || null;
+    const effectiveBucket = (bucketMs !== undefined) ? bucketMs
+      : (opts && opts.bucketMs !== undefined) ? opts.bucketMs
+      : DEFAULT_BUCKET_MS;
+    const fingerprint = fingerprintOf(payload || {});
+    if (provided) {
+      return { idempotencyKey: String(provided), source: 'provided', bucketMs: effectiveBucket, fingerprint };
+    }
+    const idempotencyKey = this.build({
+      endpointKey, action: action || (payload && payload.action),
+      operation: operation || (payload && payload.operation),
+      refId, referenceId, target, payload, bucketMs: effectiveBucket
+    });
+    return { idempotencyKey, source: 'derived', bucketMs: effectiveBucket, fingerprint };
+  },
+
+  /** Record a request entry in the bounded ring buffer for diagnostics. */
+  record({ endpointKey, action, key, ok, status, durationMs, errorMessage } = {}) {
     if (log.length >= LOG_CAP) log.shift();
     log.push({
       ts: new Date().toISOString(),
@@ -68,15 +154,16 @@ export const Idempotency = {
   log({ limit = 100, endpointKey = null, action = null, okOnly = false, errOnly = false } = {}) {
     let out = log.slice().reverse();
     if (endpointKey) out = out.filter((e) => e.endpointKey === endpointKey);
-    if (action)      out = out.filter((e) => e.action === action);
-    if (okOnly)      out = out.filter((e) => e.ok);
-    if (errOnly)     out = out.filter((e) => !e.ok);
+    if (action) out = out.filter((e) => e.action === action);
+    if (okOnly) out = out.filter((e) => e.ok);
+    if (errOnly) out = out.filter((e) => !e.ok);
     return out.slice(0, limit);
   },
 
   clear() {
     log.length = 0;
-    try { globalThis.localStorage && localStorage.removeItem(PERSIST_KEY); } catch (_) {}
+    try { globalThis.localStorage && localStorage.removeItem(PERSIST_KEY); } catch (_) { /* ignore */ }
   }
 };
 export default Idempotency;
+// END FILE: core/idempotency.js

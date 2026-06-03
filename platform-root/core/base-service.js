@@ -1,3 +1,4 @@
+// FILE: core/base-service.js
 /**
  * OBSIDIAN v4.0 — BaseService (/core/base-service.js)
  * Common service plumbing so no service hand-rolls fetch, pagination, sort, or cache.
@@ -5,9 +6,12 @@
  *   export const fetchAll = BaseService.endpoint('FETCH_ALL', { cache: 30000, expectedKeys: ['ok','data'] });
  *   const res = await fetchAll({ ...payload }, { page, pageSize, sortBy, sortDir });
  *
- * The factory returns the FULL normalized result from Platform.API.callAPI
- * (so callers keep errors[] warnings); res.data is the contract payload.
- * Client-side sort/paginate apply only when res.data is an array.
+ * The factory returns the FULL normalized result from API.callAPI (callers keep errors[] warnings);
+ * res.data is the contract payload. Client-side sort/paginate apply only when res.data is an array.
+ *
+ * Idempotency: for writes a key is prepared here (deterministic, bucketed) and passed BOTH via
+ * payload.idempotencyKey and opts.idempotencyKey. The caller's payload object is never mutated.
+ * bucketMs may be overridden per-endpoint (factory opts) or per-call (query) for OTP-gated bulk flows.
  */
 
 import { API } from './api.js';
@@ -48,8 +52,8 @@ function applyPage(rows, page, pageSize) {
 export const BaseService = {
   /**
    * Build a callable bound to one endpoint key.
-   * opts: { cache?:ms, expectedKeys?:string[], silent?:bool }
-   * Returned fn(payload?, query?): query may carry { page, pageSize, sortBy, sortDir, force }.
+   * opts: { cache?:ms, expectedKeys?:string[], silent?:bool, bucketMs?:number|false }
+   * Returned fn(payload?, query?): query may carry { page, pageSize, sortBy, sortDir, force, bucketMs, idempotencyKey }.
    */
   endpoint(endpointKey, opts = {}) {
     if (!Endpoints[endpointKey]) {
@@ -66,25 +70,34 @@ export const BaseService = {
         if (hit && Date.now() - hit.at < ttl) return hit.result;
       }
 
-      // ─── Idempotency: add a key to writes so accidental double-clicks are de-duped server-side.
-      //     Reads (FETCH_ALL, REFERENCE_DATA) don't need it; skip when GET or cache-enabled.
-      const isWrite = !ttl && payload && (payload.action || payload.operation);
-      let idemKey = null;
+      // ─── Idempotency: prepare a key for writes (reads skip it). Never mutate the caller's payload.
+      const action = payload && (payload.action || payload.operation);
+      const isWrite = !ttl && !!action && !Idempotency.isReadAction(action);
+      const bucketMs = (opts.bucketMs !== undefined) ? opts.bucketMs
+        : (query.bucketMs !== undefined) ? query.bucketMs
+        : undefined;
+      let idempotencyKey = (payload && payload.idempotencyKey) || query.idempotencyKey || null;
+      let outPayload = payload;
       if (isWrite) {
-        idemKey = Idempotency.build({ action: payload.action, refId: payload.RefIDD || payload.referenceId, payload });
-        // Pass via both payload field and a property the API layer can lift to a header
-        payload = { ...payload, idempotencyKey: idemKey };
+        idempotencyKey = Idempotency.normalizeInput({
+          endpointKey, payload, opts: { idempotencyKey, bucketMs }, bucketMs
+        }).idempotencyKey;
+        outPayload = { ...payload, idempotencyKey };
       }
 
+      const callOpts = { silent: opts.silent };
+      if (idempotencyKey) callOpts.idempotencyKey = idempotencyKey;
+      if (bucketMs !== undefined) callOpts.bucketMs = bucketMs;
+
       const t0 = (globalThis.performance && performance.now ? performance.now() : Date.now());
-      const result = await API.callAPI(endpointKey, payload, { silent: opts.silent });
+      const result = await API.callAPI(endpointKey, outPayload, callOpts);
       const durationMs = Math.round((globalThis.performance && performance.now ? performance.now() : Date.now()) - t0);
       validateShape(endpointKey, result, expectedKeys);
 
       // ─── Always log the call (success or failure) into the bounded request log.
       Idempotency.record({
-        endpointKey, action: payload.action || '',
-        key: idemKey, ok: !!result.ok, status: result.status || null,
+        endpointKey, action: action || '',
+        key: idempotencyKey, ok: !!result.ok, status: result.status || null,
         durationMs, errorMessage: (!result.ok && result.errors && result.errors[0] && result.errors[0].message) || null
       });
 
@@ -107,3 +120,4 @@ export const BaseService = {
 };
 
 export default BaseService;
+// END FILE: core/base-service.js

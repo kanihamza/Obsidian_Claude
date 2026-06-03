@@ -1,20 +1,16 @@
+// FILE: core/api.js
 /**
  * OBSIDIAN v4.0 — Core API engine (/core/api.js)
  * THE ONLY MODULE PERMITTED TO CALL fetch(). Services go through BaseService.
  *
  * Platform.API.callAPI(endpointKey, payload?, opts?) -> Promise<NormalizedResult>
  * Never rejects on HTTP/transport failure. Always resolves a normalized object:
- *   { ok, kind, status, data, errors, body, headers, durationMs, correlationId }
+ *   { ok, kind, errorKind, status, data, errors, body, headers, durationMs, correlationId }
  *   kind ∈ 'ok' | 'network' | 'timeout' | 'client' | 'server' | 'parse' | 'abort' | 'notImplemented' | 'config' | 'duplicate'
  *
- * Alignments with the authoritative live working SPA (NITDA_Digital_Ops_Hub_patched.html ~L2614):
- *   • Direct fetch(ep.url) — no intermediary, embedded URLs.
- *   • Per-endpoint in-flight guard rejects duplicate concurrent calls (kind:'duplicate').
- *   • correlationId set BOTH in X-Correlation-ID header AND in the body (PA run history captures body).
- *   • Per-call opts.timeoutMs || per-endpoint ep.timeoutMs || DEFAULT_TIMEOUT_MS (bulk/AI/fetch-all = 90s).
- *   • Double-stringified JSON ("{\"ok\":true,…}") returned by Power Automate is detected + unwrapped.
- *   • sanitize() preserves null and '' by default (flow schemas declare nullable fields, the SPA sends
- *     them through). Pass opts.stripEmpty:true for the legacy strip-all behaviour.
+ * Idempotency (A-11): callAPI is the FINAL safeguard. If the merged payload already carries an
+ * idempotencyKey it is preserved; else opts.idempotencyKey is used; else, for write calls, a key is
+ * derived via Idempotency.normalizeInput. The key is sent in the body AND as X-Idempotency-Key.
  *
  * Envelope normalization (F2 — contract):
  *   Production-v1 -> body.ok / body.status.http
@@ -24,6 +20,7 @@
  */
 
 import { Endpoints } from '../config/endpoints.config.js';
+import { Idempotency } from './idempotency.js';
 
 const DEFAULT_TIMEOUT_MS = 45000;
 const _inflight = new Map(); // endpointKey -> count of in-flight calls
@@ -86,7 +83,7 @@ function scanConcatenatedJSON(text) {
       else if (c === '{' || c === '[') depth++;
       else if (c === '}' || c === ']') { depth--; if (depth === 0) { i++; break; } }
     }
-    try { out.push(JSON.parse(text.slice(start, i))); } catch { /* skip malformed fragment */ }
+    try { out.push(JSON.parse(text.slice(start, i))); } catch (_) { /* skip malformed fragment, keep later valid ones */ }
   }
   return out;
 }
@@ -97,7 +94,7 @@ function parseFlowBody(text) {
   if (!text) return null;
   try {
     let b = JSON.parse(text);
-    if (typeof b === 'string') { const t = b.trim(); if (t.startsWith('{') || t.startsWith('[')) { try { b = JSON.parse(t); } catch { /* keep */ } } }
+    if (typeof b === 'string') { const t = b.trim(); if (t.startsWith('{') || t.startsWith('[')) { try { b = JSON.parse(t); } catch (_) { /* keep */ } } }
     return b;
   } catch (e) {
     const objs = scanConcatenatedJSON(text);
@@ -107,9 +104,7 @@ function parseFlowBody(text) {
   }
 }
 
-/** Extract a normalized errors[] array from whatever shape PA / connectors returned.
- *  Handles: body.errors[], body.error (object|string), body.message, body.validationErrors,
- *  body.exception, top-level fault objects. Each error becomes {code, message, target?}. */
+/** Extract a normalized errors[] array from whatever shape PA / connectors returned. */
 function extractErrors(body) {
   if (!body) return [];
   if (Array.isArray(body.errors)) return body.errors.map(normErr);
@@ -133,9 +128,7 @@ function normErr(e, defaultCode) {
            target: e.target || e.field || e.path || undefined };
 }
 
-/** A-10 — canonical machine-readable error taxonomy. Maps PA-provided `kind` (preferred) or the
- *  HTTP/transport signal to the 13-row taxonomy the UI error-router and OTP handshake consume.
- *  Attached as `result.errorKind` on every failure; the transport `kind` field is left untouched. */
+/** A-10 — canonical machine-readable error taxonomy. PA-provided `kind` wins; else HTTP/transport. */
 const HTTP_ERROR_KIND = {
   401: 'AUTH_FAILED', 403: 'NOT_AUTHORIZED', 409: 'CONFLICT_IDEMPOTENT', 410: 'OTP_EXPIRED',
   422: 'VALIDATION_FAILED', 428: 'OTP_REQUIRED', 429: 'RATE_LIMITED',
@@ -160,8 +153,6 @@ function reserved501(endpointKey, correlationId, durationMs) {
   };
 }
 
-/** Map a parsed body to the normalized result, handling v1 (ok) and v4 (success) envelopes.
- *  Maps HTTP-only signals (rate-limit, unavailable) to richer `kind` values. */
 function kindForStatus(httpStatus, defaultKind) {
   if (httpStatus === 429) return 'rateLimit';
   if (httpStatus === 503) return 'unavailable';
@@ -195,7 +186,6 @@ function normalizeBody(body, headers, durationMs, correlationId, httpStatus) {
       routeKey: body.meta && body.meta.routeKey, body, headers, durationMs, correlationId
     };
   }
-  // No recognized envelope — still surface HTTP signals (429/503/etc.) instead of 'parse' if status is informative
   if (httpStatus && httpStatus >= 400) {
     return { ok: false, kind: kindForStatus(httpStatus), errorKind: deriveErrorKind(body, httpStatus, null),
       status: httpStatus, data: null,
@@ -210,9 +200,7 @@ function normalizeBody(body, headers, durationMs, correlationId, httpStatus) {
   };
 }
 
-/** Resolve an endpoint URL, honouring any operator-set override in localStorage.
- *  Overrides are managed by the Settings module — keyed by `obsidian.endpoint.<KEY>` so
- *  ops can swap a flow URL for sandbox testing without a rebuild. Empty/missing => default. */
+/** Resolve an endpoint URL, honouring any operator-set override in localStorage. */
 function _resolveUrl(endpointKey, defaultUrl) {
   try {
     const k = 'obsidian.endpoint.' + endpointKey;
@@ -220,6 +208,17 @@ function _resolveUrl(endpointKey, defaultUrl) {
     if (v && /^https?:\/\//.test(v)) return v;
   } catch (_) { /* private mode / SSR — fall through */ }
   return defaultUrl;
+}
+
+/** Decide whether a call is a write that must carry an idempotency key. */
+function isWriteCall(ep, payload, opts) {
+  if (opts && (opts.idempotent === true || opts.write === true)) return true;
+  if (ep && (ep.write === true || ep.idempotent === true || ep.requiresIdempotency === true)) return true;
+  const action = payload && (payload.action || payload.operation);
+  if (Idempotency.isReadAction(action)) return false;
+  const method = String((ep && ep.method) || 'POST').toUpperCase();
+  if (method !== 'GET' && action) return true;
+  return false;
 }
 
 async function callAPI(endpointKey, payload = {}, opts = {}) {
@@ -240,7 +239,6 @@ async function callAPI(endpointKey, payload = {}, opts = {}) {
     return reserved501(endpointKey, correlationId, elapsed());
   }
 
-  // Per-endpoint in-flight guard — rejects duplicate concurrent calls (mirrors SPA's AppState._fetching).
   if (!opts.allowConcurrent && _inflight.get(endpointKey)) {
     log('warn', 'api.duplicate-blocked', { endpointKey, correlationId });
     return { ok: false, kind: 'duplicate', status: 0, data: null, errorKind: 'CONFLICT_IDEMPOTENT',
@@ -253,17 +251,27 @@ async function callAPI(endpointKey, payload = {}, opts = {}) {
   // sanitize: preserve null/'' by default (flow schemas accept them; only drop undefined).
   const merged = sanitize({ ...ep.defaults, ...payload, correlationId }, !!opts.stripEmpty);
 
+  // ─── Idempotency: final safeguard. Preserve an existing key, else opts, else derive for writes.
+  let idempotencyKey = merged.idempotencyKey || (opts && opts.idempotencyKey) || null;
+  if (!idempotencyKey && isWriteCall(ep, merged, opts)) {
+    idempotencyKey = Idempotency.normalizeInput({ endpointKey, payload: merged, opts, bucketMs: opts.bucketMs }).idempotencyKey;
+  }
+  if (idempotencyKey) merged.idempotencyKey = idempotencyKey;
+
   const controller = new AbortController();
   const timeoutMs = opts.timeoutMs || ep.timeoutMs || DEFAULT_TIMEOUT_MS;
   const timer = setTimeout(() => controller.abort('timeout'), timeoutMs);
   if (opts.cancellable && typeof opts.onCancel === 'function') opts.onCancel(() => controller.abort('user'));
 
-  log('info', 'api.request', { endpointKey, action: merged.action, persona, correlationId, timeoutMs });
+  log('info', 'api.request', { endpointKey, action: merged.action, persona, correlationId, timeoutMs, idempotencyKey: idempotencyKey || null });
+
+  const reqHeaders = { ...ep.headers, 'X-Correlation-ID': correlationId };
+  if (idempotencyKey) reqHeaders['X-Idempotency-Key'] = idempotencyKey;
 
   try {
     const res = await fetch(_resolveUrl(endpointKey, ep.url), {
       method: ep.method || 'POST',
-      headers: { ...ep.headers, 'X-Correlation-ID': correlationId },
+      headers: reqHeaders,
       body: JSON.stringify(merged),
       signal: controller.signal
     });
@@ -272,12 +280,11 @@ async function callAPI(endpointKey, payload = {}, opts = {}) {
     const headers = {};
     res.headers.forEach((v, k) => { headers[k] = v; });
 
-    // Read text first so we can handle Power Automate's double-stringification ("{\"ok\":…}").
     const text = await res.text();
     let body = null;
     try {
       body = parseFlowBody(text);
-    } catch {
+    } catch (_) {
       const r = { ok: false, kind: 'parse', status: res.status, data: null, errorKind: 'INTERNAL_ERROR',
         errors: [{ code: 'PARSE_ERROR', message: 'Response body was not valid JSON.' }],
         body: text || null, headers, durationMs: elapsed(), correlationId };
@@ -288,7 +295,7 @@ async function callAPI(endpointKey, payload = {}, opts = {}) {
 
     const result = normalizeBody(body, headers, elapsed(), correlationId, res.status);
     log(result.ok ? 'info' : 'error', 'api.response',
-      { endpointKey, status: result.status, kind: result.kind, persona, correlationId });
+      { endpointKey, status: result.status, kind: result.kind, errorKind: result.errorKind || null, persona, correlationId });
     if (!result.ok && !opts.silent && globalThis.Platform && Platform.UI) Platform.UI.toastError(result);
     return result;
   } catch (err) {
@@ -310,3 +317,4 @@ async function callAPI(endpointKey, payload = {}, opts = {}) {
 
 export const API = { callAPI };
 export default API;
+// END FILE: core/api.js
