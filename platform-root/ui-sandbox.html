@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OBSIDIAN UI Isolation Sandbox — Toast + Error Router + OTP</title>
+<!--
+  OBSIDIAN v4.0 — ui-sandbox.html
+  Standalone visual harness for the S1 UI surfaces ONLY:
+    core/error-router.js · shared/components/pf-toast.js · shared/components/pf-otp-modal.js
+  Zero external dependencies. Offline: fetch() is stubbed so the OTP handshake runs without a network.
+  Serve platform-root/ over http (Termux: python -m http.server 8080) and open /ui-sandbox.html
+  on the Galaxy Tab A9 in landscape. Use it to check touch targets, aria-live assertiveness, and
+  one-handed ergonomics BEFORE merging into the main fabric.
+-->
+<style>
+  /* Design tokens (sandbox-local; mirror DGO light theme so the imported components render). */
+  :root{
+    --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-display: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --color-bg: #0f1623;
+    --color-surface: #ffffff;
+    --color-surface-raised: #ffffff;
+    --color-surface-sunken: #f3f5f9;
+    --color-surface-inverse: #0b1220;
+    --color-text: #16203a;
+    --color-text-muted: #5a6781;
+    --color-text-inverse: #ffffff;
+    --color-border: #d8deea;
+    --color-border-strong: #b7c1d4;
+    --color-brand-primary: #1f6feb;
+    --color-info: #1f6feb;
+    --color-success: #1f9d57;
+    --color-warning: #c9821a;
+    --color-danger: #d23b3b;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --shadow-lg: 0 10px 30px rgba(10,20,40,.18);
+    --shadow-xl: 0 18px 48px rgba(10,20,40,.28);
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 28px;
+    --size-caption: .78rem;
+    --size-body-sm: .92rem;
+    --size-h3: 1.3rem;
+    --fw-semibold: 600;
+    --tracking-overline: .08em;
+    --z-toast: 9000;
+    --z-modal: 9500;
+    --z-drawer: 9400;
+    --duration-fast: 120ms;
+    --duration-base: 200ms;
+    --easing-standard: cubic-bezier(.2,.0,.2,1);
+    --focus-ring: 0 0 0 3px rgba(31,111,235,.45);
+  }
+  *{ box-sizing: border-box; }
+  html, body{ margin:0; height:100%; }
+  body{
+    font-family: var(--font-body);
+    color: var(--color-text);
+    background: linear-gradient(160deg, #0f1623, #182338);
+    -webkit-text-size-adjust: 100%;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);
+  }
+  .wrap{
+    max-width: 1280px; margin: 0 auto; min-height: 100%;
+    display: flex; flex-direction: column;
+    padding: var(--space-4) var(--space-4) 96px;
+  }
+  header{ color: var(--color-text-inverse); margin-bottom: var(--space-4); }
+  header h1{ font-size: 1.15rem; margin: 0 0 var(--space-1); }
+  header p{ margin: 0; color: #aebbd6; font-size: var(--size-body-sm); }
+  .vp{ font-size: var(--size-caption); color:#7d8db0; margin-top: var(--space-2); }
+  .vp b{ color:#cdd8ef; }
+
+  .grid{
+    display: grid; gap: var(--space-3);
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+  @media (min-width: 760px){ .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
+  @media (min-width: 1100px) and (orientation: landscape){ .grid{ grid-template-columns: repeat(4, minmax(0,1fr)); } }
+
+  .card{
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    display: flex; flex-direction: column; gap: var(--space-2);
+  }
+  .card h2{ font-size: var(--size-body-sm); margin: 0; color: var(--color-text-muted);
+    text-transform: uppercase; letter-spacing: var(--tracking-overline); font-weight: var(--fw-semibold); }
+
+  button.touch{
+    font: inherit; font-weight: var(--fw-semibold);
+    min-height: 56px; padding: 0 var(--space-4);
+    border-radius: var(--radius-md); border: 1px solid transparent;
+    cursor: pointer; width: 100%;
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+    -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  }
+  button.touch:focus-visible{ outline: none; box-shadow: var(--focus-ring); }
+  .btn-primary{ background: var(--color-brand-primary); color: var(--color-text-inverse); }
+  .btn-danger{ background: var(--color-danger); color: var(--color-text-inverse); }
+  .btn-warning{ background: var(--color-warning); color: var(--color-text-inverse); }
+  .btn-success{ background: var(--color-success); color: var(--color-text-inverse); }
+  .btn-ghost{ background: var(--color-surface-sunken); color: var(--color-text); border-color: var(--color-border); }
+
+  .readout{
+    margin-top: var(--space-4);
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg); padding: var(--space-4);
+  }
+  .readout h2{ font-size: var(--size-body-sm); margin: 0 0 var(--space-2); color: var(--color-text-muted);
+    text-transform: uppercase; letter-spacing: var(--tracking-overline); }
+  pre{ margin: 0; white-space: pre-wrap; word-break: break-word; font-size: var(--size-body-sm);
+    background: var(--color-surface-sunken); border-radius: var(--radius-md); padding: var(--space-3); }
+  .hint{ color: var(--color-text-muted); font-size: var(--size-caption); margin-top: var(--space-2); }
+
+  /* Thumb-reachable action bar pinned to the bottom for one-handed landscape use. */
+  .thumbbar{
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 8000;
+    display: flex; gap: var(--space-3);
+    padding: var(--space-3) var(--space-4) calc(var(--space-3) + env(safe-area-inset-bottom));
+    background: rgba(11,18,32,.92); backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(255,255,255,.08);
+  }
+  .thumbbar button.touch{ width: auto; flex: 1; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>OBSIDIAN — UI Isolation Sandbox</h1>
+      <p>S1 surfaces only: error-router taxonomy → pf-toast (aria-live), and the PA-handshake pf-otp-modal. Offline; no network.</p>
+      <div class="vp">viewport <b id="vp-size">—</b> · orientation <b id="vp-orient">—</b> · DPR <b id="vp-dpr">—</b></div>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Auth failed (danger)</h2>
+        <button class="touch btn-danger" data-kind="AUTH_FAILED">AUTH_FAILED</button>
+      </div>
+      <div class="card">
+        <h2>Not authorized (danger)</h2>
+        <button class="touch btn-danger" data-kind="NOT_AUTHORIZED">NOT_AUTHORIZED</button>
+      </div>
+      <div class="card">
+        <h2>Dispatch failed (danger)</h2>
+        <button class="touch btn-danger" data-kind="DISPATCH_FAILED">DISPATCH_FAILED</button>
+      </div>
+      <div class="card">
+        <h2>Internal error (danger)</h2>
+        <button class="touch btn-danger" data-kind="INTERNAL_ERROR">INTERNAL_ERROR</button>
+      </div>
+      <div class="card">
+        <h2>Rate limited (warning)</h2>
+        <button class="touch btn-warning" data-kind="RATE_LIMITED">RATE_LIMITED</button>
+      </div>
+      <div class="card">
+        <h2>Directorate mismatch (warning)</h2>
+        <button class="touch btn-warning" data-kind="DIRECTORATE_MISMATCH">DIRECTORATE_MISMATCH</button>
+      </div>
+      <div class="card">
+        <h2>Validation (warning)</h2>
+        <button class="touch btn-warning" data-kind="VALIDATION_FAILED">VALIDATION_FAILED</button>
+      </div>
+      <div class="card">
+        <h2>Upstream timeout (warning)</h2>
+        <button class="touch btn-warning" data-kind="UPSTREAM_TIMEOUT">UPSTREAM_TIMEOUT</button>
+      </div>
+      <div class="card">
+        <h2>Already applied (info)</h2>
+        <button class="touch btn-ghost" data-kind="CONFLICT_IDEMPOTENT">CONFLICT_IDEMPOTENT</button>
+      </div>
+      <div class="card">
+        <h2>OTP required (info)</h2>
+        <button class="touch btn-ghost" data-kind="OTP_REQUIRED">OTP_REQUIRED</button>
+      </div>
+      <div class="card">
+        <h2>Success toast</h2>
+        <button class="touch btn-success" id="btn-success">Success</button>
+      </div>
+      <div class="card">
+        <h2>Clear stack</h2>
+        <button class="touch btn-ghost" id="btn-clear">Dismiss all</button>
+      </div>
+    </div>
+
+    <div class="readout">
+      <h2>OTP handshake result</h2>
+      <pre id="otp-result">No handshake run yet.</pre>
+      <p class="hint">Demo code that verifies: <b>123456</b>. Any other 6 digits fails and decrements the attempt matrix; after 5 failures the modal fires the ASSIGNMENT-FAILED rollback. Each invalid try also raises an assertive error toast via the taxonomy.</p>
+    </div>
+  </div>
+
+  <div class="thumbbar">
+    <button class="touch btn-primary" id="btn-otp">Open OTP handshake</button>
+    <button class="touch btn-danger" id="btn-quick-error">Quick error toast</button>
+  </div>
+
+  <!-- Toast host -->
+  <pf-toast></pf-toast>
+
+  <script type="module">
+    import { Bus } from './core/bus.js';
+    import { UI } from './core/ui.js';
+    import { ErrorRouter } from './core/error-router.js';
+    import './shared/components/pf-toast.js';
+    import { PfOtpModal } from './shared/components/pf-otp-modal.js';
+
+    // ── Minimal i18n stub covering every key the three components reference. {var} interpolation. ──
+    const DICT = {
+      'common.actions.cancel': 'Cancel',
+      'common.actions.processing': 'Working…',
+      'common.actions.dismiss': 'Dismiss',
+      'otp.title': 'Security verification',
+      'otp.defaultReason': 'Confirm your identity to authorise this bulk assignment.',
+      'otp.codeLabel': 'One-time code',
+      'otp.verify': 'Verify',
+      'otp.sent': 'Code sent to {to} · expires in {ttl}s',
+      'otp.genFailed': 'Could not send a code. Try again.',
+      'otp.needCode': 'Enter the code.',
+      'otp.invalid': 'Invalid or expired code.',
+      'otp.required': 'A one-time code is required to continue.',
+      'otp.expired': 'The code expired. Request a new one.',
+      'otp.resend': 'Resend code',
+      'otp.verifying': 'Verifying…',
+      'otp.expiresIn': 'Expires in {s}s',
+      'otp.attemptsLeft': '{n} attempt(s) left.',
+      'otp.failed': 'Verification failed. The assignment was rolled back.',
+      'otp.sendingCode': 'Sending a code…',
+      'otp.rollback': 'Too many incorrect attempts — assignment cancelled.',
+      'error.auth.failed': 'Your session could not be verified. Please re-authenticate.',
+      'error.directorate.mismatch': 'Cross-directorate action requires DG approval.',
+      'error.rateLimited': 'Too many requests. Please wait a moment and retry.',
+      'error.validation': 'Some details need correcting before this can proceed.',
+      'error.notAuthorized': 'You do not have authority for this action.',
+      'error.timeout': 'The service took too long to respond. Please retry.',
+      'error.internal': 'Something went wrong on our side. The team has been notified.',
+      'dispatch.failed': 'Dispatch failed. You can retry from the dispatch queue.',
+      'info.alreadyApplied': 'Already applied — no change needed.'
+    };
+    function t(key, vars) {
+      let s = DICT[key];
+      if (s === undefined) return key;
+      if (vars) for (const k of Object.keys(vars)) s = s.split('{' + k + '}').join(String(vars[k]));
+      return s;
+    }
+
+    // ── Compose the Platform namespace the imported modules expect (same Bus singleton as UI). ──
+    globalThis.Platform = {
+      Bus, UI, ErrorRouter,
+      I18n: { t },
+      Persona: { current: () => 'web-ops', email: () => 'officer@nitda.gov.ng' },
+      Log: { info() {}, warn() {}, error() {} }
+    };
+
+    // ── Offline fetch stub: drives the OTP handshake (OTP_GENERATE / OTP_VERIFY) with no network. ──
+    const VALID_CODE = '123456';
+    let serverRemaining = 5;
+    function jsonResponse(status, bodyObj) {
+      return {
+        status, ok: status < 400,
+        headers: { forEach: (cb) => cb('application/json', 'content-type') },
+        text: async () => JSON.stringify(bodyObj)
+      };
+    }
+    globalThis.fetch = async (_url, options) => {
+      let payload = {};
+      try { payload = JSON.parse((options && options.body) || '{}'); } catch (_) { payload = {}; }
+      const action = String(payload.action || '').toLowerCase();
+      await new Promise((r) => setTimeout(r, 250)); // simulate latency so spinners/countdown show
+
+      if (action === 'otpgenerate') {
+        serverRemaining = 5;
+        const now = Date.now();
+        return jsonResponse(200, { ok: true, data: {
+          otpId: 'otp_demo_' + now.toString(36),
+          ttlSeconds: 120,
+          codeLength: 6,
+          sentTo: payload.userEmail || 'officer@nitda.gov.ng',
+          channel: 'email',
+          expiresAt: new Date(now + 120000).toISOString(),
+          resendAvailableAt: new Date(now + 30000).toISOString()
+        } });
+      }
+      if (action === 'otpverify') {
+        if (String(payload.code || '') === VALID_CODE) {
+          return jsonResponse(200, { ok: true, data: {
+            otpId: payload.otpId, verified: true,
+            verificationToken: 'vt_demo_' + Math.random().toString(36).slice(2, 12),
+            tokenExpiresAt: new Date(Date.now() + 600000).toISOString()
+          } });
+        }
+        serverRemaining = Math.max(0, serverRemaining - 1);
+        return jsonResponse(401, {
+          ok: false,
+          errors: [{ kind: 'OTP_INVALID', field: 'otp.code', message: 'The verification code is incorrect.' }],
+          remainingAttempts: serverRemaining
+        });
+      }
+      // Any other action: succeed quietly.
+      return jsonResponse(200, { ok: true, data: {} });
+    };
+
+    // ── Wire taxonomy buttons → ErrorRouter.handle (the real S1 routing path). ──
+    function fakeResult(kind) {
+      const detailByKind = {
+        AUTH_FAILED: 'Session token rejected by the flow.',
+        NOT_AUTHORIZED: 'Persona web-ops lacks authority for this state.',
+        DISPATCH_FAILED: 'Downstream mail relay timed out.',
+        INTERNAL_ERROR: 'Unhandled exception in flow run 8f3a.',
+        RATE_LIMITED: 'Quota exceeded.',
+        DIRECTORATE_MISMATCH: 'REF-2026-000204 belongs to DSU-LEGAL.',
+        VALIDATION_FAILED: 'dueDate must be in the future.',
+        UPSTREAM_TIMEOUT: 'Gateway did not respond in 45s.',
+        CONFLICT_IDEMPOTENT: 'Duplicate idempotency key.',
+        OTP_REQUIRED: 'This batch (>5) needs an OTP.'
+      };
+      return {
+        ok: false,
+        errorKind: kind,
+        status: 0,
+        retryAfter: kind === 'RATE_LIMITED' ? 8 : null,
+        errors: [{ code: kind, kind, message: detailByKind[kind] || kind }]
+      };
+    }
+    document.querySelectorAll('button[data-kind]').forEach((b) => {
+      b.addEventListener('click', () => ErrorRouter.handle(fakeResult(b.getAttribute('data-kind'))));
+    });
+
+    document.getElementById('btn-success').addEventListener('click', () => {
+      UI.toast({ message: 'Assignment saved for 14 references.', variant: 'success', timeout: 5000 });
+    });
+    document.getElementById('btn-clear').addEventListener('click', () => {
+      // Dismiss everything currently shown (ids are sequential; clear a wide range).
+      for (let i = 0; i < 200; i++) Bus.emit('platform:ui:toast-dismiss', { id: i });
+    });
+    document.getElementById('btn-quick-error').addEventListener('click', () => {
+      ErrorRouter.handle(fakeResult('AUTH_FAILED'));
+    });
+
+    // ── OTP handshake trigger. ──
+    const otpResult = document.getElementById('otp-result');
+    async function runOtp() {
+      otpResult.textContent = 'OTP modal open…';
+      const r = await PfOtpModal.require({
+        purpose: 'BULK_ASSIGNMENT',
+        userEmail: 'officer@nitda.gov.ng',
+        context: { batchSize: 14, referenceIds: ['REF-2026-000118', 'REF-2026-000119'] }
+      });
+      otpResult.textContent = JSON.stringify(r, null, 2);
+    }
+    document.getElementById('btn-otp').addEventListener('click', runOtp);
+
+    // ── Live viewport readout for the ergonomic check. ──
+    function paintViewport() {
+      document.getElementById('vp-size').textContent = window.innerWidth + ' × ' + window.innerHeight + ' px';
+      document.getElementById('vp-orient').textContent =
+        (window.innerWidth >= window.innerHeight) ? 'landscape' : 'portrait';
+      document.getElementById('vp-dpr').textContent = String(window.devicePixelRatio || 1);
+    }
+    paintViewport();
+    window.addEventListener('resize', paintViewport);
+    window.addEventListener('orientationchange', paintViewport);
+  </script>
+</body>
+</html>
