@@ -540,7 +540,8 @@
     },
     "timeline": {
       "title": "Activity",
-      "empty": "No activity recorded for this record yet."
+      "empty": "No activity recorded for this record yet.",
+      "more": "Show {n} more"
     }
   },
   "action": {

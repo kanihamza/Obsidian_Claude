@@ -262,11 +262,15 @@ export function mountListLens(mod, root, { type, columns, csvName = 'export.csv'
   region.append(toolbar, filter, el('div', { style: 'height:var(--space-3)' }), split);
   let q = focusRef ? String(focusRef).toLowerCase() : '', st = '', rows = [], _focused = false, _selRef = null;
   const _filterCache = createFilterCache();   // LRU cache so repeated keystrokes don't re-scan 300 docs
+  let _allRows = null;                          // A-17: scoped snapshot; rebuilt only on fabric change
 
   function apply() {
     if (!E.isHydrated()) { renderSkeleton(); return; }
-    const allRows = E.all(type);
-    rows = _filterCache.filter(allRows, q, st, (r, qq, ss) => {
+    // A-17 — snapshot E.all(type) ONCE per fabric version. Post-seal each reader call deep-clones +
+    // freezes every record, so re-scanning on every keystroke is costly; a stable snapshot also lets
+    // the LRU filter-cache (keyed on rows identity) actually hit across keystrokes.
+    if (!_allRows) _allRows = E.all(type);
+    rows = _filterCache.filter(_allRows, q, st, (r, qq, ss) => {
       const sv = String(r.status || r.Status || '').toLowerCase();
       if (ss && sv !== ss) return false;
       if (!qq) return true;
@@ -274,9 +278,9 @@ export function mountListLens(mod, root, { type, columns, csvName = 'export.csv'
     });
     render();
   }
-  // Invalidate cache when the fabric changes (new ingest / upsert)
-  mod.bus('entity:bootstrapped', () => _filterCache.clear());
-  mod.bus('entity:changed', () => _filterCache.clear());
+  // Invalidate the scoped snapshot + cache when the fabric changes (new ingest / upsert).
+  mod.bus('entity:bootstrapped', () => { _allRows = null; _filterCache.clear(); });
+  mod.bus('entity:changed', () => { _allRows = null; _filterCache.clear(); });
   function renderSkeleton() {
     filter.count = 0;
     clear(wrap);
@@ -524,10 +528,72 @@ export function buildActivityTimeline(r, ref) {
     });
   }
 
+  // A-16 — fold audit:* events for this reference into the thread. The audit log is a bounded ring
+  // buffer (not yet ref-indexed, A-12), so we scan it and keep entries whose payload carries this ref.
+  // This surfaces phase transitions, blocked-access attempts, dispatch + archive events in one timeline.
+  const AL = P && P.AuditLog;
+  if (AL && typeof AL.log === 'function') {
+    let entries = [];
+    try { entries = AL.log({ limit: 1000 }); } catch (_) { entries = []; }
+    for (const e of entries) {
+      const pr = e.payload || {};
+      const evRef = pr.ref || pr.reference || pr.referenceId || pr.attemptedRef;
+      if (String(evRef || '') !== String(ref)) continue;
+      events.push({ ts: e.ts, kind: 'audit',
+        label: auditLabel(e.kind),
+        actor: pr.by || pr.persona || pr.actor || '',
+        body: auditBody(e.kind, pr),
+        badge: auditBadge(e.kind) });
+    }
+  }
+
   return events.sort((a, b) => new Date(a.ts) - new Date(b.ts));
 }
 
-/** Render a vertical activity timeline into a container. */
+/** Audit-event presentation helpers (A-16). Map an audit kind + payload to label/body/badge. */
+function auditLabel(kind) {
+  return String(kind || 'audit').replace(/[-_]/g, ' ').replace(/^./, (c) => c.toUpperCase()).trim();
+}
+function auditBody(kind, pr) {
+  if (kind === 'phase-transition') return `${pr.from || '∅'} → ${pr.to || ''}`;
+  if (kind === 'unauthorized-access-attempt') return pr.action || pr.requiredDirectorate || '';
+  if (pr.to) return String(pr.to);
+  if (pr.reason) return String(pr.reason);
+  if (pr.message) return String(pr.message).slice(0, 200);
+  return '';
+}
+function auditBadge(kind) {
+  if (/unauthor|failed|reject|escalat/i.test(kind)) return 'danger';
+  if (/transition|assign|dispatch|route/i.test(kind)) return 'routed';
+  if (/archiv|closed|approv/i.test(kind)) return 'replied';
+  return 'neutral';
+}
+
+const TIMELINE_ICON = { created: 'plus-circle', comment: 'message-square', assignment: 'user-plus', audit: 'shield' };
+const TIMELINE_CHUNK = 40;   // A-14: render in windows so 100+ events don't build all DOM at once
+
+/** Build one flattened timeline <li> (A-15: one wrapper fewer per item than the prior structure). */
+function timelineItem(ev) {
+  const dt = ev.ts ? new Date(ev.ts) : null;
+  const when = dt && Number.isFinite(dt.valueOf())
+    ? (globalThis.Platform?.Format?.dateTime ? globalThis.Platform.Format.dateTime(dt) : dt.toLocaleString())
+    : '—';
+  const icon = TIMELINE_ICON[ev.kind] || 'circle';
+  return el('li', { class: 'pf-timeline__item', 'data-kind': ev.kind, 'data-badge': ev.badge || 'neutral' }, [
+    el('span', { class: 'pf-timeline__icon', html: `<pf-icon name="${icon}" size="14"></pf-icon>` }),
+    el('div', { class: 'pf-timeline__head' }, [
+      el('strong', { text: ev.label }),
+      ev.actor ? el('span', { class: 'pf-muted', text: ' · ' + ev.actor }) : null,
+      el('span', { class: 'pf-timeline__when', text: when })
+    ].filter(Boolean)),
+    ev.body ? el('div', { class: 'pf-timeline__text', text: ev.body }) : null
+  ].filter(Boolean));
+}
+
+/** Render a vertical activity timeline into a container.
+ *  A-14 — virtualized: only TIMELINE_CHUNK items are built up front; the rest stream in as the user
+ *  scrolls (IntersectionObserver), with a tap-to-reveal fallback where the observer is unavailable.
+ *  Keeps the DOM small on the Galaxy Tab A9 for archive threads with hundreds of events (B-2). */
 export function renderActivityTimeline(container, r, ref) {
   clear(container);
   const events = buildActivityTimeline(r, ref);
@@ -536,27 +602,40 @@ export function renderActivityTimeline(container, r, ref) {
     return;
   }
   const list = el('ol', { class: 'pf-timeline' });
-  events.forEach((ev) => {
-    const dt = ev.ts ? new Date(ev.ts) : null;
-    const when = dt && Number.isFinite(dt.valueOf())
-      ? (globalThis.Platform?.Format?.dateTime ? globalThis.Platform.Format.dateTime(dt) : dt.toLocaleString())
-      : '—';
-    const ICON = { created: 'plus-circle', comment: 'message-square', assignment: 'user-plus' };
-    const icon = ICON[ev.kind] || 'circle';
-    const li = el('li', { class: 'pf-timeline__item', 'data-kind': ev.kind }, [
-      el('span', { class: 'pf-timeline__icon', html: `<pf-icon name="${icon}" size="14"></pf-icon>` }),
-      el('div', { class: 'pf-timeline__body' }, [
-        el('div', { class: 'pf-timeline__head' }, [
-          el('strong', { text: ev.label }),
-          ev.actor ? el('span', { class: 'pf-muted', text: ' · ' + ev.actor }) : null,
-          el('span', { class: 'pf-timeline__when', text: when })
-        ].filter(Boolean)),
-        ev.body ? el('div', { class: 'pf-timeline__text', text: ev.body }) : null
-      ].filter(Boolean))
-    ]);
-    list.appendChild(li);
-  });
   container.append(list);
+
+  let i = 0;
+  function appendChunk() {
+    const end = Math.min(i + TIMELINE_CHUNK, events.length);
+    const frag = document.createDocumentFragment();
+    for (; i < end; i++) frag.append(timelineItem(events[i]));
+    list.append(frag);
+  }
+  appendChunk();
+  if (i >= events.length) return;   // everything fit in one chunk
+
+  if (typeof globalThis.IntersectionObserver === 'function') {
+    const sentinel = el('li', { class: 'pf-timeline__sentinel', 'aria-hidden': 'true' });
+    list.append(sentinel);
+    const io = new globalThis.IntersectionObserver((entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      sentinel.remove();
+      appendChunk();
+      if (i < events.length) { list.append(sentinel); } else { io.disconnect(); }
+    }, { root: null, rootMargin: '240px' });
+    io.observe(sentinel);
+  } else {
+    // Fallback: explicit "show more" control for environments without IntersectionObserver.
+    const more = el('button', { type: 'button', class: 'pf-btn pf-btn--ghost pf-timeline__more',
+      text: t('lens.timeline.more', { n: events.length - i }) });
+    const step = () => {
+      appendChunk();
+      if (i < events.length) { more.textContent = t('lens.timeline.more', { n: events.length - i }); container.append(more); }
+      else more.remove();
+    };
+    more.addEventListener('click', () => { more.remove(); step(); });
+    container.append(more);
+  }
 }
 
 export function mountAggregator(mod, root, { tiles, table = null }) {
