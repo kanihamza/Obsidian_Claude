@@ -5,9 +5,11 @@
  *    request body = { action:'generate'|'verify', identifier:<email|phone>, otp_code:<verify only> }
  *    - `identifier` is the OTP target (NOT userEmail); `action` must be exactly 'generate'/'verify'.
  *    - userEmail is still sent in the envelope for audit, but the flow consumes `identifier`.
- *  The success-path RESPONSE shape is unobserved (only error-path probes available), so `data` is
- *  parsed defensively (string → JSON.parse; object → use as-is) and the fields otpId/expiresAt/
- *  ttlSeconds/verificationToken/remainingAttempts/sentTo/codeLength are treated as OPTIONAL.
+ *  RESPONSE shape (confirmed against live OTP_GENERATE/OTP_VERIFY run records 2026-06-09): the envelope
+ *  is v1 ({ ok, status, request, timing, data, results, errors, meta }) and `data` is a JSON STRING that
+ *  parses to { valid:boolean, message:string, ... }. Success/failure is keyed on `valid`; the assumed
+ *  fields otpId/expiresAt/verificationToken/remainingAttempts/sentTo/codeLength are NOT emitted by the
+ *  live flow — `data` is parsed defensively (string → JSON.parse) and all such fields are best-effort.
  *  The plaintext code is NEVER generated or compared client-side.
  *
  *  Usage:  const r = await PfOtpModal.require({ identifier, userEmail, purpose, context });
@@ -131,8 +133,15 @@ class PfOtpModal extends PfBaseElement {
       this.$('#resend').hidden = false;
       return;
     }
-    // Success-path fields are best-effort (unobserved); absence must not block verify.
+    // Live flow returns `data` as a JSON STRING keyed on `valid` (boolean); human text in `message`
+    // (confirmed against OTP_GENERATE run record 2026-06-09). valid:false ⇒ the request was rejected.
     const d = this._parseData(res);
+    if (d.valid === false) {
+      this.$('#dest').textContent = '';
+      msg.textContent = d.message || this.t('otp.genFailed');
+      this.$('#resend').hidden = false;
+      return;
+    }
     this._sent = true;
     this._otpId = d.otpId || d.id || null;
     this._attemptsLeft = Number(this._opts.maxAttempts) || DEFAULT_ATTEMPTS;
@@ -161,21 +170,22 @@ class PfOtpModal extends PfBaseElement {
     const res = await verifyOtp({ action: 'verify', identifier, otp_code: code, userEmail: identifier });
     this.$('#verify').disabled = false;
 
-    // Success shape unobserved: ok ⇒ verified unless `data.verified` is explicitly false.
+    // Live flow keys success on `data.valid` (boolean), human text in `data.message`; `data` arrives as
+    // a JSON string (confirmed against OTP_VERIFY run record 2026-06-09). Verified ⇒ ok AND valid !== false.
     const d = this._parseData(res);
-    if (res.ok && d.verified !== false) {
-      this._finish({ ok: true, identifier, code, verificationToken: d.verificationToken || null });
+    if (res.ok && d.valid !== false) {
+      this._finish({ ok: true, identifier, code, verificationToken: d.verificationToken || d.token || null });
       return;
     }
 
     const kind = res.errorKind || '';
     if (kind === 'OTP_EXPIRED') { this._onExpired(); return; }
 
-    // OTP_INVALID (or any other non-verified result) — decrement the attempt matrix.
+    // valid:false / ok:false — decrement the attempt matrix; surface the flow's own message when present.
     const serverLeft = Number.isFinite(d.remainingAttempts) ? Number(d.remainingAttempts) : null;
     this._attemptsLeft = serverLeft != null ? serverLeft : (this._attemptsLeft - 1);
     if (this._attemptsLeft <= 0) { this._rollback(); return; }
-    msg.textContent = this.t('otp.invalid') + ' ' + this.t('otp.attemptsLeft', { n: this._attemptsLeft });
+    msg.textContent = (d.message || this.t('otp.invalid')) + ' ' + this.t('otp.attemptsLeft', { n: this._attemptsLeft });
     input.focus(); input.select();
   }
 

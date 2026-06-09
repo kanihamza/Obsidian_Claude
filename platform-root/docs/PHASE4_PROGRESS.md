@@ -23,11 +23,13 @@
   HTML-bleed-validated (no `<`, not whitespace-only, length ≤ 32). **Ordering caveat:** step (d) needs the
   `Lookups.categories()` option-set loaded; if FETCH_ALL ingest precedes the lookups load, Category-only docs
   resolve on the next bootstrap. Confirm un-quarantine on the browser walkthrough.
-- **OTP input contract — CONFIRMED & FIXED.** Real `OTP_GENERATE` Compose_1 contract: `action`
-  ('generate'/'verify'), `identifier` (email/phone — **not** `userEmail`), `otp_code` (verify-only). Modal
-  now sends these; `userEmail` retained envelope-only for audit. **Output contract still PARTIAL:** success
-  path unobserved, so `data` is parsed defensively and `otpId`/`expiresAt`/`verificationToken`/
-  `remainingAttempts`/`sentTo`/`codeLength` are treated as optional/best-effort.
+- **OTP input + output contract — CONFIRMED & FIXED (live records 2026-06-09).** Input: `action`
+  ('generate'/'verify'), `identifier` (email/phone — **not** `userEmail`), `otp_code` (verify-only); modal
+  sends these, `userEmail` envelope-only for audit. **Output now observed:** `data` is a **JSON string**
+  parsing to `{ valid:boolean, message:string }`; success keyed on `valid`, human text in `message`. The
+  six previously-assumed fields (`otpId`/`expiresAt`/`verificationToken`/`remainingAttempts`/`sentTo`/
+  `codeLength`) are **NOT emitted** by the live flow. Bug fixed: verify previously keyed on `verified`
+  (would false-pass `{valid:false}`) — now keys on `valid`. Sandbox stub aligned to the live shape.
 - **DISPATCH_OUTBOUND — CONFIRMED non-existent.** Zero references in live `FETCH_ALL`, OTP_GENERATE, or
   OTP_VERIFY records, **and zero `.js`/`endpoints.config.js` references in this repo** — no dead code to
   excise. Doc occurrences marked intended-not-implemented (`PHASE2_SUPPLEMENTAL_AUDIT.md §B.4`).

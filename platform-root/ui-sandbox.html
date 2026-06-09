@@ -261,7 +261,6 @@
 
     // ── Offline fetch stub: drives the OTP handshake (OTP_GENERATE / OTP_VERIFY) with no network. ──
     const VALID_CODE = '123456';
-    let serverRemaining = 5;
     function jsonResponse(status, bodyObj) {
       return {
         status, ok: status < 400,
@@ -275,32 +274,19 @@
       const action = String(payload.action || '').toLowerCase();
       await new Promise((r) => setTimeout(r, 250)); // simulate latency so spinners/countdown show
 
+      // Live flow returns `data` as a JSON STRING keyed on `valid` (confirmed 2026-06-09). ttlSeconds is a
+      // sandbox-only extra so the countdown UI is demonstrable; the real flow does not emit it.
       if (action === 'otpgenerate' || action === 'generate') {
-        serverRemaining = 5;
-        const now = Date.now();
-        return jsonResponse(200, { ok: true, data: {
-          otpId: 'otp_demo_' + now.toString(36),
-          ttlSeconds: 120,
-          codeLength: 6,
-          sentTo: payload.identifier || payload.userEmail || 'officer@nitda.gov.ng',
-          channel: 'email',
-          expiresAt: new Date(now + 120000).toISOString(),
-          resendAvailableAt: new Date(now + 30000).toISOString()
-        } });
+        return jsonResponse(200, { ok: true, status: { http: 200 }, data: JSON.stringify({ valid: true, ttlSeconds: 120 }) });
       }
       if (action === 'otpverify' || action === 'verify') {
         if (String(payload.otp_code || payload.code || '') === VALID_CODE) {
-          return jsonResponse(200, { ok: true, data: {
-            otpId: payload.otpId, verified: true,
-            verificationToken: 'vt_demo_' + Math.random().toString(36).slice(2, 12),
-            tokenExpiresAt: new Date(Date.now() + 600000).toISOString()
-          } });
+          return jsonResponse(200, { ok: true, status: { http: 200 }, data: JSON.stringify({ valid: true }) });
         }
-        serverRemaining = Math.max(0, serverRemaining - 1);
-        return jsonResponse(401, {
-          ok: false,
-          errors: [{ kind: 'OTP_INVALID', field: 'otp.code', message: 'The verification code is incorrect.' }],
-          remainingAttempts: serverRemaining
+        return jsonResponse(400, {
+          ok: false, status: { http: 400 },
+          errors: [{ kind: 'OTP_INVALID', field: 'otp_code', message: 'The verification code is incorrect.' }],
+          data: JSON.stringify({ valid: false, message: 'The verification code is incorrect.' })
         });
       }
       // Any other action: succeed quietly.
