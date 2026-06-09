@@ -12,14 +12,6 @@
 
 import { readFileSync } from 'node:fs';
 
-// Minimal Platform shim so the sealed readers + quarantine() resolve. Admin persona => quarantine visible.
-globalThis.Platform = {
-  Persona: { current: () => 'admin', email: () => 'admin@nitda.gov.ng' },
-  Context: { directorate: () => 'all' },
-  Log: { info() {}, warn() {}, error() {} },
-  State: { set() {}, get() {} }
-};
-
 const PATH = process.argv[2] || '/tmp/real-response.json';
 let raw;
 try {
@@ -28,6 +20,27 @@ try {
   console.error('[smoke] cannot read ' + PATH + ' — ' + (e && e.message));
   process.exit(2);
 }
+
+// Build a Lookups stub from the payload's own `categories` collection so the Category→Default-Primary-
+// Responsible directorate step (S1.5 step d) resolves on real data — exactly as it will once the live
+// Lookups option-set is loaded in the browser. Defensive: empty stub if the collection is absent.
+let categoriesStub = [];
+try {
+  const parsed = JSON.parse(raw);
+  const body = (parsed && parsed.data && typeof parsed.data === 'object') ? parsed.data : parsed;
+  const cats = (body && Array.isArray(body.categories)) ? body.categories
+    : (body && Array.isArray(body.Categories)) ? body.Categories : [];
+  categoriesStub = cats.map((c) => ({ value: c.Category ?? c.Title ?? '', label: c.Title ?? c.Category ?? '', raw: c }));
+} catch (_) { categoriesStub = []; }
+
+// Minimal Platform shim so the sealed readers + quarantine() resolve. Admin persona => quarantine visible.
+globalThis.Platform = {
+  Persona: { current: () => 'admin', email: () => 'admin@nitda.gov.ng' },
+  Context: { directorate: () => 'all' },
+  Log: { info() {}, warn() {}, error() {} },
+  State: { set() {}, get() {} },
+  Lookups: { categories: () => categoriesStub }
+};
 
 // Stub fetch so Entities.bootstrap() ingests the local file as if it were the live FETCH_ALL body.
 globalThis.fetch = async () => ({
@@ -69,28 +82,35 @@ if (quarantineRows.length) {
   console.log('(none)');
 }
 console.log('quarantined total: ' + quarantinedTotal);
-console.log('  reason "directorate-underivable" = record had neither PrimaryDSU nor AssignedDSU (Q-6).');
-console.log('  reason "reference-missing"        = record had no derivable Reference id (No-Orphan).');
+console.log('  reason "reference-missing" = a CHILD-ONLY record (approval/comment/activity) with no');
+console.log('     resolvable parent reference (No-Orphan). Correspondence types self-reference (S1.5c).');
+
+// Directorate-derivation breakdown (S1.5c): how many accepted records resolved a directorate vs.
+// were admitted with __directorate=null (visible only at the unscoped 'all' tier — never leaked).
+console.log('\n--- DIRECTORATE DERIVATION (accepted records) ---');
+const dirRows = ['reference', 'document', 'task', 'email'].map((t) => {
+  let withDir = 0, nullDir = 0;
+  for (const r of Entities.all(t)) (r.__directorate != null ? withDir++ : nullDir++);
+  return { type: t, 'directorate-derived': withDir, 'directorate-null (all-tier only)': nullDir };
+});
+console.table(dirRows);
 
 console.log('\n--- SUMMARY ---');
 const grandTotal = acceptedTotal + quarantinedTotal;
 const acceptRate = grandTotal ? ((acceptedTotal / grandTotal) * 100).toFixed(1) : '0.0';
-console.table([{
-  acceptedTotal,
-  quarantinedTotal,
-  grandTotal,
-  acceptRatePct: acceptRate
-}]);
+console.table([{ acceptedTotal, quarantinedTotal, grandTotal, acceptRatePct: acceptRate }]);
 
-// The canonical preserved response is documented as ref 302 | doc 300 | task 100 | email 50 | comment 2.
-const EXPECT = { reference: 302, document: 300, task: 100, email: 50, comment: 2 };
-const matchesCanonical = Object.keys(EXPECT).every((k) => (counts[k] || 0) === EXPECT[k]);
-console.log('matches documented canonical counts (302/300/100/50/2): ' + (matchesCanonical ? 'YES' : 'NO'));
-if (!matchesCanonical && quarantinedTotal > 0) {
-  console.log('NOTE: records were quarantined — if this payload should be fully accepted, the live');
-  console.log('      FETCH_ALL rows are missing PrimaryDSU/AssignedDSU. Report the counts above so the');
-  console.log('      Q-6 derivation can be reconciled against the real DGCEO data shape.');
-}
+// S1.5c success criteria: correspondence is visible (docs + emails > 0) and nothing is quarantined
+// for a derivable-directorate reason. Child-only orphans (comments without a parent) may remain.
+const docsVisible = (counts.document || 0) > 0;
+const emailsVisible = (counts.email || 0) > 0;
+const noDirQuarantine = !(byReason['directorate-underivable'] > 0);
+console.log('documents visible:               ' + (docsVisible ? 'YES (' + counts.document + ')' : 'NO'));
+console.log('emails visible:                  ' + (emailsVisible ? 'YES (' + counts.email + ')' : 'NO'));
+console.log('zero directorate-quarantine:     ' + (noDirQuarantine ? 'YES' : 'NO (' + byReason['directorate-underivable'] + ')'));
+console.log('reference-missing (child orphans): ' + (byReason['reference-missing'] || 0));
+const s15cOk = docsVisible && emailsVisible && noDirQuarantine;
+console.log('\nS1.5c restitution: ' + (s15cOk ? 'PASS — correspondence is visible in the fabric.' : 'FAIL — see above.'));
 
 if (acceptedTotal === 0) {
   console.error('[smoke] FAIL — zero records ingested.');

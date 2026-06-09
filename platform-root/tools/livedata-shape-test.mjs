@@ -31,7 +31,8 @@ const BODY = {
     { ID: 8,  RefIDD: 'No RefIDD', RoutedToDSU: '<div>bleed</div>', title: 'Doc eight (no directorate)' }
   ],
   tasks: [
-    { ID: 5, RefIDD: 'No RefIDD', AssignedToDSU: 'No Route', CoAssigneeDSU: 'LEGAL', title: 'Task five' },
+    // Exact live sentinels: both RefIDD AND Reference_ID (a REF_ALT_KEY) are placeholder strings.
+    { ID: 5, RefIDD: 'No RefIDD', Reference_ID: 'No Reference ID', AssignedToDSU: 'No Route', CoAssigneeDSU: 'LEGAL', title: 'Task five' },
     { ID: 9, RefIDD: 'DG/2024/007', AssignedToDSU: 'TECH-REG', title: 'Task nine (linked to doc seven)' }
   ],
   emails: [
