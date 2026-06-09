@@ -897,5 +897,34 @@
   },
   "info": {
     "alreadyApplied": "Already applied — no change needed."
+  },
+  "triage": {
+    "bar": "Triage actions",
+    "acknowledge": "Acknowledge",
+    "acknowledged": "Acknowledged",
+    "tagCategory": "Tag Category",
+    "flagUrgency": "Flag Urgency",
+    "markDuplicate": "Mark Duplicate",
+    "sendToRouting": "Send to Routing",
+    "statusLabel": "Status",
+    "categoryPlaceholder": "Select category…",
+    "urgencyPlaceholder": "Select urgency…",
+    "ackFirst": "Acknowledge the item before sending it to routing.",
+    "noRef": "No correspondence selected to triage.",
+    "noCategories": "No categories loaded.",
+    "ackDone": "{ref} acknowledged — triaged.",
+    "routed": "{ref} sent to routing.",
+    "routeTitle": "Send to routing",
+    "routeSummary": "Complete triage and hand this correspondence to Phase 2 (Routing).",
+    "duplicateHint": "Possible duplicate of {ref} — review before routing.",
+    "duplicateConfirmed": "Marked as duplicate.",
+    "metaCategory": "Category",
+    "metaUrgency": "Urgency",
+    "urgency": {
+      "p1": "P1 · DG Attention (2 WH)",
+      "p2": "P2 · High (6 WH)",
+      "p3": "P3 · Routine (24 WH)",
+      "p4": "P4 · Deferred (72 WH)"
+    }
   }
 }

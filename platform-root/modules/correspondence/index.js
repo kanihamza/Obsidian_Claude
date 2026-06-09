@@ -99,6 +99,15 @@ class CorrespondenceModule extends BaseModule {
     clear(this._detailEl);
     if (!it) { emptyState(this._detailEl, 'correspondence.selectHint'); return; }
     const ref = it.__ref || this._selRef || '';
+    // Phase-1 (INTAKE) framing (C-1): the triage bar drives registered→triaged→triage_complete and the
+    // Phase-1→2 handoff. Refresh the lens when the item is routed out of INTAKE.
+    if (ref) {
+      const triage = document.createElement('pf-triage-bar');
+      triage.item = it;
+      this.on(triage, 'pf-triage:routed', () => this.refresh());
+      this.on(triage, 'pf-triage:acknowledged', () => this.refresh());
+      this._detailEl.append(triage);
+    }
     this._detailEl.append(
       el('h2', { text: it.subject || it.title || ref }),
       el('div', { class: 'meta', text: this.t('correspondence.fromMeta', { who: it.sender || it.from || '', ref }) }),

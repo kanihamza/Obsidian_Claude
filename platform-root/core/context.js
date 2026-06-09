@@ -28,6 +28,19 @@ export const Context = {
     return refId;
   },
 
+  /** Phase handoff slice (J-5 / Phase-1 §4.1 handshake). A phase surface stages the next-phase
+   *  payload here — `{ fromPhase, toPhase, refs, triageMeta, ts }` — and the receiving surface reads
+   *  it on entry. Stored as a defensive copy; readers get a fresh copy so the staged payload can't be
+   *  mutated in place. `<pf-triage-bar>` writes this on "Send to Routing" (Phase 1 → Phase 2). */
+  _handoff: null,
+  setHandoff(h) {
+    this._handoff = (h && typeof h === 'object') ? { ...structuredClone(h), ts: new Date().toISOString() } : null;
+    Bus.emit('context:handoff', { handoff: this.getHandoff() });
+    return this.getHandoff();
+  },
+  getHandoff() { return this._handoff ? structuredClone(this._handoff) : null; },   // deep defensive copy (nested refs[] can't leak)
+  clearHandoff() { this._handoff = null; },
+
   /** Read-only directorate scope getter (A-7). The fabric's scope filter calls this on every read. */
   directorate() { return _directorate; },
 

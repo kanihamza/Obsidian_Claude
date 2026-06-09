@@ -14,6 +14,39 @@
 | **S2** UX/Memory (B-2) | A-14 timeline virtualization, A-15 DOM flatten, A-16 audit-event folding, A-17 ListLens snapshot scoping | ✅ | ✅ 12/12 | ✅ 9/9 | ⏳ DOM virtualization `[browser-unverified]` |
 | **S1.5** Live-Data Conformance Patch | Q-6 derivation rewrite (AssignedToDSU/RoutedToDSU/CoAssigneeDSU/Category→DPR + HTML-bleed guard), OTP input contract (`action`/`identifier`/`otp_code`) + defensive output parse, DISPATCH_OUTBOUND doc-marked non-existent | ✅ | ✅ | ⏳ browser-verify |
 | **S1.5c** Ingestion Restitution | sentinel filter (`isBlankVal`: empties + null-words + "No &lt;field&gt;" family) on ref/id/DSU fields; type-prefixed self-reference for refless correspondence (DOC-/EML-/TASK-); cross-type id-collision guard; directorate-underivable now ADMITTED-with-null (not quarantined) | ✅ | ✅ 12/12 | ✅ 14/14 synthetic | ✅ **live 4.6MB smoke PASS** (1300 accepted, 2 child-orphans, 0 dir-quarantine, 99.8%) |
+| **S3** INTAKE Triage Surface (C-3 + C-1 triage integration + J-5 handoff) | new `<pf-triage-bar>` chip row (Acknowledge / Tag Category / Flag Urgency / Mark Duplicate / Send to Routing); `Context.setHandoff/getHandoff` (deep-copy) slice; correspondence detail Phase-1 framing + dedup banner; all status writes via `transitionStatus` (C-7) | ✅ | ✅ 12/12 | ✅ 13/13 contract | ⏳ DOM `[browser-unverified]` (walkthrough pending) |
+
+## S3 — INTAKE triage surface (2026-06-09)
+
+**C-3 `<pf-triage-bar>` (Rebuild Fresh) + C-1 triage integration + J-5 handoff slice.** New Phase-1
+chip surface that walks one correspondence reference through INTAKE and hands it to ROUTING:
+
+| Chip | Effect |
+|---|---|
+| Acknowledge | `registered → triaged` via `Entities.transitionStatus` (C-7) — the bar never writes status directly |
+| Tag Category | captures `triageMeta.category` from the `Lookups` option-set (no fabrication if unloaded) |
+| Flag Urgency | captures `triageMeta.urgency` P1–P4, mapped to the SLA windows (§3.3) |
+| Mark Duplicate | toggles `triageMeta.duplicate`; pre-flagged from the fabric's 30-day dedup `__duplicateOf` (A-6) |
+| Send to Routing | confirms, `triaged → triage_complete`, writes `Context.handoff {fromPhase:1,toPhase:2,refs,triageMeta}`, navigates to `ops-hub` |
+
+Design notes:
+- **Phase-gate honoured (C-7).** `_advance()` reads the *live* canonical status before each step, so a
+  record imported with a non-canonical status (e.g. live docs are `"Open"`/`"Pending"`) is treated as
+  freshly-arrived and walked `→ registered → triaged → triage_complete`. Illegal jumps are rejected by
+  the writer and surfaced via `UI.toastError`.
+- **Confirmation gate.** The consequential phase commit (Send to Routing) is preceded by `UI.confirm`
+  with the captured triageMeta; the intra-phase staging chips act immediately with a toast.
+- **`Context.handoff` (J-5)** added with deep (`structuredClone`) copies — a contract test caught a
+  shallow-copy leak of the nested `refs[]` array; fixed.
+- **Correspondence (C-1)** mounts the bar atop the detail pane and refreshes the lens on acknowledge/route.
+
+**Scoped OUT of S3 (next sub-slice):** registry Phase-1 framing + admin quarantine view (C-2); the
+deeper correspondence items — directorate filter (waits A-8 wiring) and the `openEmailToTask` phase-gate
+(D-9, a Phase-2/ROUTING item). Component polish C-4/C-5/C-6 remain.
+
+Guards: `tools/triage-flow-test.mjs` (13/13) proves the INTAKE chain + handoff contract against the
+real fabric + context. The bar's **DOM rendering/interaction is `[browser-unverified]`** until the
+walkthrough. Static gate 12/12 (i18n 390 keys, boot-smoke registers the component).
 
 ## S1.5c — Ingestion restitution (2026-06-09)
 
