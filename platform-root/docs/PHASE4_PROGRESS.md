@@ -13,7 +13,7 @@
 | **A-11** Idempotency upgrade | stable fingerprint, 300s bucket, normalizeInput, callAPI safeguard | ✅ | ✅ 12/12 | ✅ 7/7 | ⏳ (covered by S1 walkthrough) |
 | **S2** UX/Memory (B-2) | A-14 timeline virtualization, A-15 DOM flatten, A-16 audit-event folding, A-17 ListLens snapshot scoping | ✅ | ✅ 12/12 | ✅ 9/9 | ⏳ DOM virtualization `[browser-unverified]` |
 | **S1.5** Live-Data Conformance Patch | Q-6 derivation rewrite (AssignedToDSU/RoutedToDSU/CoAssigneeDSU/Category→DPR + HTML-bleed guard), OTP input contract (`action`/`identifier`/`otp_code`) + defensive output parse, DISPATCH_OUTBOUND doc-marked non-existent | ✅ | ✅ | ⏳ browser-verify |
-| **S1.5c** Ingestion Restitution | sentinel filter (`isBlankVal`: empties + null-words + "No &lt;field&gt;" family) on ref/id/DSU fields; type-prefixed self-reference for refless correspondence (DOC-/EML-/TASK-); cross-type id-collision guard; directorate-underivable now ADMITTED-with-null (not quarantined) | ✅ | ✅ 12/12 | ✅ 14/14 synthetic | ⏳ re-run real-payload smoke |
+| **S1.5c** Ingestion Restitution | sentinel filter (`isBlankVal`: empties + null-words + "No &lt;field&gt;" family) on ref/id/DSU fields; type-prefixed self-reference for refless correspondence (DOC-/EML-/TASK-); cross-type id-collision guard; directorate-underivable now ADMITTED-with-null (not quarantined) | ✅ | ✅ 12/12 | ✅ 14/14 synthetic | ✅ **live 4.6MB smoke PASS** (1300 accepted, 2 child-orphans, 0 dir-quarantine, 99.8%) |
 
 ## S1.5c — Ingestion restitution (2026-06-09)
 
@@ -43,8 +43,12 @@ email = 0, reference = 1.** Two root causes, both fixed:
 > true identity orphans (child-only records with no resolvable parent) are quarantined.
 
 Synthetic guard: `tools/livedata-shape-test.mjs` (14/14) reproduces the live shape incl. the
-cross-type id collision. **Pending:** re-run `tools/real-response-smoke.mjs` on the 4.6 MB payload —
-expect document/email/task accepted and reference-missing ≈ 0 (only genuine orphan comments).
+cross-type id collision. **CLOSED against live data (2026-06-09):** `tools/real-response-smoke.mjs`
+on the 4.6 MB payload accepted **1300** records (document 300 · task 300 · email 50 · reference
+650), quarantined **2** child-only orphan `taskComments`, **0** directorate-quarantine, 99.8% accept
+rate. Directorate derived for 147/300 docs (RoutedToDSU/Category); the remaining 153 docs + all 300
+tasks + 50 emails carry sentinel-only DSU fields and surface at the `all` tier per the signed-off
+admit-with-null policy.
 
 ## Live-data audit closures (2026-06-08)
 
