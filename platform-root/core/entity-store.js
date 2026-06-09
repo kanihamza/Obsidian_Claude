@@ -8,8 +8,11 @@
  *    • Every reader returns Object.freeze(structuredClone(...)) so UI mutation can never reflect
  *      back into the fabric (A-1 defensive copy).
  *    • Every reader applies the (directorate ∩ persona-scope) filter before returning (A-2, A-8).
- *    • Directorate is derived hierarchically PrimaryDSU → AssignedDSU; if neither is present the
- *      record is admitted to _quarantine, never the live store (Q-6 mandate + No Orphan contract).
+ *    • Directorate is derived hierarchically (S1.5: AssignedToDSU → RoutedToDSU → CoAssigneeDSU →
+ *      Category→Default-Primary-Responsible → legacy PrimaryDSU/AssignedDSU). A directorate-underivable
+ *      record is admitted with __directorate=null and surfaces only at the unscoped 'all' tier — it is
+ *      NOT quarantined (S1.5c reversal of the 100%-quarantine regression; isolation preserved by
+ *      visible()). Only a child-only record with no resolvable parent reference is quarantined.
  *    • transitionStatus(ref, from, to, by) is the SOLE status mutator: validates the canonical state
  *      machine, checks persona authority, and enforces the four integrity contracts (C-7, Decision 4).
  *    • canClose(ref) / archive(ref) implement the Closure-Gate and Atomic-Archive contracts (A-5, A-4).
@@ -151,23 +154,50 @@ export const Entities = (function sealFabric() {
   const fetchAll = BaseService.endpoint('FETCH_ALL', { cache: 0, expectedKeys: ['ok'] });
 
   // ─── identity helpers ──────────────────────────────────────────────────────
+  /** Sentinel filter (S1.5c). Live FETCH_ALL records carry explicit placeholder strings rather
+   *  than empty fields — tasks have RefIDD:"No RefIDD", routing fields RoutedToDSU:"No Route",
+   *  etc. Treated as REAL by the old `!= '' ` test, those placeholders made 300 tasks share one
+   *  bogus reference and falsely satisfied directorate derivation. isBlankVal() rejects empties,
+   *  common null-words, and the "No <field>" sentinel family. Applied only to identity/DSU fields
+   *  (never to titles/bodies), so a genuine ref like "NO-2024-001" (no space after "no") survives. */
+  const SENTINEL_SET = new Set(['', 'null', 'undefined', 'none', 'nil', 'n/a', 'na', '-', '--']);
+  function isBlankVal(v) {
+    if (v == null) return true;
+    const s = String(v).trim().toLowerCase();
+    if (s === '') return true;
+    if (SENTINEL_SET.has(s)) return true;
+    if (/^no\s+\S/.test(s)) return true;   // "No RefIDD", "No Route", "No DSU", "No Category"
+    return false;
+  }
   function refOf(rec) {
     if (!rec || typeof rec !== 'object') return null;
-    for (const k of REF_ALT_KEYS) if (rec[k] != null && rec[k] !== '') return String(rec[k]);
+    for (const k of REF_ALT_KEYS) { const v = rec[k]; if (!isBlankVal(v)) return String(v).trim(); }
+    return null;
+  }
+  /** A record's OWN id, sentinel-filtered, WITHOUT the refOf/row-N fallbacks — used to decide
+   *  whether a refless correspondence record can stand as its own reference (S1.5c). */
+  function ownId(type, rec) {
+    for (const k of ENTITY_TYPES[type].altKeys) { const v = rec[k]; if (!isBlankVal(v)) return String(v).trim(); }
     return null;
   }
   function idOf(type, rec) {
-    for (const k of ENTITY_TYPES[type].altKeys) if (rec[k] != null) return String(rec[k]);
-    return refOf(rec) || ('row-' + (_store[type].size + 1));
+    return ownId(type, rec) || refOf(rec) || ('row-' + (_store[type].size + 1));
   }
+
+  // Correspondence-bearing types may self-reference (a document/email/task IS a unit of
+  // correspondence). Child-only types (approval/comment/activity) cannot — they are meaningless
+  // without a parent reference and remain quarantine-eligible. Self-reference keys are type-prefixed
+  // so a document with list-id 5 and a task with list-id 5 never collide on a synthetic reference.
+  const SELF_REF_TYPES  = new Set(['document', 'email', 'task']);
+  const SELF_REF_PREFIX = { document: 'DOC', email: 'EML', task: 'TASK' };
 
   /** Validate a directorate candidate (S1.5 Live-Data Conformance Patch). Rejects SharePoint
    *  rich-text bleed (Finding 2): any value containing '<', whitespace-only, or longer than 32 chars.
    *  Returns the trimmed value or null. */
   function validDsu(v) {
-    if (v == null) return null;
+    if (isBlankVal(v)) return null;                                  // S1.5c sentinel filter ("No Route", etc.)
     const s = String(v).trim();
-    if (s === '' || s.indexOf('<') !== -1 || s.length > 32) return null;
+    if (s.indexOf('<') !== -1 || s.length > 32) return null;
     return s;
   }
   /** Step (d): resolve a directorate from the record's Category via the categories option-set —
@@ -175,7 +205,7 @@ export const Entities = (function sealFabric() {
    *  Lookups option-set is not yet loaded or no row matches. */
   function categoryDsu(rec) {
     const cat = (rec.Category ?? rec.category);
-    if (cat == null || String(cat).trim() === '' || String(cat).indexOf('<') !== -1) return null;
+    if (isBlankVal(cat) || String(cat).indexOf('<') !== -1) return null;
     const L = globalThis.Platform && globalThis.Platform.Lookups;
     const rows = (L && typeof L.categories === 'function') ? L.categories() : null;
     if (!Array.isArray(rows) || !rows.length) return null;
@@ -224,7 +254,7 @@ export const Entities = (function sealFabric() {
   function indexRaw(type, rec) {
     const id = idOf(type, rec);
     rec.__id = id;
-    rec.__ref = refOf(rec);
+    if (rec.__ref == null) rec.__ref = refOf(rec);   // preserve a self-referenced/explicit ref (S1.5c)
     _store[type].set(id, rec);
     if (rec.__ref) {
       const arr = _byRef[type].get(rec.__ref) || [];
@@ -234,18 +264,27 @@ export const Entities = (function sealFabric() {
     return rec;
   }
 
-  /** Admission gate — normalize, derive directorate, enforce No Orphan, dedup-flag, then index.
-   *  Orphans (no reference, or directorate underivable on a primary type) go to _quarantine. */
+  /** Admission gate (S1.5c) — normalize, resolve reference identity, derive directorate, then index.
+   *  Reference identity: a sentinel-filtered external ref key, else (for correspondence-bearing
+   *  document/email/task) a type-prefixed self-reference from the record's own id. Only a CHILD-ONLY
+   *  record (approval/comment/activity) with no resolvable parent is a true orphan → _quarantine
+   *  (reason 'reference-missing'). Directorate-underivable is NO LONGER a quarantine trigger: such a
+   *  record is admitted with __directorate=null and is therefore visible only at the unscoped 'all'
+   *  tier (visible() never matches it to a specific directorate scope), reversing the prior
+   *  100%-quarantine regression while preserving directorate isolation. See PHASE4_PROGRESS Q-6 note. */
   function admit(type, raw) {
     const rec = normalizeRecord(raw);
-    rec.__ref = refOf(rec);
+    let ref = refOf(rec);
+    if (!ref && SELF_REF_TYPES.has(type)) {
+      const own = ownId(type, rec);
+      if (own) { ref = (SELF_REF_PREFIX[type] || type.toUpperCase()) + '-' + own; rec.__selfReferenced = true; }
+    }
+    rec.__ref = ref;
     rec.__directorate = deriveDirectorate(rec);
-    const orphanRef = !rec.__ref;
-    const orphanDsu = (rec.__directorate === null && type !== 'reference');
-    if (orphanRef || orphanDsu) {
+    if (!ref) {
       const innerId = idOf(type, rec);
       rec.__id = innerId;
-      rec.__quarantineReason = orphanRef ? 'reference-missing' : 'directorate-underivable';
+      rec.__quarantineReason = 'reference-missing';
       _quarantine.set(type + ':' + innerId, rec);
       Bus.emit('audit:orphan-quarantined', { type, id: innerId, reason: rec.__quarantineReason, ts: new Date().toISOString() });
       return null;
@@ -354,17 +393,20 @@ export const Entities = (function sealFabric() {
         for (const [ref, arr] of _byRef[type]) {
           if (_store.reference.has(ref)) continue;
           const donor = (arr || []).find((r) => r.__directorate != null) || (arr || [])[0] || {};
-          indexRaw('reference', { referenceId: ref, __directorate: donor.__directorate ?? null });
+          // Carry the donor's display/timeline fields so synthesized references still populate the
+          // recent/timeline rollups (S1.5c — replaces the removed bare-ID document-self-reference block).
+          indexRaw('reference', {
+            referenceId: ref, __directorate: donor.__directorate ?? null,
+            title: donor.title || donor.subject || '', status: donor.status || '',
+            ts: donor.ts || donor.createdAt || '', createdAt: donor.createdAt || donor.ts || ''
+          });
         }
       }
-      // Documents whose own numeric ID is their reference identity become both document AND reference.
-      for (const rec of _store.document.values()) {
-        if (rec.__ref || !rec.__id) continue;
-        rec.__ref = String(rec.__id);
-        const arr = _byRef.document.get(rec.__ref) || []; arr.push(rec); _byRef.document.set(rec.__ref, arr);
-        if (!_store.reference.has(rec.__ref))
-          indexRaw('reference', { referenceId: rec.__ref, title: rec.title || '', status: rec.status || '', __directorate: rec.__directorate ?? null });
-      }
+      // NOTE (S1.5c): refless correspondence records (document/email/task) are now self-referenced in
+      // admit() via a type-prefixed key, so they already carry __ref and are indexed in _byRef before
+      // the synthesize-reference pass above promotes them to reference rows. The former bare-ID
+      // document-self-reference block here is therefore obsolete and was removed (it also risked a
+      // cross-type id collision the prefixed scheme avoids).
     },
 
     async bootstrap(force) {

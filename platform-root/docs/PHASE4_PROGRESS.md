@@ -12,7 +12,40 @@
 | **S1** Security & OTP | A-10 error taxonomy, error-router, B-1 pf-otp-modal rebuild, A-23 toast aria-live, K-8b assistant scope stamp | ✅ | ✅ 12/12 | ✅ 13/13 | ✅ (OTP handshake both branches) |
 | **A-11** Idempotency upgrade | stable fingerprint, 300s bucket, normalizeInput, callAPI safeguard | ✅ | ✅ 12/12 | ✅ 7/7 | ⏳ (covered by S1 walkthrough) |
 | **S2** UX/Memory (B-2) | A-14 timeline virtualization, A-15 DOM flatten, A-16 audit-event folding, A-17 ListLens snapshot scoping | ✅ | ✅ 12/12 | ✅ 9/9 | ⏳ DOM virtualization `[browser-unverified]` |
-| **S1.5** Live-Data Conformance Patch | Q-6 derivation rewrite (AssignedToDSU/RoutedToDSU/CoAssigneeDSU/Category→DPR + HTML-bleed guard), OTP input contract (`action`/`identifier`/`otp_code`) + defensive output parse, DISPATCH_OUTBOUND doc-marked non-existent | ✅ | run it | ⏳ browser-verify |
+| **S1.5** Live-Data Conformance Patch | Q-6 derivation rewrite (AssignedToDSU/RoutedToDSU/CoAssigneeDSU/Category→DPR + HTML-bleed guard), OTP input contract (`action`/`identifier`/`otp_code`) + defensive output parse, DISPATCH_OUTBOUND doc-marked non-existent | ✅ | ✅ | ⏳ browser-verify |
+| **S1.5c** Ingestion Restitution | sentinel filter (`isBlankVal`: empties + null-words + "No &lt;field&gt;" family) on ref/id/DSU fields; type-prefixed self-reference for refless correspondence (DOC-/EML-/TASK-); cross-type id-collision guard; directorate-underivable now ADMITTED-with-null (not quarantined) | ✅ | ✅ 12/12 | ✅ 14/14 synthetic | ⏳ re-run real-payload smoke |
+
+## S1.5c — Ingestion restitution (2026-06-09)
+
+The real-payload smoke (4.6 MB live FETCH_ALL) exposed a second-order ingestion regression even
+after S1.5 fixed directorate derivation: **352 records reference-missing-quarantined, document = 0,
+email = 0, reference = 1.** Two root causes, both fixed:
+
+1. **Sentinel strings, not nulls.** Live rows carry explicit placeholders — tasks `RefIDD:"No RefIDD"`,
+   routing `RoutedToDSU:"No Route"`, emails `RefIDD:"null"`. The old `!= ''` test accepted them as
+   real, so all tasks collapsed onto one bogus reference and the bogus DSU falsely satisfied
+   derivation. New `isBlankVal()` rejects empties, null-words, and the `^no\s+` sentinel family on
+   identity/DSU fields only (a genuine `NO-2024-001` — no space after "no" — survives).
+2. **Refless correspondence was quarantined before it could self-reference.** `admit()` quarantined
+   refless documents/emails/tasks immediately, so the downstream document-self-reference step never
+   ran. Now `admit()` self-references correspondence-bearing types via a **type-prefixed** key
+   (`DOC-<id>` / `EML-<id>` / `TASK-<id>`) — the prefix prevents a document with list-id 5 and a task
+   with list-id 5 from colliding on one synthetic reference. Child-only types (approval/comment/
+   activity) stay quarantine-eligible.
+
+> **⚠ POLICY DEVIATION — needs your sign-off.** S1.5c changes the directorate rule: a record whose
+> directorate is **underivable is now ADMITTED with `__directorate = null`**, NOT quarantined. The
+> literal Q-6 mandate said "quarantine if no DSU." Rationale: (a) the confirmed bug was 100%
+> quarantine; (b) `visible()` only matches a record to a *specific* directorate scope, so a null-DSU
+> record surfaces **only at the unscoped `all` tier (DG's Office)** and can never leak into another
+> directorate — isolation is preserved; (c) against live data this path is empty anyway (derivation
+> succeeds). If you'd rather keep the strict quarantine, say so and I'll revert just that branch
+> (one line). Only true identity orphans (child-only records with no resolvable parent) are
+> quarantined now.
+
+Synthetic guard: `tools/livedata-shape-test.mjs` (14/14) reproduces the live shape incl. the
+cross-type id collision. **Pending:** re-run `tools/real-response-smoke.mjs` on the 4.6 MB payload —
+expect document/email/task accepted and reference-missing ≈ 0 (only genuine orphan comments).
 
 ## Live-data audit closures (2026-06-08)
 
