@@ -33,15 +33,14 @@ email = 0, reference = 1.** Two root causes, both fixed:
    with list-id 5 from colliding on one synthetic reference. Child-only types (approval/comment/
    activity) stay quarantine-eligible.
 
-> **⚠ POLICY DEVIATION — needs your sign-off.** S1.5c changes the directorate rule: a record whose
-> directorate is **underivable is now ADMITTED with `__directorate = null`**, NOT quarantined. The
-> literal Q-6 mandate said "quarantine if no DSU." Rationale: (a) the confirmed bug was 100%
-> quarantine; (b) `visible()` only matches a record to a *specific* directorate scope, so a null-DSU
-> record surfaces **only at the unscoped `all` tier (DG's Office)** and can never leak into another
-> directorate — isolation is preserved; (c) against live data this path is empty anyway (derivation
-> succeeds). If you'd rather keep the strict quarantine, say so and I'll revert just that branch
-> (one line). Only true identity orphans (child-only records with no resolvable parent) are
-> quarantined now.
+> **POLICY DECISION — SIGNED OFF (kanihamza, 2026-06-09): keep admit-with-null.** A record whose
+> directorate is underivable is **ADMITTED with `__directorate = null`**, NOT quarantined. This
+> consciously supersedes the literal Q-6 "quarantine if no DSU" wording. Rationale: (a) the confirmed
+> bug was 100% quarantine; (b) `visible()` only matches a record to a *specific* directorate scope, so
+> a null-DSU record surfaces **only at the unscoped `all` tier (DG's Office)** and can never leak into
+> another directorate — isolation is preserved; (c) against live data this affects all 300 tasks + 50
+> emails (every DSU field is a sentinel) — quarantining them would hide the bulk of the workload. Only
+> true identity orphans (child-only records with no resolvable parent) are quarantined.
 
 Synthetic guard: `tools/livedata-shape-test.mjs` (14/14) reproduces the live shape incl. the
 cross-type id collision. **Pending:** re-run `tools/real-response-smoke.mjs` on the 4.6 MB payload —
