@@ -161,14 +161,43 @@ export const Entities = (function sealFabric() {
     return refOf(rec) || ('row-' + (_store[type].size + 1));
   }
 
-  /** Q-6 mandate — hierarchical directorate derivation: PrimaryDSU first, then AssignedDSU.
-   *  No legacy fallback map is permitted; if neither is present the record is an orphan. */
+  /** Validate a directorate candidate (S1.5 Live-Data Conformance Patch). Rejects SharePoint
+   *  rich-text bleed (Finding 2): any value containing '<', whitespace-only, or longer than 32 chars.
+   *  Returns the trimmed value or null. */
+  function validDsu(v) {
+    if (v == null) return null;
+    const s = String(v).trim();
+    if (s === '' || s.indexOf('<') !== -1 || s.length > 32) return null;
+    return s;
+  }
+  /** Step (d): resolve a directorate from the record's Category via the categories option-set —
+   *  the category row's `Default Primary Responsible` is a DSU_KEY. Defensive: returns null when the
+   *  Lookups option-set is not yet loaded or no row matches. */
+  function categoryDsu(rec) {
+    const cat = (rec.Category ?? rec.category);
+    if (cat == null || String(cat).trim() === '' || String(cat).indexOf('<') !== -1) return null;
+    const L = globalThis.Platform && globalThis.Platform.Lookups;
+    const rows = (L && typeof L.categories === 'function') ? L.categories() : null;
+    if (!Array.isArray(rows) || !rows.length) return null;
+    const key = String(cat);
+    const row = rows.find((o) => o && (
+      (o.raw && (String(o.raw.Category) === key || String(o.raw['Category Code'] || '') === key)) ||
+      String(o.value) === key || String(o.label) === key));
+    const dsu = row && row.raw && (row.raw['Default Primary Responsible'] ?? row.raw.DefaultPrimaryResponsible ?? row.raw.DSU_KEY);
+    return validDsu(dsu);
+  }
+  /** Q-6 directorate derivation (S1.5 — corrected against live FETCH_ALL data). Live records carry
+   *  AssignedToDSU / RoutedToDSU / CoAssigneeDSU (not PrimaryDSU/AssignedDSU), and RoutedToDSU is
+   *  frequently rich-text bleed, so every candidate is validated. Legacy PrimaryDSU/AssignedDSU are
+   *  kept as final fallbacks for forward compatibility; null ⇒ quarantine. */
   function deriveDirectorate(rec) {
-    const v = (rec.PrimaryDSU ?? rec.primaryDSU ?? rec.PrimaryDsu);
-    if (v != null && String(v).trim() !== '') return String(v).trim();
-    const a = (rec.AssignedDSU ?? rec.assignedDSU ?? rec.AssignedDsu);
-    if (a != null && String(a).trim() !== '') return String(a).trim();
-    return null;
+    return validDsu(rec.AssignedToDSU)                                    // (a)
+        || validDsu(rec.RoutedToDSU)                                      // (b)
+        || validDsu(rec.CoAssigneeDSU)                                    // (c)
+        || categoryDsu(rec)                                              // (d) Category → Default Primary Responsible
+        || validDsu(rec.PrimaryDSU ?? rec.primaryDSU ?? rec.PrimaryDsu)   // legacy fallback
+        || validDsu(rec.AssignedDSU ?? rec.assignedDSU ?? rec.AssignedDsu) // legacy fallback
+        || null;                                                          // (e) quarantine
   }
 
   function dedupHash(rec) {

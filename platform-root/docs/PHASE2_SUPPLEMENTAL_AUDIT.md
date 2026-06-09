@@ -296,6 +296,8 @@ Disposition: **15 Salvage & Refactor · 1 Delete (`assignment`) · 1 verify-then
 
 ### B.4 — Outbound Dispatch (Phase 5 delivery route)
 
+> ⚠️ NOTE: DISPATCH_OUTBOUND is non-existent (confirmed against live data 2026-06-08); this section describes intended-not-implemented behavior.
+
 **Endpoint key:** **does not yet exist.** Proposed key `DISPATCH_OUTBOUND` (G-4) — **requires NITDA-side flow design or adoption of the existing `DYNAMIC_GLOBAL_ACTIONS` flow** (`operation:'dispatch'`). Contract drafted so the PA author can build to it.
 
 **Request — `POST` body:**

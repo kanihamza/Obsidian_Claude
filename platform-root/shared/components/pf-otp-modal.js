@@ -1,24 +1,28 @@
 /** OBSIDIAN v4.0 — <pf-otp-modal> · stateless PA-handshake OTP gate (register B-1 / D-7).
  *
- *  This component holds NO OTP logic of its own. It is a thin UI consumer of the two-step Power
- *  Automate handshake:
- *    1. request-otp  → OTP_GENERATE  : server emails the code; UI caches { otpId, expiresAt }.
- *    2. verify-otp   → OTP_VERIFY     : UI submits the user-typed code; PA validates server-side.
+ *  This component holds NO OTP logic of its own. It is a thin UI consumer of the Power Automate
+ *  OTP handshake. The live flow contract (OTP_GENERATE Compose_1, S1.5 Live-Data Conformance Patch):
+ *    request body = { action:'generate'|'verify', identifier:<email|phone>, otp_code:<verify only> }
+ *    - `identifier` is the OTP target (NOT userEmail); `action` must be exactly 'generate'/'verify'.
+ *    - userEmail is still sent in the envelope for audit, but the flow consumes `identifier`.
+ *  The success-path RESPONSE shape is unobserved (only error-path probes available), so `data` is
+ *  parsed defensively (string → JSON.parse; object → use as-is) and the fields otpId/expiresAt/
+ *  ttlSeconds/verificationToken/remainingAttempts/sentTo/codeLength are treated as OPTIONAL.
  *  The plaintext code is NEVER generated or compared client-side.
  *
- *  Usage:  const r = await PfOtpModal.require({ purpose:'BULK_ASSIGNMENT', userEmail, context });
- *    resolves → { ok:true,  verificationToken, otpId, code }                       (verified)
+ *  Usage:  const r = await PfOtpModal.require({ identifier, userEmail, purpose, context });
+ *    resolves → { ok:true,  identifier, code, verificationToken? }                 (verified)
  *             → { ok:false, kind:'ASSIGNMENT_FAILED' }   on exhausted attempts (B-1 rollback)
  *             → { ok:false, kind:'CANCELLED' }           on user cancel / Escape
- *             → { ok:false, kind:'GENERATE_FAILED' }     if the code could not be sent
  *
  *  On OTP_INVALID the attempt matrix decrements; at zero it fires an ASSIGNMENT-FAILED rollback
  *  (audit + bus event) so the caller can revert the optimistic `assigning` state. */
 import { PfBaseElement } from './_base.js';
 import { BaseService } from '../../core/base-service.js';
 
-const requestOtp = BaseService.endpoint('OTP_GENERATE', { expectedKeys: ['ok', 'data'] });
-const verifyOtp  = BaseService.endpoint('OTP_VERIFY', { expectedKeys: ['ok', 'data'] });
+// Success-path `data` shape is unobserved (S1.5 Finding 5) — only require the `ok` envelope key.
+const requestOtp = BaseService.endpoint('OTP_GENERATE', { expectedKeys: ['ok'] });
+const verifyOtp  = BaseService.endpoint('OTP_VERIFY', { expectedKeys: ['ok'] });
 
 const DEFAULT_ATTEMPTS = 5;
 
@@ -35,7 +39,8 @@ class PfOtpModal extends PfBaseElement {
 
   onConnect() {
     this._settled = false;
-    this._otpId = null;
+    this._sent = false;         // a code has been requested for this identifier (gates verify)
+    this._otpId = null;         // best-effort only; the flow identifies by `identifier`, not otpId
     this._expiresAt = 0;
     this._attemptsLeft = Number(this._opts.maxAttempts) || DEFAULT_ATTEMPTS;
     this._countdownTimer = null;
@@ -88,34 +93,52 @@ class PfOtpModal extends PfBaseElement {
 
   onDisconnect() { this._stopCountdown(); }
 
-  /** Step 1 — request a fresh code (request-otp → OTP_GENERATE). */
+  /** The OTP target the flow consumes: `identifier` (email or phone), falling back to userEmail. */
+  _identifier() {
+    return this._opts.identifier || this._opts.userEmail || this._personaEmail();
+  }
+
+  /** Defensive parse of the response `data` (S1.5 Finding 5): string → JSON.parse; object → as-is. */
+  _parseData(res) {
+    let d = res && res.data;
+    if (typeof d === 'string') { try { d = JSON.parse(d); } catch (_) { d = {}; } }
+    if (!d || typeof d !== 'object') d = {};
+    return d;
+  }
+
+  /** Step 1 — request a fresh code (OTP_GENERATE, action:'generate'). */
   async _request() {
     this._stopCountdown();
+    this._sent = false;
     const msg = this.$('#msg'); msg.textContent = '';
     this.$('#resend').hidden = true;
     this.$('#dest').textContent = this.t('otp.sendingCode');
     this.$('#code').disabled = true; this.$('#verify').disabled = true;
 
+    const identifier = this._identifier();
     const res = await requestOtp({
+      action: 'generate',
+      identifier,
+      userEmail: identifier,            // envelope-only, for audit; flow consumes `identifier`
       purpose: this._opts.purpose || 'VERIFICATION',
       channel: 'email',
-      userEmail: this._opts.userEmail || this._personaEmail(),
       context: this._opts.context || {}
     });
 
     if (!res.ok) {
-      this._otpId = null;
       this.$('#dest').textContent = '';
       msg.textContent = this._detail(res) || this.t('otp.genFailed');
       this.$('#resend').hidden = false;
       return;
     }
-    const d = res.data || {};
+    // Success-path fields are best-effort (unobserved); absence must not block verify.
+    const d = this._parseData(res);
+    this._sent = true;
     this._otpId = d.otpId || d.id || null;
     this._attemptsLeft = Number(this._opts.maxAttempts) || DEFAULT_ATTEMPTS;
     const ttl = Number(d.ttlSeconds) || 0;
     this._expiresAt = d.expiresAt ? Date.parse(d.expiresAt) : (ttl ? Date.now() + ttl * 1000 : 0);
-    this.$('#dest').textContent = this.t('otp.sent', { to: d.sentTo || d.channel || 'email', ttl: ttl || 0 });
+    this.$('#dest').textContent = this.t('otp.sent', { to: d.sentTo || identifier || 'email', ttl: ttl || 0 });
     const input = this.$('#code');
     input.disabled = false; input.value = ''; input.maxLength = Number(d.codeLength) || 8;
     this.$('#verify').disabled = false;
@@ -123,24 +146,25 @@ class PfOtpModal extends PfBaseElement {
     this._startCountdown();
   }
 
-  /** Step 2 — verify the user-typed code (verify-otp → OTP_VERIFY). */
+  /** Step 2 — verify the user-typed code (OTP_VERIFY, action:'verify'). */
   async _verify() {
     const input = this.$('#code');
     const code = (input.value || '').trim();
     const msg = this.$('#msg'); msg.textContent = '';
-    if (!this._otpId) { msg.textContent = this.t('otp.expired'); this.$('#resend').hidden = false; return; }
+    if (!this._sent) { msg.textContent = this.t('otp.expired'); this.$('#resend').hidden = false; return; }
     if (!code) { msg.textContent = this.t('otp.needCode'); return; }
     if (this._expiresAt && Date.now() > this._expiresAt) { this._onExpired(); return; }
 
     this.$('#verify').disabled = true;
     this.$('#countdown').textContent = this.t('otp.verifying');
-    const res = await verifyOtp({ otpId: this._otpId, code, userEmail: this._opts.userEmail || this._personaEmail() });
+    const identifier = this._identifier();
+    const res = await verifyOtp({ action: 'verify', identifier, otp_code: code, userEmail: identifier });
     this.$('#verify').disabled = false;
 
-    const verified = !!(res.ok && res.data && (res.data.verified === true || res.data.verificationToken));
-    if (verified) {
-      this._finish({ ok: true, otpId: this._otpId, code,
-        verificationToken: (res.data && res.data.verificationToken) || null });
+    // Success shape unobserved: ok ⇒ verified unless `data.verified` is explicitly false.
+    const d = this._parseData(res);
+    if (res.ok && d.verified !== false) {
+      this._finish({ ok: true, identifier, code, verificationToken: d.verificationToken || null });
       return;
     }
 
@@ -148,7 +172,7 @@ class PfOtpModal extends PfBaseElement {
     if (kind === 'OTP_EXPIRED') { this._onExpired(); return; }
 
     // OTP_INVALID (or any other non-verified result) — decrement the attempt matrix.
-    const serverLeft = res.data && Number.isFinite(res.data.remainingAttempts) ? Number(res.data.remainingAttempts) : null;
+    const serverLeft = Number.isFinite(d.remainingAttempts) ? Number(d.remainingAttempts) : null;
     this._attemptsLeft = serverLeft != null ? serverLeft : (this._attemptsLeft - 1);
     if (this._attemptsLeft <= 0) { this._rollback(); return; }
     msg.textContent = this.t('otp.invalid') + ' ' + this.t('otp.attemptsLeft', { n: this._attemptsLeft });
@@ -157,6 +181,7 @@ class PfOtpModal extends PfBaseElement {
 
   _onExpired() {
     this._stopCountdown();
+    this._sent = false;
     this._otpId = null;
     this.$('#code').disabled = true; this.$('#verify').disabled = true;
     this.$('#countdown').textContent = '';

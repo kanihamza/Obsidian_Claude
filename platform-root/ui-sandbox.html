@@ -275,21 +275,21 @@
       const action = String(payload.action || '').toLowerCase();
       await new Promise((r) => setTimeout(r, 250)); // simulate latency so spinners/countdown show
 
-      if (action === 'otpgenerate') {
+      if (action === 'otpgenerate' || action === 'generate') {
         serverRemaining = 5;
         const now = Date.now();
         return jsonResponse(200, { ok: true, data: {
           otpId: 'otp_demo_' + now.toString(36),
           ttlSeconds: 120,
           codeLength: 6,
-          sentTo: payload.userEmail || 'officer@nitda.gov.ng',
+          sentTo: payload.identifier || payload.userEmail || 'officer@nitda.gov.ng',
           channel: 'email',
           expiresAt: new Date(now + 120000).toISOString(),
           resendAvailableAt: new Date(now + 30000).toISOString()
         } });
       }
-      if (action === 'otpverify') {
-        if (String(payload.code || '') === VALID_CODE) {
+      if (action === 'otpverify' || action === 'verify') {
+        if (String(payload.otp_code || payload.code || '') === VALID_CODE) {
           return jsonResponse(200, { ok: true, data: {
             otpId: payload.otpId, verified: true,
             verificationToken: 'vt_demo_' + Math.random().toString(36).slice(2, 12),
