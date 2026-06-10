@@ -42,6 +42,9 @@ export async function boot({ outlet } = {}) {
   // Background, non-blocking: warm the shared fabric. Never blocks first paint; if the API is
   // unreachable (offline / local server / no auth) the shell still renders and shows empty states.
   Platform.Entities.bootstrap().catch((e) => Platform.Log.warn('entities.bootstrap-failed', { message: String(e && e.message || e) }));
+  // U1: warm the dropdown option-sets (categories / users / departments) at boot so every picker is
+  // populated without requiring a manual Refresh. Non-blocking; falls back to FETCH_ALL collections.
+  Platform.Lookups?.load?.().catch((e) => Platform.Log.warn('lookups.warm-failed', { message: String(e && e.message || e) }));
 
   if (Platform.Flags.serviceWorker && typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
     navigator.serviceWorker.register('/service-worker.js').catch((e) => Platform.Log.warn('sw.register-failed', { message: String(e) }));

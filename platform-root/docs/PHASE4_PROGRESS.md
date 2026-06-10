@@ -16,6 +16,31 @@
 | **S1.5c** Ingestion Restitution | sentinel filter (`isBlankVal`: empties + null-words + "No &lt;field&gt;" family) on ref/id/DSU fields; type-prefixed self-reference for refless correspondence (DOC-/EML-/TASK-); cross-type id-collision guard; directorate-underivable now ADMITTED-with-null (not quarantined) | ✅ | ✅ 12/12 | ✅ 14/14 synthetic | ✅ **live 4.6MB smoke PASS** (1300 accepted, 2 child-orphans, 0 dir-quarantine, 99.8%) |
 | **S3** INTAKE Triage Surface (C-3 + C-1 triage integration + J-5 handoff) | new `<pf-triage-bar>` chip row (Acknowledge / Tag Category / Flag Urgency / Mark Duplicate / Send to Routing); `Context.setHandoff/getHandoff` (deep-copy) slice; correspondence detail Phase-1 framing + dedup banner; all status writes via `transitionStatus` (C-7) | ✅ | ✅ 12/12 | ✅ 13/13 contract | ⏳ DOM `[browser-unverified]` (walkthrough pending) |
 
+## U-series — Cross-cutting usability (authorized 2026-06-10, deviates from locked wave order)
+
+User direction after the first browser walkthrough: **fix what makes every screen feel broken before
+building more phase surfaces.** This reorders the CLAUDE.md §10 wave plan (in-session authorization).
+
+### U1 — Lookups resilience (empty dropdowns everywhere) — 2026-06-10
+
+The `inspect-lookups.mjs` probe against the live `REFERENCE_DATA` flow revealed **two** root causes for
+the empty category/assignee/co-assignee/CC dropdowns:
+
+1. **`Platform.Lookups` was never wired.** `core/platform.js` never imported `shared/utils/lookups.js`,
+   so every consumer reading `globalThis.Platform.Lookups` (the triage bar's category list, the fabric's
+   Category→`Default Primary Responsible` directorate derivation, the connectivity-banner / `r`-shortcut
+   warm) silently got `undefined`. Fixed: import + add to the namespace.
+2. **Shape mismatch.** `REFERENCE_DATA` returns `users`/`categories`/`departments` at the **top level**
+   of the body (flat), but `Lookups.load()` read `res.data.users/...` (nested) → nothing parsed. Fixed:
+   read from `res.body` (flat) → `res.data` (nested) → and a **FETCH_ALL fallback** — the fabric now
+   captures the user/category/department collections that ride inside FETCH_ALL (`Entities.lookupSource`)
+   and Lookups uses them when `REFERENCE_DATA` is empty/unreachable.
+
+Also warms Lookups at boot (non-blocking) so pickers populate without a manual Refresh. Guard:
+`tools/lookups-resilience-test.mjs` (10/10) covers the flat-body parse, the FETCH_ALL fallback, and the
+`Platform.Lookups` wiring. Static gate 12/12; fabric harnesses unaffected (14/14, 13/13).
+**Browser-unverified** until you confirm the dropdowns populate.
+
 ## S3 — INTAKE triage surface (2026-06-09)
 
 **C-3 `<pf-triage-bar>` (Rebuild Fresh) + C-1 triage integration + J-5 handoff slice.** New Phase-1

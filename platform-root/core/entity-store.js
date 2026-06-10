@@ -36,6 +36,10 @@ export const Entities = (function sealFabric() {
 
   let hydrated = false;
   let lastRaw  = null;     // last FETCH_ALL envelope (in-memory only; incident export)
+  // Lookup option-sets (users / categories / departments) that ride inside FETCH_ALL but are NOT
+  // entities — captured during ingest so Lookups can fall back to them when REFERENCE_DATA is empty
+  // (U1 dropdown resilience). Plain copies, never indexed into the typed store.
+  let lookupRaw = { users: [], categories: [], departments: [] };
   const source = 'live';
 
   const DEDUP_WINDOW_MS = 30 * 86400000;  // rolling 30-day dedup window (A-6)
@@ -385,6 +389,12 @@ export const Entities = (function sealFabric() {
         const rows = Array.isArray(val) ? val : firstArray(val);
         for (const r of rows) if (r && typeof r === 'object') admit(type, r);
       }
+      // Capture the lookup option-sets that ride inside FETCH_ALL (users / categories / departments)
+      // so Lookups can fall back to them when the REFERENCE_DATA flow is empty/unreachable (U1).
+      for (const k of ['users', 'categories', 'departments']) {
+        const v = src[k] || src[k[0].toUpperCase() + k.slice(1)];
+        if (Array.isArray(v) && v.length) lookupRaw[k] = v.slice();
+      }
       // Synthesize reference rows from any child that carries a ref but has no explicit reference
       // record. The synthesized reference inherits its directorate structurally from that child
       // (bundle-structural derivation, NOT a legacy mapping table — Q-6 compliant).
@@ -453,6 +463,8 @@ export const Entities = (function sealFabric() {
 
     isHydrated() { return hydrated; },
     lastRawResponse() { return lastRaw || null; },
+    /** Lookup option-sets captured from FETCH_ALL (U1 fallback for Lookups). Frozen copy. */
+    lookupSource() { return frozen({ users: lookupRaw.users || [], categories: lookupRaw.categories || [], departments: lookupRaw.departments || [] }); },
 
     // ─── scoped, frozen readers (A-1, A-2, A-8) ───────────────────────────────
     all(type) {
