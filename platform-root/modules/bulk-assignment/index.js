@@ -1,34 +1,26 @@
-/** OBSIDIAN v4.0 — module 'bulk-assignment' (Administration · ACTION LENS · audience:admin).
- *  Purpose-built bulk task-assignment lens wired to the REAL canonical contract
- *  (Endpoints.BULK_ASSIGNMENT · family F3 · trigger fields SelectedItems/AssignmentType/payload).
+/** OBSIDIAN v4.0 — module 'bulk-assignment' (ROUTING · audience:admin).
+ *  EXACT port of the NITDA Digital Ops Hub SPA bulk-assignment form + logic (authorized in-session,
+ *  2026-06-10). Faithful to the SPA: Category/Sub-Category <select>s, a single Assign-To email
+ *  typeahead (no co-assignee/CC), Priority <select>, Comments, and a DUAL-MODE submit —
+ *  Direct (E06 / BULK_ASSIGNMENT_DIRECT) and Optimized (E07 / BULK_ASSIGNMENT) — gated by a
+ *  confirm step. No OTP (the SPA has none). The submit payload mirrors the SPA's executeBulkAssign
+ *  byte-for-byte (action/AssignmentType/NewActivityTask/SelectedItems/payload), including the SPA's
+ *  duplicate/misspelled acknowledgement keys, which the live PA flow reads.
  *
- *  Flow: pick items from the shared fabric (Entities.documents) → fill assignment params from
- *  Lookups (users/categories/departments) → MANDATORY preview/confirm → BULK_ASSIGNMENT →
- *  reflect F3 result (counts + failed[]) and upsert created tasks so every lens updates.
- *  No write occurs without explicit confirmation (execution-safety contract). */
+ *  The surrounding shell (item picker, 3-step stepper, result region) is the platform surface that
+ *  view.html defines; the SPA receives its items pre-selected from the document gallery, so the
+ *  picker here is the platform equivalent of that selection. */
 import { BaseModule } from '../../core/base-module.js';
 import { Modules } from '../../core/modules-registry.js';
 import { el, clear } from '../../shared/utils/dom.js';
 import { Lookups } from '../../shared/utils/lookups.js';
 import { submitBulkAssignment } from './service.js';
-import { PfOtpModal } from '../../shared/components/pf-otp-modal.js';
 
-const ASSIGNMENT_TYPES = [
-  { value: 'newassignment', label: 'New Assignment' },
-  { value: 'reassignment', label: 'Re-Assignment' }
-];
-const PRIORITIES = [
-  { value: 'P1 (High)',   label: 'P1 (High)',   icon: '🔴' },
-  { value: 'P2 (Medium)', label: 'P2 (Medium)', icon: '🟡' },
-  { value: 'P3 (Normal)', label: 'P3 (Normal)', icon: '🟢' },
-  { value: 'P4 (Low)',    label: 'P4 (Low)',    icon: '⚪' }
-];
-const ACTION_REQUIRED = [
-  { value: '',            label: 'Not set' },
-  { value: 'Review',      label: 'Review' },
-  { value: 'Approval',    label: 'Approval' },
-  { value: 'Information', label: 'Information' }
-];
+// SPA bulk priority <select> options, in the SPA's order (P3 default first).
+const PRIORITIES = ['P3 (Normal)', 'P1 (High)', 'P2 (Medium)', 'P4 (Low)'];
+// SPA category-Priority → token map (applyBulkCategoryCascade).
+const PRIORITY_MAP = { High: 'P1 (High)', Medium: 'P2 (Medium)', Normal: 'P3 (Normal)', Low: 'P4 (Low)' };
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 class BulkAssignmentModule extends BaseModule {
   static id = 'bulk-assignment';
@@ -43,7 +35,7 @@ class BulkAssignmentModule extends BaseModule {
     const P = globalThis.Platform;
     this._selected = new Set();
     this._filter = '';
-    // Ensure the shared fabric + option sets are ready (both are idempotent / cached).
+    this._draft = this._freshDraft();
     if (P?.Entities && !P.Entities.isHydrated()) await P.Entities.bootstrap();
     await Lookups.load();
     // Pre-fill selection from any hand-off (e.g. ops-hub.bulkAssign)
@@ -54,9 +46,12 @@ class BulkAssignmentModule extends BaseModule {
       P.UI?.toast?.({ messageKey: 'opshub.bulkHandoff', vars: { n: handoff.length }, variant: 'info' });
     }
     this._render(root);
-    // Refresh the item picker whenever the fabric changes (e.g. another lens upserts).
     this.bus('entity:bootstrapped', () => this._renderPicker());
     this.bus('entity:changed', () => this._renderPicker());
+  }
+
+  _freshDraft() {
+    return { category: '', subCategory: '', assignee: '', priority: 'P3 (Normal)', comments: '' };
   }
 
   _docs() {
@@ -75,8 +70,7 @@ class BulkAssignmentModule extends BaseModule {
     this._renderForm(form);
   }
 
-  /** Three-step visual progress indicator (Select → Details → Confirm). Reflects state
-   *  derived from _selected.size and _busy so the user always sees where they are. */
+  /** Three-step visual progress indicator (Select → Details → Confirm). */
   _renderStepper() {
     const root = document.getElementById('module-bulk-assignment');
     const host = root && root.querySelector('[data-region="stepper"]');
@@ -84,12 +78,9 @@ class BulkAssignmentModule extends BaseModule {
     clear(host);
     const selN = this._selected.size, busy = !!this._busy;
     const steps = [
-      { id: 1, key: 'step1', sub: this.t('module.bulk-assignment.step1Sub', { n: selN }),
-        state: selN === 0 ? 'current' : 'done' },
-      { id: 2, key: 'step2', sub: this.t('module.bulk-assignment.step2Sub'),
-        state: selN === 0 ? 'pending' : (busy ? 'done' : 'current') },
-      { id: 3, key: 'step3', sub: this.t('module.bulk-assignment.step3Sub'),
-        state: busy ? 'current' : 'pending' }
+      { id: 1, key: 'step1', sub: this.t('module.bulk-assignment.step1Sub', { n: selN }), state: selN === 0 ? 'current' : 'done' },
+      { id: 2, key: 'step2', sub: this.t('module.bulk-assignment.step2Sub'), state: selN === 0 ? 'pending' : (busy ? 'done' : 'current') },
+      { id: 3, key: 'step3', sub: this.t('module.bulk-assignment.step3Sub'), state: busy ? 'current' : 'pending' }
     ];
     const ol = el('ol', { class: 'pf-stepper', 'aria-label': this.t('module.bulk-assignment.stepperAria') },
       steps.map((s) => el('li', { class: `pf-stepper__step pf-stepper__step--${s.state}`,
@@ -155,83 +146,48 @@ class BulkAssignmentModule extends BaseModule {
     const n = document.getElementById('bulk-selected-count');
     if (n) n.textContent = this.t('module.bulk-assignment.selected', { n: this._selected.size });
     this._renderStepper();
-    const btn = document.getElementById('bulk-submit');
-    if (btn) btn.disabled = this._selected.size === 0;
+    const dis = this._selected.size === 0;
+    ['bulk-submit-direct', 'bulk-submit-optimized'].forEach((id) => {
+      const b = document.getElementById(id); if (b) b.disabled = dis;
+    });
+    this._updateSummary();
   }
 
+  // ──────── FORM (SPA-exact: selects + email typeahead + dual-mode submit) ────────
   _renderForm(form) {
     clear(form);
     this._draft = this._draft || this._freshDraft();
 
-    // ──────── RICH PICKERS (matching SPA UX): category, assignee, co-assignee, CC ────────
+    // Category <select> — unique Category names from the option set.
     const cats = Lookups.categories();
-    const catPicker = this._mkPicker({
-      id: 'bulk-category', placeholder: 'Choose a Category', placeholderIcon: '📂', searchable: true,
-      items: cats.map((c) => ({ value: c.value, label: c.raw.Category || c.label,
-        sub: c.raw.Subcategory ? `Subcategory: ${c.raw.Subcategory}` : '', raw: c.raw }))
-    });
-    catPicker.addEventListener('pf-picker:change', (e) => {
-      const raw = e.detail.raw || {};
-      this._draft.category = raw.Category || '';
-      this._draft.categoryCode = raw['Category Code'] || '';
-      this._draft.subCategory = raw.Subcategory || '';
-      this._draft.subCategoryCode = raw['SubCategory Code'] || '';
-      this._draft.categoryRaw = raw;
-      this._applyCategoryCascade(raw);
-    });
+    const categoryNames = [...new Set(cats.map((c) => c.raw && c.raw.Category).filter(Boolean))];
+    const catSel = el('select', { id: 'bulk-category', class: 'pf-input' },
+      [el('option', { value: '', text: 'Select Category...' }),
+        ...categoryNames.map((name) => el('option', { value: name, text: name }))]);
+    catSel.value = this._draft.category;
+    this.on(catSel, 'change', () => this._onCategoryChange());
 
-    const assigneePicker = this._mkPicker({
-      id: 'bulk-assignee', placeholder: 'Select Assignee', placeholderIcon: '👤', searchable: true,
-      tabs: [{ id: 'dept', label: 'By Department' }, { id: 'user', label: 'By User' }],
-      itemsByTab: { dept: this._deptItems(), user: this._userItems() }
-    });
-    assigneePicker.addEventListener('pf-picker:change', (e) => {
-      const raw = e.detail.raw || {};
-      if (raw.DSU_KEY) {
-        this._draft.assignedTo = raw.DSU_HeadEmail || raw.DSU_HeadPersonalEmail || '';
-        this._draft.assignedToTitle = raw.DSU_HeadTitle || raw.Title || '';
-        this._draft.primaryDSU = raw.DSU_KEY;
-      } else if (raw.email) {
-        this._draft.assignedTo = raw.email;
-        this._draft.assignedToTitle = raw.name || '';
-        this._draft.primaryDSU = raw.department || this._draft.primaryDSU;
-      }
-    });
+    // Sub-Category <select> — populated from the chosen category.
+    const subSel = el('select', { id: 'bulk-subcategory', class: 'pf-input' },
+      [el('option', { value: '', text: 'Select Sub-Category...' })]);
+    this.on(subSel, 'change', () => { this._draft.subCategory = subSel.value; this._applyCategoryCascade(); this._updateSummary(); });
 
-    const coassPicker = this._mkPicker({
-      id: 'bulk-coassignee', placeholder: 'Select Co-Assignee', placeholderIcon: '👥', searchable: true,
-      tabs: [{ id: 'dept', label: 'By Department' }, { id: 'user', label: 'By User' }],
-      itemsByTab: { dept: this._deptItems(), user: this._userItems() }
-    });
-    coassPicker.addEventListener('pf-picker:change', (e) => {
-      const raw = e.detail.raw || {};
-      if (raw.DSU_KEY) { this._draft.supportAssignedTo = raw.DSU_HeadEmail || raw.DSU_HeadPersonalEmail || ''; this._draft.supportDSU = raw.DSU_KEY; }
-      else if (raw.email) { this._draft.supportAssignedTo = raw.email; }
-    });
+    // Assign To (email) — typeahead over the user option set (min 2 chars, top 8). SPA filterBulkUsers.
+    const assigneeInput = el('input', { id: 'bulk-assignee', class: 'pf-input', type: 'text', maxlength: '254',
+      placeholder: 'Start typing name or email...', value: this._draft.assignee, autocomplete: 'off' });
+    const suggestions = el('div', { id: 'bulk-user-suggestions', class: 'pf-bulk__suggest', hidden: true });
+    this.on(assigneeInput, 'input', () => { this._draft.assignee = assigneeInput.value.trim(); this._filterUsers(assigneeInput, suggestions); this._updateSummary(); });
 
-    const ccPicker = this._mkPicker({
-      id: 'bulk-cc', placeholder: 'Choose CC recipients', placeholderIcon: '📋', searchable: true, mode: 'multi',
-      tabs: [{ id: 'dept', label: 'By Department' }, { id: 'user', label: 'By User' }],
-      itemsByTab: { dept: this._deptItems(), user: this._userItems() }
-    });
-    ccPicker.addEventListener('pf-picker:change', (e) => {
-      this._draft.copyTo = Array.isArray(e.detail.value) ? e.detail.value : [];
-    });
+    // Priority <select>.
+    const prioSel = el('select', { id: 'bulk-priority', class: 'pf-input' },
+      PRIORITIES.map((p) => el('option', { value: p, text: p })));
+    prioSel.value = this._draft.priority;
+    this.on(prioSel, 'change', () => { this._draft.priority = prioSel.value; this._updateSummary(); });
 
-    // ──────── CHIP GROUPS (assignment type, priority, action required) ────────
-    const typeChips = this._mkChipGroup('bulk-assignmentType', ASSIGNMENT_TYPES, this._draft.assignmentType, (v) => { this._draft.assignmentType = v; });
-    const priorityChips = this._mkChipGroup('bulk-priority', PRIORITIES.map((p) => ({ value: p.value, label: `${p.icon} ${p.label}` })), this._draft.priority, (v) => { this._draft.priority = v; });
-    const actionChips = this._mkChipGroup('bulk-actionRequired', ACTION_REQUIRED, this._draft.actionRequired, (v) => { this._draft.actionRequired = v; });
-
-    // ──────── DATES + ACTIVITY + COMMENTS ────────
-    const ackDue = el('input', { id: 'bulk-ackDue', class: 'pf-input', type: 'date' });
-    const taskDue = el('input', { id: 'bulk-taskDue', class: 'pf-input', type: 'date' });
-    const activityTask = el('input', { id: 'bulk-activityTask', class: 'pf-input', type: 'text', placeholder: this.t('field.activityTask.label') });
-    const comments = el('textarea', { id: 'bulk-comments', class: 'pf-input', rows: '2',
-      placeholder: this.t('module.single-item-ops.commentsHint') });
-    this.on(ackDue, 'change', () => { this._draft.ackDue = ackDue.value; });
-    this.on(taskDue, 'change', () => { this._draft.taskDue = taskDue.value; });
-    this.on(activityTask, 'input', () => { this._draft.activityTask = activityTask.value; });
+    // Comments.
+    const comments = el('textarea', { id: 'bulk-comments', class: 'pf-input', rows: '3',
+      placeholder: 'Comments for all selected items...' });
+    comments.value = this._draft.comments;
     this.on(comments, 'input', () => { this._draft.comments = comments.value; });
 
     const field = (labelText, control, opts = {}) => {
@@ -239,222 +195,244 @@ class BulkAssignmentModule extends BaseModule {
       wrap.append(el('label', { class: 'pf-label', for: control.id },
         [document.createTextNode(labelText), opts.required ? el('abbr', { class: 'pf-label__req', text: ' *' }) : null].filter(Boolean)));
       wrap.append(control);
-      if (opts.help) wrap.append(el('p', { class: 'pf-field__help', text: opts.help }));
+      if (opts.after) wrap.append(opts.after);
       return wrap;
     };
 
+    // Dual-mode submit (SPA: Direct = E06, Optimized = E07).
     const count = el('span', { id: 'bulk-selected-count', class: 'pf-bulk__count' });
-    const preview = el('button', { id: 'bulk-preview', class: 'pf-btn pf-btn--ghost', type: 'button',
-      html: `<pf-icon name="mail" size="14"></pf-icon> ${this.t('notif.previewBtn')}` });
-    preview.addEventListener('click', () => this._previewNotification());
-    const submit = el('button', { id: 'bulk-submit', class: 'pf-btn pf-btn--danger', type: 'button',
-      html: `<pf-icon name="check-circle" size="14"></pf-icon> ${this.t('module.bulk-assignment.submit')}` });
-    submit.disabled = true;
-    submit.addEventListener('click', () => this._submit());
+    const directBtn = el('button', { id: 'bulk-submit-direct', class: 'pf-btn pf-btn--primary', type: 'button',
+      html: '📤 Bulk Assign (Direct)' });
+    directBtn.addEventListener('click', () => this._submit('direct'));
+    const optimizedBtn = el('button', { id: 'bulk-submit-optimized', class: 'pf-btn pf-btn--accent', type: 'button',
+      html: '⚡ Optimized Assign' });
+    optimizedBtn.addEventListener('click', () => this._submit('optimized'));
+
+    // Live bulk summary (SPA updateBulkSummary).
+    const summary = el('table', { id: 'bulk-summary-table', class: 'pf-bulk__summary' }, [
+      el('tr', {}, [el('td', { text: 'Items' }), el('td', { id: 'bulk-sum-count', text: '0' })]),
+      el('tr', {}, [el('td', { text: 'Category' }), el('td', { id: 'bulk-sum-category', text: '—' })]),
+      el('tr', {}, [el('td', { text: 'Assigned To' }), el('td', { id: 'bulk-sum-assignee', text: '—' })]),
+      el('tr', {}, [el('td', { text: 'Priority' }), el('td', { id: 'bulk-sum-priority', text: 'P3 (Normal)' })])
+    ]);
 
     form.append(
-      field('Assignment Type', typeChips, { required: true }),
-      field('Category', catPicker, { required: true, help: this.t('module.single-item-ops.categoryHelp') }),
-      field('Assignee', assigneePicker, { required: true, help: this.t('field.assignedTo.help') }),
-      field('Co-Assignee (optional)', coassPicker),
-      field('CC Recipients (optional)', ccPicker, { help: this.t('field.copyTo.help') }),
-      field('Priority', priorityChips, { required: true }),
-      field('Action Required', actionChips),
-      field(this.t('field.ackDue.label'), ackDue),
-      field(this.t('field.taskDue.label'), taskDue),
-      field(this.t('field.activityTask.label'), activityTask),
-      field(this.t('module.single-item-ops.comments'), comments),
-      el('div', { class: 'pf-bulk__actions' }, [count, preview, submit])
+      field('Category', catSel, { required: true }),
+      field('Sub-Category', subSel),
+      field('Assign To (email)', assigneeInput, { required: true, after: suggestions }),
+      field('Priority', prioSel, { required: true }),
+      field('Comments', comments),
+      el('div', { class: 'pf-bulk__actions' }, [count, directBtn, optimizedBtn]),
+      summary
     );
     this._syncCount();
   }
 
-  // ──────── Helpers (mirror single-item-ops) ────────
-  _freshDraft() {
-    return {
-      assignmentType: 'newassignment',
-      category: '', categoryCode: '', subCategory: '', subCategoryCode: '', categoryRaw: null,
-      assignedTo: '', assignedToTitle: '', primaryDSU: '',
-      supportAssignedTo: '', supportDSU: '',
-      copyTo: [],
-      priority: 'P3 (Normal)',
-      actionRequired: '',
-      ackDue: '', taskDue: '',
-      activityTask: '', comments: ''
-    };
+  /** SPA onBulkCategoryChange: repopulate sub-categories; auto-select if only one; cascade. */
+  _onCategoryChange() {
+    const catSel = document.getElementById('bulk-category');
+    const subSel = document.getElementById('bulk-subcategory');
+    if (!catSel || !subSel) return;
+    this._draft.category = catSel.value;
+    const cat = catSel.value;
+    const subs = [...new Set(Lookups.categories()
+      .filter((c) => c.raw && c.raw.Category === cat)
+      .map((c) => c.raw.Subcategory).filter(Boolean))];
+    clear(subSel);
+    subSel.append(el('option', { value: '', text: 'Select Sub-Category...' }));
+    subs.forEach((s) => subSel.append(el('option', { value: s, text: s })));
+    // SPA P2-5: single sub-category auto-locks the cascade.
+    if (subs.length === 1) { subSel.value = subs[0]; this._draft.subCategory = subs[0]; }
+    else { this._draft.subCategory = ''; }
+    this._applyCategoryCascade();
+    this._updateSummary();
   }
-  _mkPicker({ id, placeholder, placeholderIcon, searchable = true, mode = 'single', tabs, items, itemsByTab }) {
-    const p = document.createElement('pf-rich-picker');
-    p.id = id; p.placeholder = placeholder; p.placeholderIcon = placeholderIcon;
-    p.searchable = searchable; p.mode = mode;
-    if (tabs) { p.tabs = tabs; p.itemsByTab = itemsByTab || {}; } else { p.items = items || []; }
-    return p;
+
+  /** SPA applyBulkCategoryCascade: fill assignee email from primary DSU head if empty; auto-set
+   *  priority from the category's Priority only while the user is still on the P3 default. */
+  _applyCategoryCascade() {
+    const cat = this._draft.category, sub = this._draft.subCategory;
+    if (!cat) return;
+    const cats = Lookups.categories();
+    const catRecord = (cats.find((c) => c.raw && c.raw.Category === cat && (!sub || c.raw.Subcategory === sub))
+      || cats.find((c) => c.raw && c.raw.Category === cat) || {}).raw;
+    if (!catRecord) return;
+
+    const primaryDSU = catRecord['Default Primary Responsible'] || '';
+    const catPriority = catRecord.Priority || '';
+
+    const assigneeEl = document.getElementById('bulk-assignee');
+    if (assigneeEl && !assigneeEl.value.trim() && primaryDSU) {
+      const primDept = (Lookups.departments().find((d) => d.raw && d.raw.DSU_KEY === primaryDSU) || {}).raw;
+      if (primDept) {
+        const email = primDept.DSU_HeadEmail || primDept.DSU_HeadPersonalEmail || '';
+        assigneeEl.value = email; this._draft.assignee = email;
+      }
+    }
+
+    const prioEl = document.getElementById('bulk-priority');
+    if (prioEl && catPriority && prioEl.value === 'P3 (Normal)') {
+      const matched = PRIORITY_MAP[catPriority] || catPriority;
+      if ([...prioEl.options].some((o) => o.value === matched)) { prioEl.value = matched; this._draft.priority = matched; }
+    }
   }
-  _mkChipGroup(id, items, current, onChange) {
-    const host = el('div', { id, class: 'pf-chipgroup', role: 'radiogroup' });
-    items.forEach((it) => {
-      const b = el('button', { type: 'button',
-        class: 'pf-chip' + (it.value === current ? ' pf-chip--selected' : ''),
-        role: 'radio', 'aria-checked': it.value === current ? 'true' : 'false',
-        'data-val': it.value, text: it.label || it.value });
-      this.on(b, 'click', () => {
-        [...host.querySelectorAll('.pf-chip')].forEach((c) => { c.classList.remove('pf-chip--selected'); c.setAttribute('aria-checked', 'false'); });
-        b.classList.add('pf-chip--selected'); b.setAttribute('aria-checked', 'true');
-        onChange(it.value);
+
+  /** SPA filterBulkUsers / selectBulkUser. */
+  _filterUsers(input, host) {
+    const q = (input.value || '').toLowerCase();
+    if (!q || q.length < 2) { host.hidden = true; clear(host); return; }
+    const matches = Lookups.users()
+      .filter((u) => (u.label || '').toLowerCase().includes(q) || (u.value || '').toLowerCase().includes(q))
+      .slice(0, 8);
+    clear(host);
+    if (!matches.length) { host.hidden = true; return; }
+    matches.forEach((u) => {
+      const opt = el('div', { class: 'pf-bulk__suggest-item', text: `${u.label} — ${u.value}` });
+      opt.addEventListener('click', () => {
+        input.value = u.value; this._draft.assignee = u.value;
+        host.hidden = true; clear(host); this._updateSummary();
       });
-      host.append(b);
+      host.append(opt);
     });
-    return host;
-  }
-  _deptItems() {
-    return Lookups.departments().map((d) => ({
-      value: d.raw && d.raw.DSU_KEY || d.value,
-      label: d.raw && d.raw.Title || d.label,
-      sub: d.raw && d.raw.DSU_HeadTitle || '', raw: d.raw
-    }));
-  }
-  _userItems() {
-    return Lookups.users().slice(0, 800).map((u) => ({
-      value: u.value, label: u.raw && u.raw.name || u.label,
-      sub: u.raw && (u.raw.jobTitle || u.raw.department) || '', raw: u.raw
-    }));
-  }
-  _applyCategoryCascade(catRaw) {
-    if (!catRaw) return;
-    const dsuKey = catRaw['Default Primary Responsible']; if (!dsuKey) return;
-    const dept = Lookups.departments().find((d) => d.raw && d.raw.DSU_KEY === dsuKey);
-    if (!dept || this._draft.assignedTo) return;
-    this._draft.assignedTo = dept.raw.DSU_HeadEmail || dept.raw.DSU_HeadPersonalEmail || '';
-    this._draft.assignedToTitle = dept.raw.DSU_HeadTitle || dept.raw.Title || '';
-    this._draft.primaryDSU = dept.raw.DSU_KEY;
-    const ap = document.getElementById('bulk-assignee');
-    if (ap) { ap.value = this._draft.assignedTo; ap.selectedLabel = `👤 ${dept.raw.Title} — ${dept.raw.DSU_HeadTitle || ''}`; }
-    globalThis.Platform.UI.toast({ messageKey: 'module.single-item-ops.cascadeApplied', vars: { dept: dept.raw.Title }, variant: 'info', timeout: 3000 });
+    host.hidden = false;
   }
 
-  _previewNotification() {
-    const d = this._draft || this._freshDraft();
-    const selected = [...this._selected];
-    const E = globalThis.Platform.Entities;
-    const items = selected.map((id) => {
-      const it = (E.all('document').find((x) => (x.__ref || x.__id) === id)) || { __id: id, __ref: id, title: '' };
-      return { ID: it.__id || id, RefIDD: String(it.__ref || it.__id || id), Title: it.title || it.Title || '' };
-    });
-    globalThis.Platform.UI.previewNotification({
-      title: d.activityTask, assignedTo: d.assignedTo, assignedToTitle: d.assignedToTitle,
-      category: d.category, subCategory: d.subCategory,
-      priority: d.priority, actionRequired: d.actionRequired,
-      ackDue: d.ackDue, taskDue: d.taskDue,
-      copyTo: d.copyTo, comments: d.comments,
-      assignmentType: d.assignmentType,
-      createdBy: (globalThis.Platform.Persona?.email && globalThis.Platform.Persona.email()) || 'web-ops@nitda.gov.ng',
-      items
-    });
+  _updateSummary() {
+    const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v || '—'; };
+    set('bulk-sum-count', String(this._selected ? this._selected.size : 0));
+    set('bulk-sum-category', this._draft.category + (this._draft.subCategory ? ' / ' + this._draft.subCategory : ''));
+    set('bulk-sum-assignee', this._draft.assignee);
+    set('bulk-sum-priority', this._draft.priority || 'P3 (Normal)');
   }
 
-  _collect() {
-    const d = this._draft || this._freshDraft();
-    return {
-      assignmentType: d.assignmentType,
-      assignedTo: d.assignedTo, assignedToTitle: d.assignedToTitle, primaryDSU: d.primaryDSU,
-      supportAssignedTo: d.supportAssignedTo, supportDSU: d.supportDSU,
-      category: d.category, categoryCode: d.categoryCode,
-      subCategory: d.subCategory, subCategoryCode: d.subCategoryCode,
-      priority: d.priority, actionRequired: d.actionRequired,
-      ackDue: d.ackDue || null, taskDue: d.taskDue || null,
-      copyTo: d.copyTo || [],
-      activityTask: d.activityTask, comments: d.comments
-    };
-  }
-  async _submit() {
+  // ──────── Submit (SPA submitBulkAssign → confirm → executeBulkAssign) ────────
+  async _submit(mode) {
     if (this._busy) return;
-    this._busy = true; this._renderStepper();
     const P = globalThis.Platform;
-    if (!this._selected.size) { this._busy = false; this._renderStepper(); return; }
-    const f = this._collect();
-    const selected = [...this._selected];
-    const items = selected.map((key) => {
-      const doc = P.Entities.get('document', key) || (P.Entities.byReference(key).reference) || { __ref: key };
-      return { referenceId: doc.__ref || key, id: doc.__id || key, title: doc.title || key };
-    });
+    const d = this._draft;
 
-    // MANDATORY preview/confirm — danger, irreversible bulk write.
+    // SPA validation order: category → assignee present → email format → items selected.
+    if (!d.category) { P.UI.toast({ message: '❌ Please select a category.', variant: 'danger' }); return; }
+    if (!d.assignee) { P.UI.toast({ message: '❌ Please enter an assignee.', variant: 'danger' }); return; }
+    if (!EMAIL_RE.test(d.assignee)) { P.UI.toast({ message: '❌ Assignee email format is invalid.', variant: 'danger' }); return; }
+    if (!this._selected.size) { P.UI.toast({ message: '❌ No items selected.', variant: 'danger' }); return; }
+
+    const n = this._selected.size;
     const ok = await P.UI.confirm({
       titleKey: 'module.bulk-assignment.title',
       summaryKey: 'bulk.confirmSummary',
       danger: true,
       confirmKey: 'module.bulk-assignment.submit',
       details: [
-        { label: this.t('confirm.action'), value: this.t('module.bulk-assignment.submit') },
-        { label: this.t('module.bulk-assignment.selected', { n: selected.length }), value: `${selected.length}` },
-        { label: this.t('field.assignmentType.label'), value: f.assignmentType || '—' },
-        { label: this.t('field.assignedTo.label'), value: f.assignedTo || '—' },
-        { label: this.t('field.category.label'), value: f.category || '—' },
-        { label: this.t('field.priority.label'), value: f.priority || '—' },
-        { label: this.t('confirm.endpoint'), value: 'BULK_ASSIGNMENT' },
+        { label: 'Items', value: `${n} item${n !== 1 ? 's' : ''}` },
+        { label: 'Category', value: d.category + (d.subCategory ? ' / ' + d.subCategory : '') },
+        { label: 'Assigned To', value: d.assignee },
+        { label: 'Priority', value: d.priority },
+        { label: 'Mode', value: mode === 'optimized' ? '⚡ Optimized' : '📤 Direct' },
+        { label: this.t('confirm.endpoint'), value: mode === 'optimized' ? 'BULK_ASSIGNMENT' : 'BULK_ASSIGNMENT_DIRECT' },
         { label: this.t('confirm.impact'), value: this.t('confirm.impactWrite') }
       ]
     });
-    if (!ok) { this._busy = false; this._renderStepper(); return; }
+    if (!ok) return;
+    await this._execute(mode);
+  }
 
-    // Sensitive bulk write → OTP gate (OTP_GENERATE/OTP_VERIFY).
-    const gated = await PfOtpModal.require({ reason: this.t('bulk.otpReason') });
-    if (!gated) { this._busy = false; this._renderStepper(); return; }
+  /** SPA executeBulkAssign — builds the byte-for-byte SPA payload and posts to E06/E07. */
+  async _execute(mode) {
+    if (this._busy) return;
+    this._busy = true; this._renderStepper();
+    const P = globalThis.Platform;
+    const d = this._draft;
 
-    // Build the canonical BULK_TASK_ASSIGNMENT payload. action/operation/mode/source are
-    // injected by Endpoints.BULK_ASSIGNMENT.defaults; we supply the contract's variable fields.
-    const persona = (P.Persona?.current && P.Persona.current()) || 'web-ops';
+    const category = d.category, subcategory = d.subCategory, assignee = d.assignee, priority = d.priority, comments = d.comments;
+    const cats = Lookups.categories();
+    const catRecord = (cats.find((c) => c.raw && c.raw.Category === category && (!subcategory || c.raw.Subcategory === subcategory)) || {}).raw;
+    const catCode = catRecord ? (catRecord['Category Code'] || '') : '';
+    const subCatCode = catRecord ? (catRecord['SubCategory Code'] || '') : '';
+    const primaryDSU = catRecord ? (catRecord['Default Primary Responsible'] || '') : '';
+    const dept = (Lookups.departments().find((x) => x.raw && x.raw.DSU_KEY === primaryDSU) || {}).raw;
+    const assignedToTitle = dept ? (dept.DSU_HeadTitle || '') : assignee;
+
     const today = new Date().toISOString().split('T')[0];
+    const tDate = new Date(); tDate.setDate(tDate.getDate() + 1);
+    const tomorrow = tDate.toISOString().split('T')[0];
+
+    const E = P.Entities;
+    const selectedItems = [...this._selected].map((key) => {
+      const doc = (E.all('document').find((x) => (x.__ref || x.__id) === key)) || { __id: key, __ref: key, title: '' };
+      const id = doc.__id || key;
+      return { ID: id, RefIDD: String(id), Title: doc.title || doc.Title || '' };
+    });
+
+    const userEmail = (P.Persona?.email && P.Persona.email())
+      || `${(P.Persona?.current && P.Persona.current()) || 'web-ops'}@nitda.gov.ng`;
+    const nav = globalThis.navigator || {};
+
     const payload = {
-      action: 'bulkassignment', operation: 'create', mode: 'bulk',
-      source: 'OBSIDIAN_v4',
-      userEmail: (P.Persona?.email && P.Persona.email()) || `${persona}@nitda.gov.ng`,
-      method: 'POST', device: { id: 'obsidian-platform' },
-      AssignmentType: f.assignmentType,
+      action: 'bulkassignment',
+      operation: 'create',
+      mode: 'bulk',
+      source: 'DGO_FAST_Track_WEB_OPS',
+      userEmail,
+      method: 'POST',
+      device: { id: 'standalone-html', platform: nav.platform || '', ua: nav.userAgent || '' },
+      AssignmentType: 'bulkassignment',
       NewActivityTask: {
         StartDate: today,
-        Title: f.activityTask || `Bulk: ${selected.length} item(s)`,
+        Title: '',
         Status: 'New',
-        Category: f.category, CategoryCode: f.categoryCode,
-        SubCategory: f.subCategory, SubCategoryCode: f.subCategoryCode,
-        PrimaryDSU: f.primaryDSU,
-        AssignedTo: f.assignedTo, AssignedToTitle: f.assignedToTitle, AssignedDSU: f.primaryDSU,
-        supportingAssignedTo: f.supportAssignedTo, SupportAssignedTo: f.supportAssignedTo, SupportDSU: f.supportDSU,
-        Priority: f.priority,
-        Comments: f.comments,
-        ActionRequired: f.actionRequired,
-        CreatedBy: (P.Persona?.email && P.Persona.email()) || `${persona}@nitda.gov.ng`,
-        Categorization: f.category + (f.subCategory ? '-' + f.subCategory : ''),
-        TaskDue: f.taskDue, AckDue: f.ackDue, CopyTo: (f.copyTo || []).join(';')
+        Category: category,
+        CategoryCode: catCode,
+        SubCategory: subcategory,
+        SubCategoryCode: subCatCode,
+        PrimaryDSU: primaryDSU,
+        AssignedTo: assignee,
+        AssignedToTitle: assignedToTitle,
+        AssignedDSU: primaryDSU,
+        supportingAssignedTo: '',
+        SupportAssignedTo: '',
+        SupportDSU: '',
+        Priority: priority,
+        AcknowledgementDueBy: tomorrow,
+        AcknolwedgementDueBy: tomorrow,
+        TaskDueDate: tomorrow,
+        Comments: comments,
+        CreatedBy: userEmail,
+        Timeline: 'N/A',
+        Categorization: category + '-' + subcategory
       },
-      SelectedItems: items,
-      items,
+      SelectedItems: selectedItems,
       payload: {
-        task: { StartDate: today, Title: f.activityTask, Category: f.category, AssignedTo: f.assignedTo },
-        selection: { items, count: selected.length },
-        assignment: { type: f.assignmentType }
+        task: {
+          Category: category, CategoryCode: catCode, SubCategory: subcategory, SubCategoryCode: subCatCode,
+          PrimaryDSU: primaryDSU, AssignedTo: assignee, AssignedToTitle: assignedToTitle,
+          AssignedDSU: primaryDSU, Priority: priority, AcknowledgementDueBy: tomorrow, AcknolwedgementDueBy: tomorrow,
+          TaskDueDate: tomorrow, Comments: comments, CreatedBy: userEmail
+        },
+        selection: { items: selectedItems },
+        assignment: { type: 'bulkassignment' }
       }
     };
 
-    const btn = document.getElementById('bulk-submit');
-    if (btn) { btn.disabled = true; btn.textContent = this.t('common.actions.processing'); }
-    const res = await this.call(submitBulkAssignment, payload);
-    if (btn) { btn.textContent = this.t('module.bulk-assignment.submit'); btn.disabled = this._selected.size === 0; }
+    const total = selectedItems.length;
+    const res = await this.call(() => submitBulkAssignment(mode, payload));
     if (!res.ok) { this._busy = false; this._renderStepper(); return; } // error toast already raised by this.call
 
-    // F3 result: data.{ selectedCount, tasksCreated, docsUpdated, notificationsSent, failed }
-    const d = res.data || {};
-    const failed = Array.isArray(d.failed) ? d.failed.length : (Number(d.failed) || 0);
-    const created = Number(d.tasksCreated ?? d.selectedCount ?? selected.length);
+    const data = res.data || {};
+    const failed = Array.isArray(data.failed) ? data.failed.length
+      : Array.isArray(data.results) ? data.results.filter((r) => r && r.success === false).length
+      : (Number(data.failed) || 0);
+    const created = Number(data.tasksCreated ?? data.selectedCount ?? (total - failed));
 
-    // Reflect into the shared fabric so every lens (response-tracking, ops-hub, stats…) updates.
+    // Reflect into the shared fabric so every lens (response-tracking, ops-hub, stats…) updates —
+    // the platform equivalent of the SPA's local AppState.docs mutation.
     const ts = new Date().toISOString();
-    items.forEach((it) => P.Entities.upsert('task', {
-      referenceId: it.referenceId, title: it.title, assignedTo: f.assignedTo,
-      priority: f.priority, status: 'Assigned', assignmentType: f.assignmentType, taskDue: f.taskDue, ackDue: f.ackDue, ts
+    selectedItems.forEach((it) => P.Entities.upsert('task', {
+      referenceId: it.RefIDD, title: it.Title, assignedTo: assignee,
+      priority, status: 'Assigned', assignmentType: 'bulkassignment', category, subCategory: subcategory, ts
     }));
 
-    this._renderResult({ created, failed, notified: Number(d.notificationsSent || 0), total: selected.length });
+    this._renderResult({ created, failed, notified: Number(data.notificationsSent || 0), total, mode });
     P.UI.actionCompleted('bulk.success', { n: created, module: 'response-tracking' });
     this._selected.clear(); this._renderPicker();
     this._busy = false; this._renderStepper();

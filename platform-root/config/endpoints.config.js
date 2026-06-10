@@ -92,10 +92,22 @@ export const Endpoints = {
     method: 'POST', headers: JSON_HEADERS, family: 'F1', envelope: 'v1', flowName: 'Fetch_All_Data_&_References-POST',
     defaults: { action: 'fetchAll', operation: 'read', mode: 'read', source: SOURCE }, expectedKeys: ['ok', 'data'], timeoutMs: 90000
   },
-  /** @see /docs/contracts/assignments.contract.md#BULK_ASSIGNMENT */
+  /** @see /docs/contracts/assignments.contract.md#BULK_ASSIGNMENT
+   *  OPTIMIZED bulk flow (SPA endpoint E07 'optimized bulk assign'). The bulk-assignment surface
+   *  offers a dual-mode submit faithful to the SPA: Direct (BULK_ASSIGNMENT_DIRECT) and
+   *  Optimized (this). Workflow id/sig are byte-for-byte the SPA's E07. */
   BULK_ASSIGNMENT: {
     url: PATH('1154b50e1d17420dadb3b012e7e2a02c', 'Swbi7nJCn3-VSSz4KN1YxHfxFPfO-EUWsF-czBS3zs4'),
     method: 'POST', headers: JSON_HEADERS, family: 'F3', envelope: 'v1', flowName: 'Docoument_Bulk_Task_Assignment_Create',
+    defaults: { action: 'bulkassignment', operation: 'create', mode: 'bulk', source: SOURCE }, expectedKeys: ['ok', 'data'], timeoutMs: 90000
+  },
+  /** @see /docs/contracts/assignments.contract.md#BULK_ASSIGNMENT
+   *  DIRECT bulk flow (SPA endpoint E06 'bulk Assign direct'). Workflow id/sig are byte-for-byte
+   *  the SPA's E06, supplied in the operator's source HTML. Same payload contract as the optimized
+   *  flow; the two differ only in the server-side batching strategy. */
+  BULK_ASSIGNMENT_DIRECT: {
+    url: PATH('7e71fffe770a45ccb93bf216bb53786e', 'RtvNxwUI6kgsyM0rTjfV6b60OsCvmmJCyFqhb4L96NE'),
+    method: 'POST', headers: JSON_HEADERS, family: 'F3', envelope: 'v1', flowName: 'Docoument_Bulk_Task_Assignment_Create_Direct',
     defaults: { action: 'bulkassignment', operation: 'create', mode: 'bulk', source: SOURCE }, expectedKeys: ['ok', 'data'], timeoutMs: 90000
   },
   /** @see /docs/contracts/assignments.contract.md#SINGLE_ASSIGNMENT */

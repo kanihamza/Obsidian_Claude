@@ -403,37 +403,96 @@ class SingleItemOpsModule extends BaseModule {
     });
     if (!ok) { this._busy = false; return; }
 
-    // ──────── Canonical SPA payload (matches buildHybridAssignPayload / SPA submitAssignment) ────────
+    // ──────── SPA payload — byte-for-byte the SPA submitAssignment shape (authorized 2026-06-10) ────────
+    // Field set, key spellings (incl. the SPA's duplicate/misspelled `AcknolwedgementDueBy`), and the
+    // nested payload.{task,selection,assignment} block all mirror the source. The SPA hard-codes every
+    // due date to `tomorrow`; here the platform's own Ack/Task-Due pickers win when set, falling back to
+    // `tomorrow` to stay faithful when they are blank.
     const today = new Date().toISOString().split('T')[0];
+    const tDate = new Date(); tDate.setDate(tDate.getDate() + 1);
+    const tomorrow = tDate.toISOString().split('T')[0];
+    const ackDue = d.ackDue || tomorrow;
+    const taskDue = d.taskDue || tomorrow;
     const userEmail = (P.Persona?.email && P.Persona.email()) || `${(P.Persona?.current && P.Persona.current()) || 'web-ops'}@nitda.gov.ng`;
+    const nav = globalThis.navigator || {};
     const doc = d.sourceDoc || {};
+    const docId = doc.__id || d.ref;
+    const docTitle = doc.title || doc.Title || d.title || d.activityTask || d.ref;
+    const docDesc = doc.description || doc.Description || '';
+    const docAttach = doc.attachmentLink || doc.AttachmentLink || '';
+    // SPA refId pattern: YYYYMMDD-<docId>-<catCode>-<subCatCode>-  (server appends the new task id).
+    const refId = `${today.replace(/-/g, '')}-${docId}-${d.categoryCode}-${d.subCategoryCode}-`;
+    const copyTo = d.copyTo.join(';');
+    const timeline = 'N/A';
     const payload = {
-      action: 'singleassignment', operation: 'create', mode: 'single',
-      source: 'OBSIDIAN_v4', userEmail, method: 'POST',
-      device: { id: 'obsidian-platform' },
+      action: 'singleassignment',
+      operation: 'create',
+      mode: 'single',
+      source: 'DGO_FAST_Track_WEB_OPS',
+      userEmail,
+      method: 'POST',
+      device: { id: 'standalone-html', platform: nav.platform || '', ua: nav.userAgent || '' },
       AssignmentType: d.assignmentType,
       NewActivityTask: {
         StartDate: today,
-        ActivityID: doc.__id || d.ref,
-        Title: doc.title || d.title || d.activityTask || d.ref,
+        ActivityID: docId,
+        Title: docTitle,
+        Description: docDesc,
         Status: 'New',
-        Category: d.category, CategoryCode: d.categoryCode,
-        SubCategory: d.subCategory, SubCategoryCode: d.subCategoryCode,
+        Category: d.category,
+        CategoryCode: d.categoryCode,
+        SubCategory: d.subCategory,
+        SubCategoryCode: d.subCategoryCode,
         PrimaryDSU: d.primaryDSU,
-        AssignedTo: d.assignedTo, AssignedToTitle: d.assignedToTitle, AssignedDSU: d.primaryDSU,
-        supportingAssignedTo: d.supportAssignedTo, SupportAssignedTo: d.supportAssignedTo, SupportDSU: d.supportDSU,
+        AssignedTo: d.assignedTo,
+        AssignedToTitle: d.assignedToTitle,
+        AssignedDSU: d.primaryDSU,
+        supportingAssignedTo: d.supportAssignedTo,
+        SupportAssignedTo: d.supportAssignedTo,
+        SupportAssignedToTitle: d.supportAssignedToTitle,
+        SupportDSU: d.supportDSU,
+        SupportDSUKey: d.supportDSU,
+        AckDue: ackDue,
+        AcknowledgementDueBy: ackDue,
+        AcknolwedgementDueBy: ackDue,
+        TaskDue: taskDue,
+        TaskDueDate: taskDue,
+        Timeline: timeline,
+        CopyTo: copyTo,
         Priority: d.priority,
-        PreReferenceID: d.ref,
+        PreReferenceID: refId,
+        Categorization: d.category + '-' + d.subCategory,
+        AttachmentLink: docAttach,
         Comments: d.comments,
-        ActionRequired: d.actionRequired,
-        CreatedBy: userEmail,
-        Categorization: d.category + (d.subCategory ? '-' + d.subCategory : ''),
-        TaskDue: d.taskDue, AckDue: d.ackDue, CopyTo: d.copyTo.join(';')
+        ActionRequired: d.actionRequired || '',
+        CreatedBy: userEmail
       },
-      Selected: { ID: doc.__id || d.ref, RefIDD: String(doc.__id || d.ref), Title: doc.title || d.title || '' },
+      Selected: { ID: docId, RefIDD: String(docId), Title: docTitle },
       payload: {
-        task: { StartDate: today, ActivityID: doc.__id || d.ref, Title: doc.title || d.title, Category: d.category, AssignedTo: d.assignedTo },
-        selection: { single: { ID: doc.__id || d.ref, RefIDD: String(doc.__id || d.ref), Title: doc.title || d.title }, items: [] },
+        task: {
+          StartDate: today,
+          ActivityID: docId,
+          Title: docTitle,
+          Category: d.category,
+          CategoryCode: d.categoryCode,
+          SubCategory: d.subCategory,
+          SubCategoryCode: d.subCategoryCode,
+          AssignedTo: d.assignedTo,
+          AssignedToTitle: d.assignedToTitle,
+          AssignedDSU: d.primaryDSU,
+          PrimaryDSU: d.primaryDSU,
+          supportingAssignedTo: d.supportAssignedTo,
+          SupportDSU: d.supportDSU,
+          Priority: d.priority,
+          AcknowledgementDueBy: ackDue,
+          TaskDueDate: taskDue,
+          CopyTo: copyTo,
+          PreReferenceID: refId,
+          Comments: d.comments,
+          ActionRequired: d.actionRequired || '',
+          CreatedBy: userEmail
+        },
+        selection: { single: { ID: docId, RefIDD: String(docId), Title: docTitle }, items: [] },
         assignment: { type: d.assignmentType }
       }
     };
