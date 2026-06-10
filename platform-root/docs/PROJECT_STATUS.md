@@ -1173,3 +1173,37 @@ Layers 0–3 need no credentials (validate on seed); Layer 4 needs the §0 live 
 2. Read `docs/PROJECT_STATUS.md` (this file) + `INTEGRATION.md` + `DECOMPOSITION.md`.
 3. Take the top open item in §6; port per the lens contract reusing shared resources (`Lookups`,
    `Entities`, lens utils); verify (imports, hex, console, banned-scan, i18n); re-zip checkpoint.
+
+---
+
+## 9. 2026-06-10 — SPA-exact assignment forms (in-session authorization)
+
+User-authorized in-session (supersedes the B-1 OTP mandate for bulk only). Two changes:
+
+**Bulk assignment — exact SPA port.** `modules/bulk-assignment/index.js` rewritten to mirror the
+NITDA Ops Hub SPA: Category/Sub-Category `<select>`s with cascade (auto-select single sub-category,
+fill assignee from primary-DSU head, auto-priority from category while still on the P3 default), a
+single **Assign-To email typeahead** (min 2 chars, top 8), Priority `<select>`, Comments, and a
+**dual-mode submit** — Direct (E06 / `BULK_ASSIGNMENT_DIRECT`) and Optimized (E07 /
+`BULK_ASSIGNMENT`) — gated by a confirm step. Removed: OTP gate (SPA has none), co-assignee, CC,
+assignment-type/action chips, date pickers. `_execute` payload is byte-for-byte the SPA
+`executeBulkAssign` shape (`AssignmentType:'bulkassignment'`, `NewActivityTask`, `SelectedItems`,
+nested `payload.{task,selection,assignment}`), including the SPA's duplicate/misspelled
+`AcknolwedgementDueBy`.
+
+**Endpoints.** Added `BULK_ASSIGNMENT_DIRECT` (SPA E06, operator-supplied URL) beside the existing
+optimized flow. `service.js` exports both and routes by mode.
+
+**Single assignment — full SPA payload.** `modules/single-item-ops/index.js` `_submit()` payload
+replaced with the SPA `submitAssignment` full shape (Description, Timeline, AttachmentLink, all three
+Ack/Task date spellings, SupportAssignedToTitle/SupportDSUKey, `YYYYMMDD-<docId>-<catCode>-<subCatCode>-`
+refId, complete nested `payload.task`). Form unchanged; the platform's Ack/Task-Due pickers win over
+the SPA `tomorrow` default when set.
+
+Gate: 12/12 PASS; boot-smoke 19 modules. Status: implemented per SPA; `[browser-unverified]`
+end-to-end (typeahead, cascade, Direct/Optimized round-trips, live PA acceptance).
+
+**Disclosed deviations:** (1) platform shell (item picker, stepper, result region) retained around the
+ported form — the SPA receives items pre-selected from its gallery whereas this is a standalone surface;
+(2) single due-dates honor the form pickers, falling back to the SPA `tomorrow` default. **Register
+note:** bulk no longer enforces OTP, contradicting defect B-1 — accepted under in-session authorization.
