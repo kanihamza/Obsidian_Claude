@@ -79,7 +79,7 @@ class CorrespondenceModule extends BaseModule {
       this.on(tr, 'click', () => { if (r.__ref) globalThis.Platform.Context.setActive(r.__ref, this.id); this.selectRef(r.__ref, r); });
       return tr;
     }));
-    this._tableEl.append(el('table', { class: 'pf-table' }, [head, body]));
+    this._tableEl.append(el('table', { class: 'pf-table pf-table--selectable' }, [head, body]));  // U3: clickable-row affordance (cursor + hover + selected highlight)
     this.markSelected();
   }
   markSelected() {

@@ -21,6 +21,15 @@
 User direction after the first browser walkthrough: **fix what makes every screen feel broken before
 building more phase surfaces.** This reorders the CLAUDE.md §10 wave plan (in-session authorization).
 
+### U3 — Row-selection affordance — 2026-06-10
+
+The correspondence list was built as a plain `.pf-table`; the shared CSS gives `cursor:pointer`, the
+hover transition, and the strong selected-row highlight only to `.pf-table--selectable`. So rows were
+clickable but gave no visual affordance — the "row selection doesn't behave properly" complaint. Added
+the `--selectable` modifier (matching `fasttrack` and the `lens.js` linked-table path). Audit of all
+`pf-table` builders confirmed the only other plain tables are a loading skeleton and a non-clickable
+report — no further change needed. Static gate 12/12. **Browser-unverified.**
+
 ### U2 — Nav coherence: 6-phase groups (J-1) — 2026-06-10
 
 Replaced the pre-rebrief nav groups (Operations / Governance / Intelligence / Assignments / System)
