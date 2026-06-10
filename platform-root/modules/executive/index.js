@@ -9,7 +9,7 @@ import { Charts } from '../../core/charts.js';
 
 class ExecutiveModule extends BaseModule {
   static id = 'executive'; static label = 'module.executive.title'; static icon = 'briefcase';
-  static nav = { group: 'Intelligence', order: 1 }; static audience = 'executive'; static status = 'active';
+  static nav = { group: 'REVIEW', order: 2 }; static audience = 'executive'; static status = 'active';
   static base = new URL('.', import.meta.url);
 
   async onVisible(root) {

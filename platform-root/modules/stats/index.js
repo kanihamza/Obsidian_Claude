@@ -9,7 +9,7 @@ import { el, clear } from '../../shared/utils/dom.js';
 
 class StatsModule extends BaseModule {
   static id = 'stats'; static label = 'module.stats.title'; static icon = 'trending-up';
-  static nav = { group: 'Intelligence', order: 2 }; static audience = 'executive'; static status = 'active';
+  static nav = { group: 'CrossPhase', order: 2 }; static audience = 'executive'; static status = 'active';
   static base = new URL('.', import.meta.url);
 
   async onVisible(root) {

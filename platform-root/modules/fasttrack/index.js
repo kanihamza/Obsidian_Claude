@@ -19,7 +19,7 @@ class FastTrackModule extends BaseModule {
   static id = 'fasttrack';
   static label = 'module.fasttrack.title';
   static icon = 'activity';
-  static nav = { group: 'Operations', order: 4 };
+  static nav = { group: 'ROUTING', order: 4 };
   static audience = 'general';
   static status = 'active';
   static base = new URL('.', import.meta.url);

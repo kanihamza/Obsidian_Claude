@@ -8,7 +8,7 @@ import { AI } from '../../shared/utils/ai.js';
 
 class AssistantModule extends BaseModule {
   static id = 'assistant'; static label = 'module.assistant.title'; static icon = 'message-circle';
-  static nav = { group: 'Operations', order: 6 }; static audience = 'all'; static status = 'active';
+  static nav = { group: 'CrossPhase', order: 4 }; static audience = 'all'; static status = 'active';
   static base = new URL('.', import.meta.url);
 
   async onVisible(root) {

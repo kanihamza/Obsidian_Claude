@@ -16,7 +16,7 @@ class CorrespondenceModule extends BaseModule {
   static id = 'correspondence';
   static label = 'module.correspondence.title';
   static icon = 'mail';
-  static nav = { group: 'Operations', order: 2 };
+  static nav = { group: 'INTAKE', order: 1 };
   static audience = 'general';
   static status = 'active';
   static base = new URL('.', import.meta.url);

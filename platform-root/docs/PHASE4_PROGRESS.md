@@ -21,6 +21,22 @@
 User direction after the first browser walkthrough: **fix what makes every screen feel broken before
 building more phase surfaces.** This reorders the CLAUDE.md §10 wave plan (in-session authorization).
 
+### U2 — Nav coherence: 6-phase groups (J-1) — 2026-06-10
+
+Replaced the pre-rebrief nav groups (Operations / Governance / Intelligence / Assignments / System)
+with the **6-Phase Unified Correspondence Lifecycle** model (CLAUDE.md §3.1): **INTAKE · ROUTING ·
+ACTION · REVIEW · DISPATCH · ARCHIVE · Cross-Phase · System**. Done at the nav layer only (no file
+moves): `NAV_GROUPS` reordered in `config/nav.config.js`, each module's `static nav.group` remapped,
+new `nav.group.*` i18n labels, and `tools/boot-smoke.mjs`'s hardcoded group list updated (J-6, partial).
+
+Group assignment: INTAKE=correspondence,registry · ROUTING=ops-hub,single-item-ops,bulk-assignment,
+fasttrack · ACTION=orchestrator,response-tracking · REVIEW=approvals,executive · Cross-Phase=home,
+lookup,stats,reports,assistant · System=diagnostics,settings. `comments` stays hidden (contextual);
+`assignment` (slated for deletion, D-5) is now hidden from nav but remains route-reachable. DISPATCH
+and ARCHIVE are empty until their modules ship — `nav-controller` filters empty groups, so they
+appear automatically then. Static gate 12/12; boot-smoke 19 modules. **Browser-unverified** (confirm
+the nav renders the phase groups in order).
+
 ### U1 — Lookups resilience (empty dropdowns everywhere) — 2026-06-10
 
 The `inspect-lookups.mjs` probe against the live `REFERENCE_DATA` flow revealed **two** root causes for

@@ -8,7 +8,7 @@ import { mountListLens } from '../../shared/utils/lens.js';
 
 class OrchestratorModule extends BaseModule {
   static id = 'orchestrator'; static label = 'module.orchestrator.title'; static icon = 'workflow';
-  static nav = { group: 'Operations', order: 3 }; static audience = 'general'; static status = 'active';
+  static nav = { group: 'ACTION', order: 1 }; static audience = 'general'; static status = 'active';
   static base = new URL('.', import.meta.url);
 
   async onVisible(root, params) {

@@ -9,7 +9,7 @@ class RegistryModule extends BaseModule {
   static id = 'registry';
   static label = 'module.registry.title';
   static icon = 'git-branch';
-  static nav = { group: 'Operations', order: 5 };
+  static nav = { group: 'INTAKE', order: 2 };
   static audience = 'general';
   static status = 'active';
   static base = new URL('.', import.meta.url);

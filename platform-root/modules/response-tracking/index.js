@@ -32,7 +32,7 @@ class ResponseTrackingModule extends BaseModule {
   static id = 'response-tracking';
   static label = 'module.response-tracking.title';
   static icon = 'table';
-  static nav = { group: 'Governance', order: 1 };
+  static nav = { group: 'ACTION', order: 2 };
   static audience = 'general';
   static status = 'active';
   static base = new URL('.', import.meta.url);

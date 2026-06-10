@@ -32,7 +32,7 @@ class SingleItemOpsModule extends BaseModule {
   static id = 'single-item-ops';
   static label = 'module.single-item-ops.title';
   static icon = 'file-plus';
-  static nav = { group: 'Assignments', order: 1 };
+  static nav = { group: 'ROUTING', order: 2 };
   static audience = 'admin';
   static status = 'active';
   static base = new URL('.', import.meta.url);

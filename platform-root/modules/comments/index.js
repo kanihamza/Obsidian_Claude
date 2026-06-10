@@ -10,7 +10,7 @@ class CommentsModule extends BaseModule {
   static id = 'comments';
   static label = 'module.comments.title';
   static icon = 'message-square';
-  static nav = { group: 'Governance', order: 3, hidden: true };
+  static nav = { group: 'ACTION', order: 3, hidden: true };
   static audience = 'general';
   static status = 'active';
   static base = new URL('.', import.meta.url);

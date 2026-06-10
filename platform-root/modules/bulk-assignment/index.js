@@ -34,7 +34,7 @@ class BulkAssignmentModule extends BaseModule {
   static id = 'bulk-assignment';
   static label = 'module.bulk-assignment.title';
   static icon = 'layers';
-  static nav = { group: 'Assignments', order: 2 };
+  static nav = { group: 'ROUTING', order: 3 };
   static audience = 'admin';
   static status = 'active';
   static base = new URL('.', import.meta.url);

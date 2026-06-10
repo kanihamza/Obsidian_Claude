@@ -205,7 +205,14 @@
       "administration": "Administration",
       "system": "System",
       "intelligence": "Intelligence",
-      "assignments": "Assignments"
+      "assignments": "Assignments",
+      "intake": "Intake",
+      "routing": "Routing",
+      "action": "Action",
+      "review": "Review",
+      "dispatch": "Dispatch",
+      "archive": "Archive",
+      "crossPhase": "Cross-Phase"
     },
     "util": {
       "palette": "Command palette",

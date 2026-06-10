@@ -24,7 +24,7 @@ class LookupModule extends BaseModule {
   static id = 'lookup';
   static label = 'module.lookup.title';
   static icon = 'search';
-  static nav = { group: 'Operations', order: 6 };
+  static nav = { group: 'CrossPhase', order: 1 };
   static audience = 'general';
   static status = 'active';
   static base = new URL('.', import.meta.url);

@@ -13,7 +13,7 @@ class ApprovalsModule extends BaseModule {
   static id = 'approvals';
   static label = 'module.approvals.title';
   static icon = 'check-circle';
-  static nav = { group: 'Governance', order: 2 };
+  static nav = { group: 'REVIEW', order: 1 };
   static audience = 'general';
   static status = 'active';
   static base = new URL('.', import.meta.url);

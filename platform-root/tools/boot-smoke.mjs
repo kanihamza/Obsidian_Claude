@@ -91,7 +91,9 @@ let fails = 0;
 if (errs.length) { console.error('IMPORT ERRORS:'); errs.forEach(e => console.error(e)); fails += errs.length; }
 if (all.length !== expected) { console.error(`module count FAIL: expected ${expected}, got ${all.length}`); fails++; }
 const adminGroups = Modules.navGroups('admin');
-const navGroups = ['Operations','Governance','Intelligence','Assignments','System'];
+// J-1/U2 — 6-phase nav groups. DISPATCH and ARCHIVE are legitimately empty until their modules ship
+// (nav-controller filters empty groups), so they are NOT asserted here.
+const navGroups = ['INTAKE','ROUTING','ACTION','REVIEW','CrossPhase','System'];
 for (const g of navGroups) {
   if (!adminGroups[g] || !adminGroups[g].length) { console.error(`nav group "${g}" is empty`); fails++; }
 }

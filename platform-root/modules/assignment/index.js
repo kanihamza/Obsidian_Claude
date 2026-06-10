@@ -8,7 +8,7 @@ import { breakdownBars, attentionList } from '../../shared/utils/lens.js';
 
 class AssignmentModule extends BaseModule {
   static id = 'assignment'; static label = 'module.assignment.title'; static icon = 'users';
-  static nav = { group: 'Intelligence', order: 4 }; static audience = 'executive'; static status = 'active';
+  static nav = { group: 'ROUTING', order: 9, hidden: true }; static audience = 'executive'; static status = 'active';
   static base = new URL('.', import.meta.url);
 
   async onVisible(root) {

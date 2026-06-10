@@ -24,7 +24,7 @@ class HomeModule extends BaseModule {
   static id = 'home';
   static label = 'module.home.title';
   static icon = 'layout-dashboard';
-  static nav = { group: 'Operations', order: 0 };
+  static nav = { group: 'CrossPhase', order: 0 };
   static audience = 'all';
   static status = 'active';
   static base = new URL('.', import.meta.url);

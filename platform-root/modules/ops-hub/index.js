@@ -14,7 +14,7 @@ class OpsHubModule extends BaseModule {
   static id = 'ops-hub';
   static label = 'module.ops-hub.title';
   static icon = 'folder';
-  static nav = { group: 'Operations', order: 1 };
+  static nav = { group: 'ROUTING', order: 1 };
   static audience = 'general';
   static status = 'active';
   static base = new URL('.', import.meta.url);
