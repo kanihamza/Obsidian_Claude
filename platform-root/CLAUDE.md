@@ -673,6 +673,23 @@ The three Other items are:
 - H-11 (Cold-archive sweep — defer/build later)
 - A residual classification edge case to be resolved in the Phase 2 sub-turn (when the 9 pending-audit modules return their final dispositions).
 
+### Section K — Supplemental Register (reconciled 2026-06-10 from operator upload `complete_NITDA_Obsidian_Operations_Platform.md`)
+
+This addendum reconciles four items that appeared in an external roadmap upload but were not in the
+92-point register above. Each was verified against the real source (not copied from the upload) per
+Strict Output Rule 11.4. Status reflects that verification — two were genuine, two were not.
+
+| # | File / Subsystem | Defect (as uploaded) | Verification vs source | Severity | Status |
+|---|---|---|---|---|---|
+| **K-1** | `modules/fasttrack/index.js` | SLA computed in raw calendar days (`DAY = 86400000`), counting weekends/holidays — false breaches. | **CONFIRMED.** `sla(ts)` divides elapsed ms by `DAY`; no working-hours logic. | Must-Fix | **Open.** Blocked on Q-5 (working-hours definition). Reconcile-only; no fix applied. |
+| **K-2** | `modules/approvals/index.js` | `commit()` references `it.__ref` (out of scope) — `ReferenceError` on the approve/reject success path. | **CONFIRMED.** Local was `existing` (l.175); `it` undefined in `commit()`. | Must-Fix | **FIXED 2026-06-10** → `target: existing.__ref \|\| existing.referenceId \|\| ref`. |
+| **K-12** | `modules/assistant/index.js` | AI payload omits persona / directorate / userEmail — PA cannot enforce RBP scope. | **NOT REPRODUCED.** Assistant already stamps `directorate`, `persona`, `userEmail` on every AI payload (l.52–61, tagged "K-8b"). | — | **No action.** Appears already remediated; re-confirm during the I-6 assistant audit. |
+| **K-15** | `shared/components/pf-side-panel.js` | Global `keydown`/Escape listener bound at mount, never removed on disconnect — listener leak. | **FALSE POSITIVE.** Uses `this.on(document,'keydown',…)`; `PfBaseElement.on` pushes a `removeEventListener` disposer that `disconnectedCallback` runs. Cleaned up. | — | **No action.** Not a leak. |
+
+**Disposition conflict noted (not resolved):** the upload's **D-5** redirects `modules/assignment/` traffic to the **Executive dashboard** (its Wave 5); this register's **D-5 / J-4** redirect it to **single-item-ops / bulk-assignment**. CLAUDE.md remains authoritative pending an explicit user ruling.
+
+**B-1 / OTP reconciliation:** the upload's **B-1** and its Wave 2 reaffirm bulk OTP as a PA-handshake (*"route OTP code verification directly inside the BULK_ASSIGNMENT payload"*). This directly contradicts the in-session change of 2026-06-10, which **removed** OTP from bulk per an exact-SPA-port authorization (see `docs/PROJECT_STATUS.md` §9). On 2026-06-10 the user reaffirmed the removal (declined "re-add OTP to bulk"). **Current state: bulk has no OTP, under in-session authorization that supersedes B-1 for the bulk surface only.** The single-assignment and any future >5-item batch OTP mandate of B-1 is otherwise unchanged.
+
 ---
 
 ## 9. Modules Pending Deep Audit

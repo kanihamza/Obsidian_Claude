@@ -1207,3 +1207,28 @@ end-to-end (typeahead, cascade, Direct/Optimized round-trips, live PA acceptance
 ported form — the SPA receives items pre-selected from its gallery whereas this is a standalone surface;
 (2) single due-dates honor the form pickers, falling back to the SPA `tomorrow` default. **Register
 note:** bulk no longer enforces OTP, contradicting defect B-1 — accepted under in-session authorization.
+
+---
+
+## 10. 2026-06-10 — Section-K reconciliation + K-2 fix (from operator upload)
+
+Operator uploaded `complete_NITDA_Obsidian_Operations_Platform.md` (a React/Vite roadmap *viewer*),
+carrying a supplemental "Section K" not in the 92-point register. Each item was verified against the
+real source, not copied:
+
+- **K-2 (approvals `commit()` ReferenceError) — CONFIRMED → FIXED.** `modules/approvals/index.js`
+  l.177 read `it.__ref` (out of scope in `commit()`); now `existing.__ref || existing.referenceId
+  || ref`. Previously threw on the approve/reject success path, so `actionCompleted` never fired.
+- **K-1 (fasttrack SLA in calendar days) — CONFIRMED, OPEN.** Reconcile-only; fix blocked on the
+  Q-5 working-hours definition.
+- **K-12 (assistant payload missing scope) — NOT REPRODUCED.** Assistant already stamps
+  directorate/persona/userEmail (l.52–61, "K-8b").
+- **K-15 (pf-side-panel listener leak) — FALSE POSITIVE.** `this.on` registers a disposer that
+  `disconnectedCallback` runs; listener is cleaned up.
+
+Recorded in CLAUDE.md §8 → "Section K — Supplemental Register". Also logged: the D-5 redirect-target
+conflict (upload says Executive dashboard; register says single-item-ops/bulk-assignment — CLAUDE.md
+authoritative) and the B-1/OTP reconciliation (bulk OTP stays removed per in-session authorization).
+
+Gate: 12/12 PASS. K-2 fix is `[browser-unverified]` end-to-end (approve a real item to confirm the
+success toast/navigation now fires).

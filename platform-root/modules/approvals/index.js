@@ -174,7 +174,7 @@ class ApprovalsModule extends BaseModule {
       // Mutate the shared fabric so every dependent lens/aggregator reacts immediately.
       const existing = (this._items[this._sel] || {});
       globalThis.Platform.Entities.upsert('approval', { ...existing, referenceId: ref, status: decision });
-      globalThis.Platform.UI.actionCompleted(kind === 'approve' ? 'approvals.approved' : 'approvals.rejected', { module: 'approvals', target: it.__ref || it.referenceId });
+      globalThis.Platform.UI.actionCompleted(kind === 'approve' ? 'approvals.approved' : 'approvals.rejected', { module: 'approvals', target: existing.__ref || existing.referenceId || ref });
     }
   }
 
