@@ -59,7 +59,17 @@ const ENVELOPE_META = new Set(['ok', 'success', 'status', 'statusCode', 'message
 
 /** Pull the data object out of a body: nested `data` if present, else the flat top-level collections. */
 function deriveData(body) {
-  if (body && body.data !== undefined && body.data !== null) return body.data;
+  if (body && body.data !== undefined && body.data !== null) {
+    // Unwrap a double-stringified `data` field centrally (adopted from the legacy SPA's parseResponse):
+    // some PA flows return data as a JSON string. Parse it once here so every consumer gets the object
+    // instead of re-parsing per call. Non-JSON strings are returned unchanged.
+    let d = body.data;
+    if (typeof d === 'string') {
+      const t = d.trim();
+      if (t.startsWith('{') || t.startsWith('[')) { try { d = JSON.parse(t); } catch (_) { /* keep raw string */ } }
+    }
+    return d;
+  }
   if (body && typeof body === 'object') {
     const d = {};
     for (const [k, v] of Object.entries(body)) if (!ENVELOPE_META.has(k)) d[k] = v;

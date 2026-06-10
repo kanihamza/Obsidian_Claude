@@ -21,6 +21,25 @@
 User direction after the first browser walkthrough: **fix what makes every screen feel broken before
 building more phase surfaces.** This reorders the CLAUDE.md §10 wave plan (in-session authorization).
 
+### U5 — Data robustness + lookups signal (adopted from the legacy SPA) — 2026-06-10
+
+Two more adoptions from `b3631e61-app.js`:
+
+- **`core/api.js` `deriveData`** now centrally unwraps a **double-stringified `data` field** (PA flows
+  sometimes return `data` as a JSON string) — the legacy `parseResponse` insight, applied at the API
+  layer so every consumer gets the object instead of re-parsing per call. Non-JSON strings pass through
+  unchanged; the OTP modal's own `_parseData` already tolerates objects, so nothing breaks. (Note: the
+  no-`data`-field flat case was already flattened by `deriveData`'s non-meta-key collection, which is
+  why U1's decisive fix was wiring `Platform.Lookups`, not the shape.)
+- **Lookups failure signal:** `Lookups.load()` now emits a `data:lookups {ok,source,counts}` Bus event
+  and, when reference data could not be loaded at all, raises a user-visible warning toast
+  (`lookups.failed`) — the legacy SPA's "dropdowns may be empty" banner, adapted to the toast system.
+  `<pf-triage-bar>` subscribes to `data:lookups` and **refills its category dropdown** when the option-sets
+  arrive after mount — closing a boot race where the bar rendered before Lookups loaded. `_fillCategories`
+  made idempotent (clears prior options, preserves selection).
+
+Static gate 12/12; lookups/cascade/triage harnesses unaffected (10/10, 14/14, 13/13). **Browser-unverified.**
+
 ### U4 — Category cascade (adopted from the legacy NITDA SPA) — 2026-06-10
 
 Reviewed an original merged SPA (`b3631e61-app.js`, 3,833 lines) per user directive and adopted its

@@ -934,5 +934,8 @@
       "p4": "P4 · Deferred (72 WH)"
     },
     "cascadeApplied": "Applied category defaults — responsible: {dsu}."
+  },
+  "lookups": {
+    "failed": "Reference data failed to load — category and assignee dropdowns may be empty."
   }
 }

@@ -61,6 +61,11 @@ export const Lookups = {
     cache.departments = toOptions(data.departments, ['DSU_KEY', 'code', 'value', 'ID', 'id'], ['Title', 'name', 'label']);
     cache.loaded = true; cache.source = source;
     if (globalThis.Platform?.State) globalThis.Platform.State.set('shared.lookups.source', source);
+    // Signal completion so surfaces that mounted before the option-sets arrived can repopulate (closes
+    // the boot race), and surface a user-visible warning when reference data could not be loaded at all.
+    const counts = { users: cache.users.length, categories: cache.categories.length, departments: cache.departments.length };
+    globalThis.Platform?.Bus?.emit?.('data:lookups', { ok, source, counts });
+    if (!ok) globalThis.Platform?.UI?.toast?.({ messageKey: 'lookups.failed', variant: 'warning', timeout: 8000 });
     return cache;
   },
   users() { return cache.users; },

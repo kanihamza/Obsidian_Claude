@@ -105,6 +105,8 @@ class PfTriageBar extends PfBaseElement {
     this.on(this.$('#send'), 'click', () => this._sendToRouting());
     this.on(this.$('#cat-sel'), 'change', (e) => this._setCategory(e.target.value));
     this.on(this.$('#urg-sel'), 'change', (e) => this._setUrgency(e.target.value));
+    // If the bar mounted before the option-sets loaded (boot race), refill categories when they arrive.
+    this.bus('data:lookups', () => this._fillCategories());
     this._hydrate();
   }
 
@@ -117,12 +119,17 @@ class PfTriageBar extends PfBaseElement {
     const L = globalThis.Platform && globalThis.Platform.Lookups;
     const rows = (L && typeof L.categories === 'function') ? L.categories() : null;
     if (!Array.isArray(rows) || !rows.length) return;     // placeholder option stays; no fabrication
+    // Idempotent: drop any previously-added options (keep the placeholder) so a refill on data:lookups
+    // doesn't duplicate. Preserve the current selection if it still exists.
+    const keep = sel.value;
+    while (sel.options.length > 1) sel.remove(1);
     for (const o of rows) {
       if (!o || o.value == null || o.value === '') continue;
       const opt = document.createElement('option');
       opt.value = String(o.value); opt.textContent = String(o.label || o.value);
       sel.appendChild(opt);
     }
+    if (keep && [...sel.options].some((o) => o.value === keep)) sel.value = keep;
   }
   _fillUrgencies() {
     const sel = this.$('#urg-sel'); if (!sel) return;
