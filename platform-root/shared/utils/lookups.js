@@ -59,7 +59,10 @@ export const Lookups = {
     cache.users = toOptions(data.users, ['email', 'value', 'id', 'upn'], ['name', 'displayName', 'title', 'label']);
     cache.categories = toOptions(data.categories, ['Category Code', 'code', 'value', 'ID', 'id'], ['Category', 'Title', 'name', 'label']);
     cache.departments = toOptions(data.departments, ['DSU_KEY', 'code', 'value', 'ID', 'id'], ['Title', 'name', 'label']);
-    cache.loaded = true; cache.source = source;
+    // Only mark loaded when we actually got option-sets — otherwise an early empty load (e.g. boot-warm
+    // before FETCH_ALL hydrated, with REFERENCE_DATA unreachable) would poison the cache and leave every
+    // dropdown permanently empty. Leaving loaded=false lets the next caller (Lookups.isLoaded() guard) retry.
+    cache.loaded = ok; cache.source = source;
     if (globalThis.Platform?.State) globalThis.Platform.State.set('shared.lookups.source', source);
     // Signal completion so surfaces that mounted before the option-sets arrived can repopulate (closes
     // the boot race), and surface a user-visible warning when reference data could not be loaded at all.
