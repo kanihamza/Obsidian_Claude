@@ -19,6 +19,18 @@ const INTAKE_PATH = ['registered', 'triaged', 'triage_complete'];
 const URGENCIES = ['p1', 'p2', 'p3', 'p4'];
 
 class PfTriageBar extends PfBaseElement {
+  constructor() {
+    // State initialized here (runs at createElement) so property setters (item/reference) are safe to
+    // call BEFORE the element is connected — fixes "Cannot read properties of undefined (reading
+    // 'acknowledged')" when a host sets .item before appending the element.
+    super();
+    this._meta = { acknowledged: false, category: null, urgency: null, duplicate: false };
+    this._status = '';
+    this._panel = null;
+    this._ref = null;
+    this._rec = null;
+  }
+
   /** Primary binding: the selected record (carries __ref, status, __duplicateOf). */
   set item(rec) {
     this._rec = (rec && typeof rec === 'object') ? rec : null;

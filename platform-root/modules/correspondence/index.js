@@ -48,8 +48,11 @@ class CorrespondenceModule extends BaseModule {
   }
 
   source() {
+    // User correction (2026-06-10): Correspondence is the DOCUMENT correspondence register (letters /
+    // memos), not the email inbox — emails are a separate surface. Show documents; fall back to
+    // references only if the document set is empty.
     const E = globalThis.Platform.Entities;
-    const rows = E.all('email');
+    const rows = E.all('document');
     return rows.length ? rows : E.all('reference');
   }
   filtered() {
@@ -67,13 +70,17 @@ class CorrespondenceModule extends BaseModule {
     this._filter.count = this._rows.length;
     clear(this._tableEl);
     if (!this._rows.length) { emptyState(this._tableEl, 'common.state.empty'); return; }
-    const cols = ['referenceId', 'subject', 'sender', 'ts', 'priority', 'status'];
+    // Document-register columns (title / category / assignee / date / status) — matched to the live
+    // document shape so cells aren't blank.
+    const cols = ['referenceId', 'title', 'category', 'assignedTo', 'ts', 'status'];
     const head = el('thead', {}, [ el('tr', {}, cols.map((c) => el('th', { text: this.t('field.' + c + '.label') }))) ]);
     const body = el('tbody', {}, this._rows.map((r) => {
       const st = String(r.status || r.Status || '');
       const tr = el('tr', { 'data-ref': r.__ref || '' }, cols.map((c) => {
-        if (c === 'status') return el('td', {}, [ el('span', { class: 'pf-badge pf-badge--' + (STATUS_CLASS[st.toLowerCase()] || 'archived'), text: st }) ]);
-        const v = c === 'referenceId' ? (r.__ref || '') : c === 'sender' ? (r.sender || r.from || '') : c === 'ts' ? (r.ts ? this.fmt(r.ts) : '') : (r[c] || '');
+        if (c === 'status') return el('td', {}, [ el('span', { class: 'pf-badge pf-badge--' + (STATUS_CLASS[st.toLowerCase()] || 'archived'), text: st || '—' }) ]);
+        const v = c === 'referenceId' ? (r.__ref || '')
+          : c === 'ts' ? ((r.ts || r.createdAt || r.created || r.Created) ? this.fmt(r.ts || r.createdAt || r.created || r.Created) : '')
+          : (r[c] || r[c.charAt(0).toUpperCase() + c.slice(1)] || '');
         return el('td', { text: String(v) });
       }));
       this.on(tr, 'click', () => { if (r.__ref) globalThis.Platform.Context.setActive(r.__ref, this.id); this.selectRef(r.__ref, r); });
@@ -103,10 +110,10 @@ class CorrespondenceModule extends BaseModule {
     // Phase-1→2 handoff. Refresh the lens when the item is routed out of INTAKE.
     if (ref) {
       const triage = document.createElement('pf-triage-bar');
-      triage.item = it;
       this.on(triage, 'pf-triage:routed', () => this.refresh());
       this.on(triage, 'pf-triage:acknowledged', () => this.refresh());
-      this._detailEl.append(triage);
+      this._detailEl.append(triage);   // append BEFORE setting .item so the element is connected (onConnect run) first
+      triage.item = it;
     }
     this._detailEl.append(
       el('h2', { text: it.subject || it.title || ref }),
