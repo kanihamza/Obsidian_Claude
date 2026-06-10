@@ -41,6 +41,25 @@ export const Lookups = {
       return null;
     };
     let users = pick('users'), categories = pick('categories'), departments = pick('departments');
+    // Change-plan directive (Lookups.wire): additively tolerate a FLAT typed array shape
+    // [{ Type, Code, Value }] by partitioning on Type. The verified live flow returns the structured
+    // { users, categories, departments } object (handled above) — this branch only fires when that
+    // structured shape is absent AND a flat typed array is present, so it never regresses the real path.
+    if (!users && !categories && !departments) {
+      const flat = [res && res.body, res && res.data, res].find((s) =>
+        Array.isArray(s) && s.some((x) => x && typeof x === 'object' && (x.Type != null || x.type != null)));
+      if (flat) {
+        const w = this.wire(flat);
+        if (w.users.length || w.categories.length || w.departments.length) {
+          cache.users = w.users; cache.categories = w.categories; cache.departments = w.departments;
+          cache.loaded = true; cache.source = 'live-flat';
+          if (globalThis.Platform?.State) globalThis.Platform.State.set('shared.lookups.source', cache.source);
+          const c = { users: cache.users.length, categories: cache.categories.length, departments: cache.departments.length };
+          globalThis.Platform?.Bus?.emit?.('data:lookups', { ok: true, source: 'live-flat', counts: c });
+          return cache;
+        }
+      }
+    }
     let ok = !!(res && res.ok && (users || categories || departments));
     let source = ok ? 'live' : null;
     if (!ok) {
@@ -76,6 +95,31 @@ export const Lookups = {
   departments() { return cache.departments; },
   isLoaded() { return cache.loaded; },
   source() { return cache.source; },
+
+  /** Change-plan directive: partition a FLAT typed-array lookup payload [{Type,Code,Value}] into the
+   *  { users, categories, departments } option-sets (each [{value,label,raw}]). Tolerant of casing and
+   *  field aliases (Type/type, Code/code/value, Value/value/label). Used by load() only when the live
+   *  flow returns the flat shape instead of the structured object. */
+  wire(rows) {
+    const out = { users: [], categories: [], departments: [] };
+    if (!Array.isArray(rows)) return out;
+    const bucket = (t) => {
+      const s = String(t == null ? '' : t).toLowerCase();
+      if (s.indexOf('assign') !== -1 || s.indexOf('user') !== -1 || s.indexOf('staff') !== -1) return 'users';
+      if (s.indexOf('categ') !== -1) return 'categories';
+      if (s.indexOf('dep') !== -1 || s.indexOf('dsu') !== -1 || s.indexOf('unit') !== -1 || s.indexOf('directorate') !== -1) return 'departments';
+      return null;
+    };
+    for (const r of rows) {
+      if (!r || typeof r !== 'object') continue;
+      const b = bucket(r.Type ?? r.type); if (!b) continue;
+      const value = r.Code ?? r.code ?? r.value ?? r.Value ?? r.id ?? r.ID;
+      const label = r.Value ?? r.value ?? r.label ?? r.Label ?? r.name ?? value;
+      if (value == null || String(value) === '') continue;
+      out[b].push({ value: String(value), label: String(label), raw: r });
+    }
+    return out;
+  },
 
   /** Map a category's free-text Priority to the canonical urgency token (U4, adopted from the legacy
    *  NITDA SPA's cascade): High→p1, Medium→p2, Normal→p3, Low→p4; also accepts "P1 (High)" style. */
