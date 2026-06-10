@@ -53,12 +53,13 @@ export const Endpoints = {
     defaults: { action: 'fetchEmailAttachments', operation: 'read', mode: 'read', source: SOURCE }, expectedKeys: ['ok', 'data']
   },
   /** @see /docs/contracts/collection-fetch.contract.md#REFERENCE_DATA
-   *  Shares one physical workflow (20e3b003…) with AI_DOC_ANALYSIS; disambiguated by action. */
+   *  Dedicated Get_All_Reference_Data flow (returns flat { users, categories, departments, ok }).
+   *  Re-pointed 2026-06-10 from the shared AI_DOC_ANALYSIS workflow (which returned a non-v1/v4
+   *  envelope for action:lookups → empty dropdowns) to its own workflow per operator-provided URL. */
   REFERENCE_DATA: {
-    url: PATH('20e3b003a57f47febae8a24ad5b9acd4', 'TVPVBWHGec5Yt7oY_jtUyIIF4yQdkZgFrxy3oCNG0pk'),
-    method: 'POST', headers: JSON_HEADERS, family: 'F1', envelope: 'v1', flowName: 'Fetch_References_and_Lookups_Data_v2_POST',
-    sharesWorkflowWith: 'AI_DOC_ANALYSIS',
-    defaults: { action: 'lookups', operation: 'read', mode: 'read', source: SOURCE }, expectedKeys: ['ok', 'data']
+    url: PATH('ff455c68e9ac493e858fb984bcfd01fb', 'jajFVxbv67HbcKqvV8h6JBPm9TPG60yDnhRjy9WmpPU'),
+    method: 'POST', headers: JSON_HEADERS, family: 'F1', envelope: 'v1', flowName: 'Get_All_Reference_Data_POST',
+    defaults: { action: 'lookups', operation: 'read', mode: 'read', source: SOURCE }, expectedKeys: ['ok']
   },
   /** @see /docs/contracts/ai.contract.md#AI_DOC_ANALYSIS (shares workflow with REFERENCE_DATA) */
   AI_DOC_ANALYSIS: {
