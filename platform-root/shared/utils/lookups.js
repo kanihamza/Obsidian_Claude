@@ -67,7 +67,65 @@ export const Lookups = {
   categories() { return cache.categories; },
   departments() { return cache.departments; },
   isLoaded() { return cache.loaded; },
-  source() { return cache.source; }
+  source() { return cache.source; },
+
+  /** Map a category's free-text Priority to the canonical urgency token (U4, adopted from the legacy
+   *  NITDA SPA's cascade): High→p1, Medium→p2, Normal→p3, Low→p4; also accepts "P1 (High)" style. */
+  priorityToToken(p) {
+    if (p == null) return null;
+    const s = String(p).trim().toLowerCase();
+    const m = s.match(/p\s*([1-4])/); if (m) return 'p' + m[1];
+    if (s.indexOf('high') !== -1 || s.indexOf('urgent') !== -1) return 'p1';
+    if (s.indexOf('medium') !== -1) return 'p2';
+    if (s.indexOf('normal') !== -1 || s.indexOf('routine') !== -1) return 'p3';
+    if (s.indexOf('low') !== -1 || s.indexOf('defer') !== -1) return 'p4';
+    return null;
+  },
+
+  /** Resolve a category (by Category name, Category Code, or option value) to its routing defaults —
+   *  the NITDA category→responsibility cascade (U4, adopted from the legacy SPA, faithful to its field
+   *  mapping). Returns null when the category isn't found. Pure read over the cached option-sets:
+   *    primaryDSU  = category 'Default Primary Responsible'   (this is also the record's directorate)
+   *    assignee    = that DSU's department head email
+   *    coAssignee  = 'Default Supporting Department/Unit' head email
+   *    cc[]        = INFORMDSU1/2/3 department head emails
+   *    priorityToken = canonical urgency token from the category Priority */
+  resolveCategory(category, subcategory) {
+    if (category == null || String(category).trim() === '') return null;
+    const key = String(category);
+    const opt = cache.categories.find((o) => o && (
+      String(o.value) === key || String(o.label) === key ||
+      (o.raw && (String(o.raw.Category) === key || String(o.raw['Category Code'] || '') === key))));
+    let rec = opt && opt.raw;
+    // Refine to the Category+Subcategory record when a subcategory is supplied and the option-set has raws.
+    if (rec && subcategory) {
+      const sub = String(subcategory);
+      const better = cache.categories.find((o) => o && o.raw &&
+        String(o.raw.Category) === String(rec.Category) && String(o.raw.Subcategory || '') === sub);
+      if (better) rec = better.raw;
+    }
+    if (!rec) return null;
+    const deptByKey = (k) => {
+      if (k == null || String(k).trim() === '') return null;
+      const hit = cache.departments.find((o) => o && o.raw && String(o.raw.DSU_KEY) === String(k));
+      return hit ? hit.raw : null;
+    };
+    const headEmail = (d) => d ? (d.DSU_HeadEmail || d.DSU_HeadPersonalEmail || '') : '';
+    const primaryDSU = rec['Default Primary Responsible'] || '';
+    const supportDSU = rec['Default Supporting Department/Unit'] || '';
+    const primDept = deptByKey(primaryDSU);
+    const suppDept = deptByKey(supportDSU);
+    const cc = [rec.INFORMDSU1, rec.INFORMDSU2, rec.INFORMDSU3]
+      .filter((k) => k && String(k).trim() !== '')
+      .map((k) => headEmail(deptByKey(k))).filter(Boolean);
+    return {
+      category: rec.Category || key, subcategory: subcategory || rec.Subcategory || '',
+      primaryDSU, assignee: headEmail(primDept), assigneeName: primDept ? (primDept.DSU_HeadTitle || '') : '', assigneeDSU: primaryDSU,
+      supportDSU, coAssignee: suppDept ? (suppDept.DSU_HeadPersonalEmail || suppDept.DSU_HeadEmail || '') : '',
+      cc, priority: rec.Priority || '', priorityToken: this.priorityToToken(rec.Priority),
+      raw: rec
+    };
+  }
 };
 
 export default Lookups;

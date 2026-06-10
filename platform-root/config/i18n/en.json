@@ -932,6 +932,7 @@
       "p2": "P2 · High (6 WH)",
       "p3": "P3 · Routine (24 WH)",
       "p4": "P4 · Deferred (72 WH)"
-    }
+    },
+    "cascadeApplied": "Applied category defaults — responsible: {dsu}."
   }
 }

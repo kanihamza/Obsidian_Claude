@@ -21,6 +21,31 @@
 User direction after the first browser walkthrough: **fix what makes every screen feel broken before
 building more phase surfaces.** This reorders the CLAUDE.md §10 wave plan (in-session authorization).
 
+### U4 — Category cascade (adopted from the legacy NITDA SPA) — 2026-06-10
+
+Reviewed an original merged SPA (`b3631e61-app.js`, 3,833 lines) per user directive and adopted its
+**category→responsibility cascade** — the authoritative NITDA intake logic. New `Lookups.resolveCategory
+(category, subcategory)` + `Lookups.priorityToToken(p)` reproduce it faithfully:
+
+- `Default Primary Responsible` → the directorate (confirms the fabric's Q-6 `categoryDsu` derivation)
+  and the **assignee** (that DSU's department-head email).
+- `Default Supporting Department/Unit` → **co-assignee** (support DSU head).
+- `INFORMDSU1/2/3` → **CC** list (inform DSU heads; blanks dropped).
+- category `Priority` → canonical urgency token (High→p1, Medium→p2, Normal/Routine→p3, Low→p4; also
+  parses "P1 (High)" style).
+
+Wired into `<pf-triage-bar>`: selecting **Tag Category** now auto-fills urgency (when unset) and carries
+the resolved responsible DSU + suggested assignee/co-assignee/CC into the `triageMeta` handoff, so the
+ROUTING surface can pre-fill them. Reusable platform-wide for the assignment surfaces (Wave 5).
+
+Other insights logged (not yet implemented): the source's `parseResponse` **double-stringified-JSON
+guard** (PA sometimes double-serializes — candidate hardening for `core/api.js`), and `buildDocEmailPairs`
+**heuristic doc↔email linking** (numeric-ID-in-title → Reference_ID → keyword scan; useful as a future
+opt-in "related items" view, but too fuzzy to make canonical references in the sealed fabric).
+
+Guard: `tools/category-cascade-test.mjs` (14/14) against the real category/department field shape.
+Static gate 12/12; lookups + triage harnesses unaffected (10/10, 13/13). **Browser-unverified.**
+
 ### U3 — Row-selection affordance — 2026-06-10
 
 The correspondence list was built as a plain `.pf-table`; the shared CSS gives `cursor:pointer`, the

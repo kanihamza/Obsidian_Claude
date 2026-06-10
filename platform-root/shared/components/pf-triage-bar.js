@@ -194,6 +194,30 @@ class PfTriageBar extends PfBaseElement {
 
   _setCategory(v) {
     this._meta.category = (v === '' ? null : v);
+    // U4 — category cascade (adopted from the legacy NITDA SPA): selecting a category resolves its
+    // routing defaults so triage carries the suggested responsible DSU + assignee + urgency forward.
+    if (this._meta.category) {
+      const L = globalThis.Platform && globalThis.Platform.Lookups;
+      const c = (L && typeof L.resolveCategory === 'function') ? L.resolveCategory(this._meta.category) : null;
+      if (c) {
+        this._meta.categoryName = c.category || this._meta.category;
+        this._meta.responsibleDSU = c.primaryDSU || null;
+        this._meta.suggestedAssignee = c.assignee || null;
+        this._meta.suggestedCoAssignee = c.coAssignee || null;
+        this._meta.suggestedCc = (c.cc && c.cc.length) ? c.cc.slice() : [];
+        let applied = false;
+        // Auto-fill urgency from the category's default priority — only if the user hasn't set one.
+        if (!this._meta.urgency && c.priorityToken) {
+          this._meta.urgency = c.priorityToken;
+          const sel = this.$('#urg-sel'); if (sel) sel.value = c.priorityToken;
+          applied = true;
+        }
+        if (applied || c.primaryDSU) this._toast('triage.cascadeApplied', 'info', { dsu: c.primaryDSU || '—' });
+      }
+    } else {
+      this._meta.categoryName = null; this._meta.responsibleDSU = null;
+      this._meta.suggestedAssignee = null; this._meta.suggestedCoAssignee = null; this._meta.suggestedCc = [];
+    }
     this._reflect();
     this.emit('pf-triage:changed', { ref: this._ref, meta: { ...this._meta } });
   }
@@ -259,10 +283,16 @@ class PfTriageBar extends PfBaseElement {
 
     const triageMeta = {
       category: this._meta.category || null,
+      categoryName: this._meta.categoryName || null,
       urgency: this._meta.urgency || null,
       duplicate: !!this._meta.duplicate,
       duplicateOf: (this._rec && this._rec.__duplicateOf) || null,
-      acknowledgedBy: this._by || null
+      acknowledgedBy: this._by || null,
+      // U4 cascade results — the suggested routing target the ROUTING surface can pre-fill.
+      responsibleDSU: this._meta.responsibleDSU || null,
+      suggestedAssignee: this._meta.suggestedAssignee || null,
+      suggestedCoAssignee: this._meta.suggestedCoAssignee || null,
+      suggestedCc: (this._meta.suggestedCc && this._meta.suggestedCc.length) ? this._meta.suggestedCc.slice() : []
     };
     const Context = globalThis.Platform && globalThis.Platform.Context;
     if (Context && typeof Context.setHandoff === 'function')
