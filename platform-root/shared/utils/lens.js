@@ -21,6 +21,24 @@ const CROSS = [['email','correspondence','mail'],['comment','comments','message-
 
 function fmt(v) { return P()?.Format?.dateTime ? P().Format.dateTime(v) : String(v); }
 
+/** Tolerant cell-value resolver (U6). Fixes blank cells across every list/detail renderer: date columns
+ *  fall back ts → createdAt → created → Created (live documents carry `Created`/`createdAt`, not `ts`),
+ *  and any column tolerates an un-normalized PascalCase source. Returns a formatted string for dates,
+ *  the raw value otherwise (callers String()-coerce). */
+const DATE_KEYS = new Set(['ts', 'date', 'createdAt', 'created', 'due', 'dueDate', 'ackDue', 'taskDue']);
+function cellVal(r, c) {
+  if (!r || !c) return '';
+  const key = c.key;
+  if (key === 'referenceId') return r.__ref || '';
+  if (DATE_KEYS.has(key)) {
+    const d = r[key] || r.ts || r.createdAt || r.created || r.Created || r.date;
+    return d ? fmt(d) : '';
+  }
+  let v = r[key];
+  if ((v == null || v === '') && key) v = r[key.charAt(0).toUpperCase() + key.slice(1)];   // PascalCase fallback
+  return (v == null) ? '' : v;
+}
+
 /** Loading skeleton shown while data hydrates (production UX feedback). */
 const submitGlobalAction = BaseService.endpoint('DYNAMIC_GLOBAL_ACTIONS', { expectedKeys: ['ok', 'data'] });
 const META_FIELD_KEYS = new Set(['__ref', '__id', 'status', 'Status', 'referenceId', 'RefIDD', '_sla']);
@@ -30,7 +48,7 @@ function deriveFields(r, columnsHint) {
   if (columnsHint) {
     for (const c of columnsHint) {
       if (META_FIELD_KEYS.has(c.key) || c.key === 'referenceId') continue;
-      const v = c.key === 'ts' ? (r.ts ? fmt(r.ts) : '') : (r[c.key] ?? '');
+      const v = cellVal(r, c);
       if (v !== '' && v != null && typeof v !== 'object') { out.push({ label: t(c.labelKey), value: String(v) }); shown.add(c.key); }
     }
   }
@@ -307,7 +325,7 @@ export function mountListLens(mod, root, { type, columns, csvName = 'export.csv'
     const head = el('thead', {}, [el('tr', {}, columns.map((c) => el('th', { text: t(c.labelKey) })))]);
     const body = el('tbody', {}, rows.map((r) => {
       const tr = el('tr', { 'data-ref': r.__ref || '', tabindex: linked ? '0' : null }, columns.map((c) => {
-        const v = c.key === 'referenceId' ? (r.__ref || '') : c.key === 'ts' ? (r.ts ? fmt(r.ts) : '') : (r[c.key] ?? '');
+        const v = cellVal(r, c);
         return c.key === 'status' ? el('td', { html: badge(v) }) : el('td', { text: String(v) });
       }));
       if (linked) {
@@ -661,7 +679,7 @@ export function mountAggregator(mod, root, { tiles, table = null }) {
           onClick: () => P().Format.downloadCsv(table.csvName || 'report.csv', P().Format.toCsv(rows, table.columns.map((c) => ({ key: c.key === 'referenceId' ? '__ref' : c.key, label: t(c.labelKey) })))) })]);
       const head = el('thead', {}, [el('tr', {}, table.columns.map((c) => el('th', { text: t(c.labelKey) })))]);
       const body = el('tbody', {}, rows.map((r) => el('tr', {}, table.columns.map((c) => {
-        const v = c.key === 'referenceId' ? (r.__ref || '') : c.key === 'ts' ? (r.ts ? fmt(r.ts) : '') : (r[c.key] ?? '');
+        const v = cellVal(r, c);
         return c.key === 'status' ? el('td', { html: badge(v) }) : el('td', { text: String(v) });
       }))));
       region.append(tb, wrap); wrap.append(el('table', { class: 'pf-table' }, [head, body]));
@@ -833,7 +851,7 @@ function _fabricTable(rows, columns, onRow, selectable) {
   const head = el('thead', {}, [el('tr', {}, columns.map((c) => el('th', { text: t(c.labelKey) })))]);
   const body = el('tbody', {}, rows.map((r) => {
     const tr = el('tr', { 'data-ref': r.__ref || '', tabindex: selectable ? '0' : null }, columns.map((c) => {
-      const v = c.get ? c.get(r) : c.key === 'referenceId' ? (r.__ref || '') : c.key === 'ts' ? (r.ts ? fmt(r.ts) : '') : (r[c.key] ?? '');
+      const v = c.get ? c.get(r) : cellVal(r, c);
       return c.key === 'status' ? el('td', { html: badge(v) }) : el('td', { text: String(v) });
     }));
     if (onRow) {

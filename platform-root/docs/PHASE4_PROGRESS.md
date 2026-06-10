@@ -21,6 +21,27 @@
 User direction after the first browser walkthrough: **fix what makes every screen feel broken before
 building more phase surfaces.** This reorders the CLAUDE.md §10 wave plan (in-session authorization).
 
+### U6 — Systemic list/data-display fixes — 2026-06-10
+
+Two parallel architecture investigations (row-rendering + dropdown wiring) found the shared
+row-selection → master-detail → actions machinery is **already wired correctly** in `lens.js`
+(`mountListLens`, `renderFabricTable`, `mountMasterDetail`) — click + keyboard + `aria-selected` +
+`pf-table--selectable` all present. The genuine systemic defects:
+
+1. **Blank cells across every list/detail** — all four cell-derivation sites used
+   `c.key==='ts' ? r.ts : r[c.key]`, but live **documents carry `Created`/`createdAt`, not `ts`**, so
+   date cells (and any un-normalized field) rendered blank → "rows don't show the expected info."
+   Fixed with one tolerant `cellVal(r,c)` helper (date fallback ts→createdAt→created→Created;
+   PascalCase fallback) applied at all four sites.
+2. **Stale-build ambiguity** — repeated symptoms ("nothing works") match a browser running a
+   **service-worker-cached old bundle**, not the latest tree (we already hit a 375-vs-390 mismatch).
+   Added `config/build-info.js` (`BUILD_INFO.id`) shown in the footer as **"build U6-20260610a"** so the
+   running build is confirmable at a glance.
+
+Still open (next, gated on confirming the running build): registry shows an activity *timeline* instead
+of the **document register** (C-2 — wrong content); assignment dropdowns don't **re-render when Lookups
+arrives late** (boot race); row actions inconsistent across lenses. Static gate 12/12.
+
 ### U5 — Data robustness + lookups signal (adopted from the legacy SPA) — 2026-06-10
 
 Two more adoptions from `b3631e61-app.js`:
