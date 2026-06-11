@@ -32,13 +32,14 @@ import { Idempotency } from './idempotency.js';
 import { AuditLog } from './audit-log.js';
 import { ErrorRouter } from './error-router.js';
 import { Lookups } from '../shared/utils/lookups.js';   // U1: dropdown option-set provider (was never exposed on Platform)
+import { DynamicActions } from '../shared/utils/dynamic-actions.js'; // universal channel for endpoint-less actions
 
 const Platform = {
   Config:AppConfig, Endpoints, Flags:FeatureFlags, Routes:RoutesConfig,
   Personas:PERSONAS, StateSchema, BrandConfig:BRANDS,
   Log, Bus, Storage, State, Errors, Format, A11y, I18n,
   API, BaseService, Modules, Theme, Brand, Persona, Router, Nav, UI, Lifecycle,
-  Entities, Context, goToEntity, Idempotency, AuditLog, ErrorRouter, Lookups,
+  Entities, Context, goToEntity, Idempotency, AuditLog, ErrorRouter, Lookups, Actions:DynamicActions,
   extend(obj) { Object.assign(Platform, obj); return Platform; }
 };
 if (typeof window !== 'undefined') window.Platform = Platform;

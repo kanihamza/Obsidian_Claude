@@ -847,10 +847,30 @@ export function renderFabricTable(container, rows, columns, onRow, opts = {}) {
   renderRichDetail(detailEl, null, mod, { type, columns, linked, actions, selectHintKey });   // initial: empty hint
 }
 
+/** Conditional/dynamic row formatting (operator request): encode workflow status + SLA urgency as row
+ *  classes so tables read at a glance. Status drives a tint; a due date within/after the window drives a
+ *  left accent. All styling is token-based + theme-aware (see styles/components.css .pf-row--*). */
+function rowStateClass(r) {
+  const cls = [];
+  const st = String((r && (r.status || r.Status)) || '').toLowerCase();
+  if (/overdue|escalat|fail|action-required|reassign|danger|rejected/.test(st)) cls.push('pf-row--alert');
+  else if (/pending|await|assigning|dispatch-pending|pending-review|in-flight/.test(st)) cls.push('pf-row--pending');
+  const due = r && (r.taskDue || r.dueDate || r.DueDate || r.TaskDue || r.AckDue || r.ackDue || r.AcknolwedgementDueBy);
+  if (due) {
+    const ms = Date.parse(due);
+    if (!Number.isNaN(ms)) {
+      const hrs = (ms - Date.now()) / 3600000;
+      if (hrs < 0) cls.push('pf-row--overdue');
+      else if (hrs < 24) cls.push('pf-row--due-soon');
+    }
+  }
+  return cls.join(' ');
+}
+
 function _fabricTable(rows, columns, onRow, selectable) {
   const head = el('thead', {}, [el('tr', {}, columns.map((c) => el('th', { text: t(c.labelKey) })))]);
   const body = el('tbody', {}, rows.map((r) => {
-    const tr = el('tr', { 'data-ref': r.__ref || '', tabindex: selectable ? '0' : null }, columns.map((c) => {
+    const tr = el('tr', { class: rowStateClass(r) || null, 'data-ref': r.__ref || '', tabindex: selectable ? '0' : null }, columns.map((c) => {
       const v = c.get ? c.get(r) : cellVal(r, c);
       return c.key === 'status' ? el('td', { html: badge(v) }) : el('td', { text: String(v) });
     }));

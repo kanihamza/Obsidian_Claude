@@ -39,7 +39,8 @@ const DOCUMENTS = [
   { ReferenceID: 'REF-1002', DocumentID: 'DOC-2', Title: 'Quarterly routine note', Category: 'Routine Memo', Subcategory: 'General', PrimaryDSU: 'CORP-DSU' }
 ];
 const TASKS = [
-  { ReferenceID: 'REF-1001', TaskID: 'T-1', Title: 'Review contract', Status: 'in-progress', AssignedTo: 'ada.obi@nitda.gov.ng', Priority: 'P2 (Medium)', TaskDue: '2026-06-15' }
+  { ReferenceID: 'REF-1001', TaskID: 'T-1', Title: 'Review contract', Status: 'in-progress', AssignedTo: 'ada.obi@nitda.gov.ng', Priority: 'P2 (Medium)', TaskDue: '2026-06-15' },
+  { ReferenceID: 'REF-1003', TaskID: 'T-2', Title: 'Overdue follow-up', Status: 'reassign-requested', AssignedTo: 'ada.obi@nitda.gov.ng', Priority: 'P1 (DG)', TaskDue: '2026-05-01' }
 ];
 const APPROVALS = [
   { ReferenceID: 'REF-2001', ApprovalID: 'AP-1', Title: 'Budget sign-off', Status: 'pending',
@@ -79,12 +80,14 @@ const consoleErrors = [];
 page.on('console', (m) => { if (m.type() === 'error') consoleErrors.push(m.text()); });
 page.on('pageerror', (e) => consoleErrors.push('pageerror: ' + e.message));
 
+const paCalls = []; // captured Power Automate request bodies (for action-channel assertions)
 const routeHandler = async (route) => {
   const req = route.request();
   if (req.url().includes('powerplatform.com')) {
-    let action = '';
-    try { action = (JSON.parse(req.postData() || '{}').action) || ''; } catch { /* ignore */ }
-    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mockBody(action)) });
+    let body = {};
+    try { body = JSON.parse(req.postData() || '{}'); } catch { body = {}; }
+    paCalls.push(body);
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mockBody(body.action || '')) });
   }
   return route.continue();
 };
@@ -230,6 +233,8 @@ try {
   check('response-tracking renders phase tabs', tabs >= 2, 'tabs=' + tabs);
   const rtRows = await page.locator('#module-response-tracking .pf-table tbody tr').count();
   check('response-tracking renders rows from fabric', rtRows >= 1, 'rows=' + rtRows);
+  const fmtRows = await page.locator('#module-response-tracking .pf-row--alert, #module-response-tracking .pf-row--overdue, #module-response-tracking .pf-row--pending, #module-response-tracking .pf-row--due-soon').count();
+  check('response-tracking: conditional row formatting applied', fmtRows >= 1, 'formatted-rows=' + fmtRows);
   check('no console errors in response-tracking', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
 
   console.log('\n==================== APPROVALS DEEP CHECK (verifies K-2 in browser) ====================');
@@ -285,6 +290,12 @@ try {
   await page.waitForTimeout(250);
   check('correspondence: selecting a row reveals the triage bar (Phase-1 intake)', await page.locator('#module-correspondence pf-triage-bar').count() === 1);
   check('correspondence: detail shows cross-lens actions', await page.locator('#module-correspondence .pf-corr__links button').count() >= 2);
+  // Triage acknowledge → transitionStatus → persists through the Dynamic Global Actions flow.
+  paCalls.length = 0;
+  await page.locator('#module-correspondence pf-triage-bar #ack').first().click();
+  await page.waitForTimeout(450);
+  const dynCall = paCalls.find((c) => c.action === 'transition' && c.client && c.client.app === 'obsidian' && c.requestId);
+  check('correspondence: triage action persists via Dynamic Global Actions', !!dynCall, 'captured actions=[' + paCalls.map((c) => c.action).join(',') + ']');
   check('correspondence: no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
 
   console.log('\n==================== REGISTRY DEEP CHECK ====================');

@@ -604,6 +604,17 @@ export const Entities = (function sealFabric() {
       });
       Bus.emit('entity:reference:updated', { ref: refId, type: 'reference' });
       Bus.emit('entity:changed', { type: 'reference', id: refRec.__id, ref: refId });
+
+      // Persist the transition through the Dynamic Global Actions flow (no dedicated per-verb endpoint
+      // exists). Fire-and-forget keeps the local mutation optimistic; DynamicActions.emit logs/audits a
+      // server reject without diverging local state. Guarded so node/boot contexts degrade gracefully.
+      const Act = globalThis.Platform && globalThis.Platform.Actions;
+      if (Act && typeof Act.emit === 'function') {
+        Act.emit('transition', {
+          operation: target, mode: 'single', ref: refId, status: target,
+          payload: { selection: { single: { RefIDD: refId } }, from: current, to: target, by: by || null }
+        });
+      }
       return Object.freeze({ ok: true, ref: refId, from: current, to: target, by: by || null, ts });
     },
 

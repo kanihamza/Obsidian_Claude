@@ -1556,3 +1556,27 @@ Outstanding but BLOCKED (flagged, not guessed):
     (touches the audit interceptor; low payoff vs risk right now).
 
 Integrated gate: 12 static + ui-smoke 140/140 (no regression).
+
+---
+
+## 27. 2026-06-11 — Dynamic Global Actions channel + conditional row formatting
+
+Operator directive: every action/function without a dedicated flow must use the Dynamic Global Actions
+flow (attached contract v2.0.0); also implement dynamic/conditional row formatting.
+
+1. shared/utils/dynamic-actions.js (new) — DynamicActions, exposed as Platform.Actions. Wraps
+   DYNAMIC_GLOBAL_ACTIONS with the standardized envelope (action/operation/mode/source/userEmail/
+   requestId/timestamp/client/payload). dispatch() awaits; emit() is fire-and-forget (optimistic UI,
+   logs+audits a server reject without diverging local state).
+2. entity-store.transitionStatus — after a successful local transition, persists via
+   Platform.Actions.emit('transition', {ref,from,to,...}). Every workflow verb that has no dedicated
+   endpoint (acknowledge/triage/route/escalate/reopen/close via the state machine) now persists through
+   the dynamic flow. Triage-bar acknowledge + send-to-routing inherit this for free (they call
+   transitionStatus), so no component change was needed.
+3. lens.rowStateClass + .pf-row--alert/pending/overdue/due-soon (components.css) — fabric tables now
+   encode status (tint) + SLA urgency (left accent) per row. Token-based, theme- and dark-safe
+   (color-mix over transparent). Applies to every renderFabricTable consumer (response-tracking, etc.).
+
+Verified: ui-smoke captures PA request bodies; new assertions confirm (a) triage acknowledge POSTs the
+dynamic envelope (action:'transition', client.app:'obsidian', requestId present), (b) conditional row
+formatting appears. Integrated gate: 12 static + ui-smoke 142/142.
