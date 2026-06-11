@@ -46,7 +46,11 @@ async function transition() {
   // mount next
   const instance = new M();
   activeInstance = instance; activeId = id;
-  if (outlet) { outlet.innerHTML = ''; outlet.id = 'module-' + id; }
+  // Keep the outlet's own id stable ('module-outlet'). The module's view.html root <section> carries
+  // id="module-<id>", so renaming the outlet to the same id produced two elements sharing one id
+  // (duplicate-id bug). getElementById('module-<id>') still resolves to the view section; module CSS
+  // scoped to #module-<id> still matches its descendants.
+  if (outlet) { outlet.innerHTML = ''; outlet.id = 'module-outlet'; }
   try {
     await instance.onMount?.(outlet, params);
     await instance.onVisible?.(outlet, params);

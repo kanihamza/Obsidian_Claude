@@ -1344,3 +1344,18 @@ Noted (not yet fixed): the router host element and the view.html root share id="
 (duplicate id, two matches) — benign for getElementById (returns first) but worth cleaning.
 
 Gate 12/12; ui-smoke 7/7.
+
+---
+
+## 16. 2026-06-11 — Duplicate-id fix + multi-surface browser sweep
+
+- **Duplicate-id fix (platform-wide, 1 line).** core/router.js set `outlet.id = 'module-'+id` while every
+  view.html root <section> already carries id="module-<id>" — two elements per module sharing one id.
+  Outlet now stays 'module-outlet' (matches the not-found branch); getElementById('module-<id>') resolves
+  to the view section, module CSS still matches via descendant.
+- **ui-smoke.mjs extended** to a 17-surface mount sweep + single & bulk deep checks. 29/29 pass: every
+  admin surface mounts without console/mount errors, single-assign cascade fills assignee + P1 priority +
+  document handoff, bulk cascade fills assignee + co-assignee. Screenshots: /tmp/single-assign-smoke.png,
+  /tmp/bulk-assign-smoke.png.
+
+Gate 12/12; ui-smoke 29/29.

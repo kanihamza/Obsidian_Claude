@@ -81,12 +81,33 @@ await page.route('**/*', async (route) => {
 let pass = 0, fail = 0;
 const check = (n, ok, d) => { ok ? (pass++, console.log('  PASS  ' + n)) : (fail++, console.log('  FAIL  ' + n + (d ? '  — ' + d : ''))); };
 
-console.log('\n==================== SINGLE-ASSIGN UI SMOKE ====================');
+// Surfaces to sweep for mount/runtime crashes (admin-visible). Caught the home `host` ReferenceError.
+const SURFACES = ['home', 'correspondence', 'registry', 'ops-hub', 'fasttrack', 'single-item-ops',
+  'bulk-assignment', 'orchestrator', 'response-tracking', 'approvals', 'executive', 'stats', 'reports',
+  'lookup', 'assistant', 'diagnostics', 'settings'];
+
 try {
-  // Boot at the default route, then switch to the admin persona (single-assign is audience:admin).
+  // Boot at the default route, then switch to the admin persona (most ops surfaces are audience:admin).
   await page.goto(`${BASE}/`, { waitUntil: 'load' });
   await page.waitForFunction(() => globalThis.Platform && globalThis.Platform.Persona, null, { timeout: 15000 });
   await page.evaluate(() => globalThis.Platform.Persona.switch('admin'));
+
+  console.log('\n==================== SURFACE MOUNT SWEEP ====================');
+  for (const id of SURFACES) {
+    consoleErrors.length = 0;
+    let mounted = false, err = '';
+    try {
+      await page.evaluate((m) => globalThis.Platform.Router.navigate(m), id);
+      await page.locator(`#module-${id}`).first().waitFor({ timeout: 8000 });
+      await page.waitForTimeout(250); // let onVisible data render settle
+      mounted = true;
+    } catch (e) { err = e.message.split('\n')[0]; }
+    const crashed = consoleErrors.find((t) => /mount-failed|is not defined|is not a function|Cannot read/.test(t));
+    check(`${id} mounts cleanly`, mounted && !crashed, crashed || err);
+  }
+
+  console.log('\n==================== SINGLE-ASSIGN DEEP CHECK ====================');
+  consoleErrors.length = 0;
   await page.evaluate(() => globalThis.Platform.Router.navigate('single-item-ops'));
   await page.locator('#module-single-item-ops').first().waitFor({ timeout: 15000 });
   await page.locator('#si-category').first().waitFor({ timeout: 15000 });
@@ -123,6 +144,25 @@ try {
 
   await page.screenshot({ path: '/tmp/single-assign-smoke.png', fullPage: true });
   console.log('  screenshot → /tmp/single-assign-smoke.png');
+
+  console.log('\n==================== BULK-ASSIGN DEEP CHECK ====================');
+  consoleErrors.length = 0;
+  await page.evaluate(() => globalThis.Platform.Router.navigate('bulk-assignment'));
+  await page.locator('#module-bulk-assignment').first().waitFor({ timeout: 15000 });
+  await page.locator('#bulk-category').waitFor({ timeout: 15000 });
+  const catOpts = await page.locator('#bulk-category option').count();
+  check('bulk category select populates', catOpts >= 3, 'options=' + catOpts); // incl. placeholder
+  await page.selectOption('#bulk-category', 'Procurement');
+  await page.waitForTimeout(300);
+  const subOpts = await page.locator('#bulk-subcategory option').count();
+  check('bulk sub-category populates on category change', subOpts >= 2, 'sub-options=' + subOpts);
+  const bulkAssignee = await page.locator('#bulk-assignee').inputValue();
+  check('bulk cascade fills assignee', /@nitda\.gov\.ng/.test(bulkAssignee), 'assignee="' + bulkAssignee + '"');
+  const bulkCoass = await page.locator('#bulk-coassignee').inputValue();
+  check('bulk cascade fills co-assignee', /@nitda\.gov\.ng/.test(bulkCoass), 'co-assignee="' + bulkCoass + '"');
+  check('no console errors in bulk journey', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
+  await page.screenshot({ path: '/tmp/bulk-assign-smoke.png', fullPage: true });
+  console.log('  screenshot → /tmp/bulk-assign-smoke.png');
 } catch (e) {
   fail++; console.log('  FAIL  harness error — ' + e.message.split('\n')[0]);
   try {
