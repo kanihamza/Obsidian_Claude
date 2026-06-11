@@ -41,14 +41,24 @@ class PfRichPicker extends PfBaseElement {
   set disabled(v) { this._disabled = !!v; if (this.shadowRoot) this._renderToggle(); }
 
   onConnect() {
-    this._placeholder = this.getAttribute('placeholder') || 'Click to select';
-    this._placeholderIcon = this.getAttribute('placeholder-icon') || '';
-    this._mode = this.getAttribute('mode') === 'multi' ? 'multi' : 'single';
-    this._searchable = this.getAttribute('searchable') !== 'false';
-    this._tabs = null; this._items = []; this._itemsByTab = {};
-    this._activeTab = null; this._query = ''; this._open = false; this._disabled = false;
-    this._value = this._mode === 'multi' ? [] : null;
-    this._selectedLabel = '';
+    // Lazy-property upgrade: PfBaseElement attaches shadowRoot in the constructor, but onConnect runs
+    // later (connectedCallback). A consumer that does `el = document.createElement('pf-rich-picker');
+    // el.items = [...]; el.tabs = [...]` assigns instance fields BEFORE this method fires. We must
+    // preserve those — precedence is instance value > attribute > default. The previous version
+    // unconditionally reset _items/_tabs/_itemsByTab/_mode here, clobbering the caller's data so every
+    // pre-configured dropdown rendered empty.
+    this._placeholder = this._placeholder ?? (this.getAttribute('placeholder') || 'Click to select');
+    this._placeholderIcon = this._placeholderIcon ?? (this.getAttribute('placeholder-icon') || '');
+    this._mode = this._mode ?? (this.getAttribute('mode') === 'multi' ? 'multi' : 'single');
+    this._searchable = this._searchable ?? (this.getAttribute('searchable') !== 'false');
+    this._tabs = this._tabs ?? null;
+    this._items = this._items ?? [];
+    this._itemsByTab = this._itemsByTab ?? {};
+    this._activeTab = this._activeTab ?? (this._tabs && this._tabs[0] ? this._tabs[0].id : null);
+    this._query = ''; this._open = false;
+    this._disabled = this._disabled ?? false;
+    this._value = this._value ?? (this._mode === 'multi' ? [] : null);
+    this._selectedLabel = this._selectedLabel ?? '';
 
     this.render(`<style>
       :host { display:block; position:relative; }

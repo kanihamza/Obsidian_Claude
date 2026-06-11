@@ -1,7 +1,9 @@
 /* OBSIDIAN v4.0 — module single-item-ops styles · @layer modules · tokens only. */
 @layer modules {
   #module-single-item-ops { display:block; }
-  #module-single-item-ops .pf-si__form { display:grid; gap:var(--space-3); max-width:34rem; }
+  /* The form hosts the global .pf-si__grid two-column layout (form + sticky summary). It must NOT be
+     width-capped — a previous max-width:34rem collapsed the 360px summary column into a sliver. */
+  #module-single-item-ops .pf-si__form { display:block; }
   #module-single-item-ops .pf-field { display:flex; flex-direction:column; gap:var(--space-1); }
   #module-single-item-ops .pf-label { color:var(--color-text-muted); font-size:.85em; }
   #module-single-item-ops .pf-si__actions { margin-top:var(--space-3); }
