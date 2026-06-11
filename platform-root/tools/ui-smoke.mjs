@@ -86,6 +86,33 @@ const routeHandler = async (route) => {
 };
 await page.route('**/*', routeHandler);
 
+// Spin up a fresh browser context already booted to the admin persona (for viewport/motion matrices).
+async function newAdminPage(opts) {
+  const ctx = await browser.newContext(opts);
+  const p = await ctx.newPage();
+  const errs = [];
+  p.on('console', (m) => { if (m.type() === 'error') errs.push(m.text()); });
+  p.on('pageerror', (e) => errs.push('pageerror: ' + e.message));
+  await p.route('**/*', routeHandler);
+  await p.goto(`${BASE}/`, { waitUntil: 'load' });
+  await p.waitForFunction(() => globalThis.Platform && globalThis.Platform.Persona, null, { timeout: 15000 });
+  await p.evaluate(() => globalThis.Platform.Persona.switch('admin'));
+  return { ctx, p, errs };
+}
+// Navigate each surface and assert it does not overflow horizontally at the context's viewport.
+async function overflowSweep(p, ids, label) {
+  let worst = 0;
+  for (const id of ids) {
+    await p.evaluate((m) => globalThis.Platform.Router.navigate(m), id);
+    await p.locator(`#module-${id}`).first().waitFor({ timeout: 10000 }).catch(() => {});
+    await p.waitForTimeout(140);
+    const overflow = await p.evaluate(() => Math.max(0, document.documentElement.scrollWidth - window.innerWidth));
+    worst = Math.max(worst, overflow);
+    check(`${label}: ${id} no horizontal overflow`, overflow <= 2, `overflow=${overflow}px`);
+  }
+  return worst;
+}
+
 let pass = 0, fail = 0;
 const check = (n, ok, d) => { ok ? (pass++, console.log('  PASS  ' + n)) : (fail++, console.log('  FAIL  ' + n + (d ? '  — ' + d : ''))); };
 
@@ -229,6 +256,28 @@ try {
   await page.screenshot({ path: '/tmp/approvals-smoke.png', fullPage: true });
   console.log('  screenshot → /tmp/approvals-smoke.png');
 
+  console.log('\n==================== THEME MATRIX (light / dark / high-contrast) ====================');
+  consoleErrors.length = 0;
+  const bodyBg = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  await page.evaluate(() => globalThis.Platform.Theme.set('light'));
+  await page.waitForTimeout(120);
+  const bgLight = await bodyBg();
+  await page.evaluate(() => globalThis.Platform.Theme.set('dark'));
+  await page.waitForTimeout(150);
+  const themeDark = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
+  const bgDark = await bodyBg();
+  check('dark theme applies [data-theme=dark]', themeDark === 'dark', 'data-theme=' + themeDark);
+  check('dark theme re-skins surface (bg differs from light)', bgDark !== bgLight, `light=${bgLight} dark=${bgDark}`);
+  await page.screenshot({ path: '/tmp/theme-dark-smoke.png', fullPage: false });
+  await page.evaluate(() => globalThis.Platform.Theme.set('hc'));
+  await page.waitForTimeout(150);
+  const themeHc = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
+  const bgHc = await bodyBg();
+  check('high-contrast theme applies [data-theme=hc]', themeHc === 'hc', 'data-theme=' + themeHc);
+  check('high-contrast re-skins surface', bgHc !== bgDark, `dark=${bgDark} hc=${bgHc}`);
+  check('no console errors across theme switches', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
+  await page.evaluate(() => globalThis.Platform.Theme.set('light'));
+
   console.log('\n==================== MOBILE / TABLET (touch) CHECK ====================');
   const mctx = await browser.newContext({ viewport: { width: 834, height: 1112 }, hasTouch: true, isMobile: true });
   const mpage = await mctx.newPage();
@@ -261,20 +310,34 @@ try {
   check('mobile: .pf-btn meets 44px touch floor', !!btnBox && btnBox.height >= 44, btnBox ? `h=${Math.round(btnBox.height)}` : 'no btn');
   check('mobile: no console errors', mErrors.length === 0, mErrors.slice(0, 3).join(' | '));
 
-  // Reflow sweep — no surface should overflow horizontally at tablet-portrait (splits must stack).
+  // Full-surface reflow sweep at tablet-portrait — every surface must stack, none overflow.
   await mpage.evaluate(() => globalThis.Platform.Bus.emit('platform:nav:toggle', {})); // close drawer if open
   await mpage.waitForTimeout(200);
-  const reflowSurfaces = ['home', 'ops-hub', 'response-tracking', 'single-item-ops', 'bulk-assignment', 'correspondence', 'approvals', 'registry'];
-  for (const id of reflowSurfaces) {
-    await mpage.evaluate((m) => globalThis.Platform.Router.navigate(m), id);
-    await mpage.locator(`#module-${id}`).first().waitFor({ timeout: 10000 }).catch(() => {});
-    await mpage.waitForTimeout(200);
-    const overflow = await mpage.evaluate(() => Math.max(0, document.documentElement.scrollWidth - window.innerWidth));
-    check(`mobile reflow: ${id} no horizontal overflow`, overflow <= 2, `overflow=${overflow}px`);
-  }
+  await overflowSweep(mpage, SURFACES, 'portrait-834');
   await mpage.screenshot({ path: '/tmp/mobile-tablet-smoke.png', fullPage: false });
   console.log('  screenshot → /tmp/mobile-tablet-smoke.png');
   await mctx.close();
+
+  console.log('\n==================== LANDSCAPE TABLET (1280, sidebar visible) ====================');
+  const land = await newAdminPage({ viewport: { width: 1280, height: 800 }, hasTouch: true });
+  await overflowSweep(land.p, SURFACES, 'landscape-1280');
+  check('landscape: no console errors across sweep', land.errs.length === 0, land.errs.slice(0, 3).join(' | '));
+  await land.ctx.close();
+
+  console.log('\n==================== PHONE (390, data-heavy surfaces) ====================');
+  const phone = await newAdminPage({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+  await overflowSweep(phone.p, ['home', 'ops-hub', 'response-tracking', 'single-item-ops', 'bulk-assignment', 'approvals', 'lookup', 'diagnostics'], 'phone-390');
+  await phone.ctx.close();
+
+  console.log('\n==================== REDUCED MOTION ====================');
+  const rm = await newAdminPage({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
+  for (const id of ['home', 'ops-hub', 'single-item-ops']) {
+    await rm.p.evaluate((m) => globalThis.Platform.Router.navigate(m), id);
+    await rm.p.locator(`#module-${id}`).first().waitFor({ timeout: 10000 }).catch(() => {});
+    await rm.p.waitForTimeout(120);
+  }
+  check('reduced-motion: surfaces render with no console errors', rm.errs.length === 0, rm.errs.slice(0, 3).join(' | '));
+  await rm.ctx.close();
 } catch (e) {
   fail++; console.log('  FAIL  harness error — ' + e.message.split('\n')[0]);
   try {

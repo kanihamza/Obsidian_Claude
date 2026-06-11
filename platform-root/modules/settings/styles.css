@@ -1,0 +1,7 @@
+/* OBSIDIAN v4.0 — settings lens · @layer modules · scoped #module-settings.
+   Tokens only (no literal colors) per the hex audit lock. Settings renders through shared
+   primitives (pf-form, pf-field, pf-card); this file scopes its frame and form width. */
+@layer modules {
+  #module-settings { display:block; }
+  #module-settings .pf-form { max-width:640px; }
+}

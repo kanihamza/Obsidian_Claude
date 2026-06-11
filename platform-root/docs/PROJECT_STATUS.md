@@ -1434,3 +1434,25 @@ wouldn't stack on mobile (squeezed detail / overflow). Added @900px stack (list 
 Verified: ui-smoke mobile pass extended with an 8-surface horizontal-overflow sweep at 834px
 (home, ops-hub, response-tracking, single-item-ops, bulk-assignment, correspondence, approvals,
 registry) — all reflow with no overflow. Integrated gate: 12 static + ui-smoke 54/54.
+
+---
+
+## 21. 2026-06-11 — Super-booster: theme matrix + 3-width responsive sweep + reduced-motion (95 assertions)
+
+Comprehensive robustness expansion of the browser harness, plus fixes for bugs it surfaced.
+
+Breakpoint consistency: aligned .pf-si__grid (1024→900) and bulk .pf-bulk (880→900) to the DGO 900
+standard — single/bulk now keep form|summary side-by-side at 1024 landscape (the target runtime).
+
+Harness now verifies (ui-smoke 95/95):
+- THEME MATRIX: light/dark/high-contrast each apply [data-theme] and actually re-skin the surface
+  (computed body bg differs); no console errors across switches. Dark screenshot captured.
+- FULL-SURFACE reflow sweep — all 17 admin surfaces at portrait-834 AND landscape-1280; data-heavy
+  subset at phone-390. Zero horizontal overflow anywhere.
+- REDUCED-MOTION context renders cleanly.
+
+Real bug found + fixed (caught by the landscape no-console-errors check): base-module.js injects
+`<link href="./styles.css">` for EVERY module, but modules/settings and modules/lookup shipped NO
+styles.css → 404 on every visit. Created both (scoped, tokens-only). 404 eliminated.
+
+Integrated gate: 12 static + ui-smoke 95/95.

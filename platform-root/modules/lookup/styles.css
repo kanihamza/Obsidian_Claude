@@ -1,0 +1,7 @@
+/* OBSIDIAN v4.0 — lookup lens · @layer modules · scoped #module-lookup.
+   Tokens only (no literal colors) per the hex audit lock. The lookup surface renders
+   through shared primitives (pf-filter-bar, pf-table, pf-card); this file scopes its frame. */
+@layer modules {
+  #module-lookup { display:block; }
+  #module-lookup .pf-view__body { display:grid; gap:var(--space-4); }
+}

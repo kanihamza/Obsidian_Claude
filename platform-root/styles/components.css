@@ -282,7 +282,7 @@
   .pf-si__summary { position:sticky; top:calc(var(--header-h) + var(--space-4)); padding:var(--space-5);
     max-height:calc(100vh - var(--header-h) - var(--space-6)); overflow:auto; }
   .pf-si__summary-body .pf-detail__fields { margin-top:var(--space-3); }
-  @media (max-width:1024px) {
+  @media (max-width:900px) {
     .pf-si__grid { grid-template-columns:1fr; }
     .pf-si__summary { position:static; max-height:none; }
   }

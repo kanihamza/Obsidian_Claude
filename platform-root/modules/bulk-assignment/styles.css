@@ -5,7 +5,7 @@
   #module-bulk-assignment .pf-bulk {
     display:grid; grid-template-columns: 1fr 1fr; gap: var(--space-6, 1.5rem); align-items:start;
   }
-  @media (max-width: 880px){ #module-bulk-assignment .pf-bulk { grid-template-columns: 1fr; } }
+  @media (max-width: 900px){ #module-bulk-assignment .pf-bulk { grid-template-columns: 1fr; } }
   #module-bulk-assignment .pf-bulk__pane {
     background: var(--color-surface-raised); border:1px solid var(--color-border);
     border-radius: var(--radius-lg); padding: var(--space-4);
