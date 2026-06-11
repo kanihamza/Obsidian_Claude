@@ -38,11 +38,18 @@ const DOCUMENTS = [
   { ReferenceID: 'REF-1001', DocumentID: 'DOC-1', Title: 'Contract award memo', Category: 'Procurement', Subcategory: 'Contracts', PrimaryDSU: 'PROC-DSU' },
   { ReferenceID: 'REF-1002', DocumentID: 'DOC-2', Title: 'Quarterly routine note', Category: 'Routine Memo', Subcategory: 'General', PrimaryDSU: 'CORP-DSU' }
 ];
+const TASKS = [
+  { ReferenceID: 'REF-1001', TaskID: 'T-1', Title: 'Review contract', Status: 'in-progress', AssignedTo: 'ada.obi@nitda.gov.ng', Priority: 'P2 (Medium)', TaskDue: '2026-06-15' }
+];
+const APPROVALS = [
+  { ReferenceID: 'REF-2001', ApprovalID: 'AP-1', Title: 'Budget sign-off', Status: 'pending',
+    AssignedTo: 'bola.eze@nitda.gov.ng', from: 'ada.obi@nitda.gov.ng', ts: '2026-06-02', summary: 'Approve Q3 budget line.' }
+];
 
 function mockBody(action) {
   if (action === 'lookups') return { ok: true, status: { http: 200 }, users: USERS, categories: CATEGORIES, departments: DEPARTMENTS };
-  if (action === 'fetchAll') return { ok: true, status: { http: 200 }, data: { documents: DOCUMENTS, categories: CATEGORIES, departments: DEPARTMENTS, users: USERS } };
-  return { ok: true, status: { http: 200 }, data: {} };
+  if (action === 'fetchAll') return { ok: true, status: { http: 200 }, data: { documents: DOCUMENTS, tasks: TASKS, approvals: APPROVALS, categories: CATEGORIES, departments: DEPARTMENTS, users: USERS } };
+  return { ok: true, status: { http: 200 }, success: true, statusCode: 200, data: {} };
 }
 
 // ── Static server ──────────────────────────────────────────────────────────
@@ -163,6 +170,43 @@ try {
   check('no console errors in bulk journey', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
   await page.screenshot({ path: '/tmp/bulk-assign-smoke.png', fullPage: true });
   console.log('  screenshot → /tmp/bulk-assign-smoke.png');
+
+  console.log('\n==================== OPS-HUB DEEP CHECK ====================');
+  consoleErrors.length = 0;
+  await page.evaluate(() => globalThis.Platform.Router.navigate('ops-hub'));
+  await page.locator('#module-ops-hub').first().waitFor({ timeout: 15000 });
+  await page.waitForTimeout(400);
+  const cards = await page.locator('#module-ops-hub .pf-md__card, #module-ops-hub .pf-table tbody tr').count();
+  check('ops-hub renders document cards from fabric', cards >= 1, 'cards=' + cards);
+  check('no console errors in ops-hub', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
+
+  console.log('\n==================== RESPONSE-TRACKING DEEP CHECK ====================');
+  consoleErrors.length = 0;
+  await page.evaluate(() => globalThis.Platform.Router.navigate('response-tracking'));
+  await page.locator('#module-response-tracking').first().waitFor({ timeout: 15000 });
+  await page.waitForTimeout(400);
+  const tabs = await page.locator('#module-response-tracking .pf-subnav__tab').count();
+  check('response-tracking renders phase tabs', tabs >= 2, 'tabs=' + tabs);
+  const rtRows = await page.locator('#module-response-tracking .pf-table tbody tr').count();
+  check('response-tracking renders rows from fabric', rtRows >= 1, 'rows=' + rtRows);
+  check('no console errors in response-tracking', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
+
+  console.log('\n==================== APPROVALS DEEP CHECK (verifies K-2 in browser) ====================');
+  consoleErrors.length = 0;
+  await page.evaluate(() => globalThis.Platform.Router.navigate('approvals'));
+  await page.locator('#module-approvals').first().waitFor({ timeout: 15000 });
+  await page.locator('#module-approvals .pf-ap__item').first().waitFor({ timeout: 10000 });
+  check('approvals list renders pending items', await page.locator('#module-approvals .pf-ap__item').count() >= 1);
+  // Drive the approve path — commit() is exactly where the K-2 ReferenceError used to throw.
+  await page.locator('#module-approvals .pf-ap__acts .pf-btn--primary').first().click();
+  await page.locator('pf-modal .primary').first().waitFor({ timeout: 8000 });
+  await page.locator('pf-modal .primary').first().click();
+  await page.waitForTimeout(400);
+  const k2err = consoleErrors.find((t) => /is not defined|ReferenceError|Cannot read/.test(t));
+  check('K-2: approve commit() throws no ReferenceError', !k2err, k2err || '');
+  check('no console errors in approvals journey', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
+  await page.screenshot({ path: '/tmp/approvals-smoke.png', fullPage: true });
+  console.log('  screenshot → /tmp/approvals-smoke.png');
 } catch (e) {
   fail++; console.log('  FAIL  harness error — ' + e.message.split('\n')[0]);
   try {

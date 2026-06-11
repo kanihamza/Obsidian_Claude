@@ -1359,3 +1359,21 @@ Gate 12/12; ui-smoke 7/7.
   /tmp/bulk-assign-smoke.png.
 
 Gate 12/12; ui-smoke 29/29.
+
+---
+
+## 17. 2026-06-11 — Deeper per-surface checks + ui-smoke as opt-in gate
+
+ui-smoke.mjs now drives interaction (not just mount) on the high-traffic surfaces — 37/37 pass:
+- ops-hub: renders document cards from the fabric.
+- response-tracking: renders phase tabs + table rows from the fabric.
+- approvals: list renders pending items, and the **approve commit() path runs with no ReferenceError
+  — verifying the K-2 fix in a real browser** (this is the exact line that used to throw).
+  Screenshot: /tmp/approvals-smoke.png.
+
+Fixtures enriched (FETCH_ALL now carries tasks + approvals).
+
+Wired into tools/verify.sh as an OPT-IN gate: default SKIPPED (core 12 stay fast/dep-free);
+`RUN_UI_SMOKE=1 bash tools/verify.sh` runs it and folds pass/fail into the gate. Verified both modes.
+
+Gate 12/12; ui-smoke 37/37.

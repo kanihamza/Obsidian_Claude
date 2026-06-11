@@ -152,6 +152,20 @@ else
   say "boot-smoke" "SKIPPED"
 fi
 
+# 11) UI smoke — OPT-IN real-browser render/interaction check (needs Playwright+Chromium; off by default
+#     so the core gate stays fast and dependency-free). Enable with: RUN_UI_SMOKE=1 bash tools/verify.sh
+if [ "${RUN_UI_SMOKE:-0}" = "1" ] && [ -f tools/ui-smoke.mjs ] && command -v node >/dev/null 2>&1; then
+  had_pkg=0; [ -f package.json ] && had_pkg=1
+  [ $had_pkg -eq 0 ] && echo '{"type":"module"}' > package.json
+  us_out=$(node tools/ui-smoke.mjs 2>&1); us_rc=$?
+  [ $had_pkg -eq 0 ] && rm -f package.json
+  if [ $us_rc -ne 0 ]; then say "ui-smoke" "FAIL"; printf '%s\n' "$us_out" | tail -8 | sed 's/^/    /'; fail=1
+  else say "ui-smoke" "PASS ($(echo "$us_out" | grep -E 'RESULT' | sed 's/^.*--  //'))"
+  fi
+else
+  say "ui-smoke" "SKIPPED (set RUN_UI_SMOKE=1 to enable)"
+fi
+
 echo "---------------------------------------------"
 if [ "$fail" -eq 0 ]; then echo "STATIC VERIFICATION: PASS"; else echo "STATIC VERIFICATION: FAIL"; fi
 exit $fail
