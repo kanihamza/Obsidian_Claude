@@ -1377,3 +1377,16 @@ Wired into tools/verify.sh as an OPT-IN gate: default SKIPPED (core 12 stay fast
 `RUN_UI_SMOKE=1 bash tools/verify.sh` runs it and folds pass/fail into the gate. Verified both modes.
 
 Gate 12/12; ui-smoke 37/37.
+
+---
+
+## 18. 2026-06-11 — Robustness deepening (40 browser assertions)
+
+Deepened interaction coverage (no new bugs found — all pass, confirming the fixes hold):
+- **approvals**: reject reason-gate blocks an empty rejection (no confirm modal, item stays); approve
+  drives the full success path and the item LEAVES the pending list (commit→upsert→entity:approval:changed
+  →reload), verified in-browser. K-2 holds (no ReferenceError).
+- **ops-hub → bulk-assignment handoff**: bulk-select a card → bulk bar Assign → Context.setBulkSelection
+  → bulk-assignment opens with the selection carried (bulk-sum-count = 1).
+
+Integrated gate: RUN_UI_SMOKE=1 bash tools/verify.sh → 12 static checks PASS + ui-smoke 40/40.

@@ -178,7 +178,16 @@ try {
   await page.waitForTimeout(400);
   const cards = await page.locator('#module-ops-hub .pf-md__card, #module-ops-hub .pf-table tbody tr').count();
   check('ops-hub renders document cards from fabric', cards >= 1, 'cards=' + cards);
-  check('no console errors in ops-hub', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
+
+  // Bulk-select a card → the bulk bar's "Assign" hands the selection to bulk-assignment via Context.
+  await page.locator('#module-ops-hub .pf-md__check input[type="checkbox"]').first().check();
+  await page.locator('#module-ops-hub .pf-md__bulkbar').first().waitFor({ state: 'visible', timeout: 5000 });
+  await page.locator('#module-ops-hub .pf-md__bulkbar .pf-btn--primary').first().click();
+  await page.locator('#module-bulk-assignment').first().waitFor({ timeout: 10000 });
+  await page.waitForTimeout(300);
+  const handedCount = (await page.locator('#bulk-sum-count').textContent() || '').trim();
+  check('ops-hub→bulk handoff carries the selection', handedCount === '1', 'bulk-sum-count="' + handedCount + '"');
+  check('no console errors in ops-hub journey', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
 
   console.log('\n==================== RESPONSE-TRACKING DEEP CHECK ====================');
   consoleErrors.length = 0;
@@ -196,14 +205,25 @@ try {
   await page.evaluate(() => globalThis.Platform.Router.navigate('approvals'));
   await page.locator('#module-approvals').first().waitFor({ timeout: 15000 });
   await page.locator('#module-approvals .pf-ap__item').first().waitFor({ timeout: 10000 });
-  check('approvals list renders pending items', await page.locator('#module-approvals .pf-ap__item').count() >= 1);
-  // Drive the approve path — commit() is exactly where the K-2 ReferenceError used to throw.
+  const apCount0 = await page.locator('#module-approvals .pf-ap__item').count();
+  check('approvals list renders pending items', apCount0 >= 1, 'count=' + apCount0);
+
+  // Reject reason-gate: rejecting with no minute must NOT open the confirm modal (and not remove item).
+  await page.locator('#module-approvals .pf-ap__acts .pf-btn--ghost').first().click();
+  await page.waitForTimeout(250);
+  check('reject reason-gate blocks empty rejection', await page.locator('pf-modal[open]').count() === 0
+    && await page.locator('#module-approvals .pf-ap__item').count() === apCount0);
+
+  // Approve path — commit() is exactly where the K-2 ReferenceError used to throw.
   await page.locator('#module-approvals .pf-ap__acts .pf-btn--primary').first().click();
-  await page.locator('pf-modal .primary').first().waitFor({ timeout: 8000 });
-  await page.locator('pf-modal .primary').first().click();
-  await page.waitForTimeout(400);
+  await page.locator('pf-modal[open] .primary').first().waitFor({ timeout: 8000 });
+  await page.locator('pf-modal[open] .primary').first().click();
+  await page.waitForTimeout(500);
   const k2err = consoleErrors.find((t) => /is not defined|ReferenceError|Cannot read/.test(t));
   check('K-2: approve commit() throws no ReferenceError', !k2err, k2err || '');
+  // Full success path: upsert→entity:approval:changed→reload drops the now-Approved item from pending.
+  check('approved item leaves the pending list', await page.locator('#module-approvals .pf-ap__item').count() < apCount0,
+    'before=' + apCount0 + ' after=' + await page.locator('#module-approvals .pf-ap__item').count());
   check('no console errors in approvals journey', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
   await page.screenshot({ path: '/tmp/approvals-smoke.png', fullPage: true });
   console.log('  screenshot → /tmp/approvals-smoke.png');
