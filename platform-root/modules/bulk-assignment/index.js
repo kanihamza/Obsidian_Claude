@@ -177,6 +177,7 @@ class BulkAssignmentModule extends BaseModule {
       placeholder: 'Start typing name or email...', value: this._draft.assignee, autocomplete: 'off' });
     const suggestions = el('div', { id: 'bulk-user-suggestions', class: 'pf-bulk__suggest', hidden: true });
     this.on(assigneeInput, 'input', () => { this._draft.assignee = assigneeInput.value.trim(); this._filterUsers(assigneeInput, suggestions); this._updateSummary(); });
+    this.on(assigneeInput, 'keydown', (e) => this._suggestKeydown(e, suggestions));
 
     // Priority <select>.
     const prioSel = el('select', { id: 'bulk-priority', class: 'pf-input' },
@@ -295,6 +296,23 @@ class BulkAssignmentModule extends BaseModule {
       host.append(opt);
     });
     host.hidden = false;
+  }
+
+  /** Keyboard navigation for the Assign-To typeahead (Arrow to move, Enter to pick, Escape to close). */
+  _suggestKeydown(e, host) {
+    if (host.hidden) return;
+    const items = [...host.querySelectorAll('.pf-bulk__suggest-item')];
+    if (!items.length) return;
+    let idx = items.findIndex((n) => n.classList.contains('is-active'));
+    if (e.key === 'ArrowDown') { e.preventDefault(); idx = (idx + 1) % items.length; }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); idx = (idx - 1 + items.length) % items.length; }
+    else if (e.key === 'Enter') { if (idx >= 0) { e.preventDefault(); items[idx].click(); } return; }
+    else if (e.key === 'Escape') { host.hidden = true; clear(host); return; }
+    else return;
+    items.forEach((n) => n.classList.remove('is-active'));
+    const active = items[idx] || items[0];
+    active.classList.add('is-active');
+    active.scrollIntoView({ block: 'nearest' });
   }
 
   _updateSummary() {

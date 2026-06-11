@@ -115,15 +115,17 @@ class SingleItemOpsModule extends BaseModule {
     });
     assigneePicker.addEventListener('pf-picker:change', (e) => {
       const raw = e.detail.raw || {};
-      // dept option carries DSU_HeadPersonalEmail / DSU_HeadEmail; user option carries email
+      // dept option carries DSU_HeadPersonalEmail / DSU_HeadEmail; user option carries the email as the
+      // option VALUE (Lookups resolves email/upn/id into `value`). Keying off raw.email alone silently
+      // failed when the source user record spelled the field Email/upn/mail — use e.detail.value first.
       if (raw.DSU_KEY) {
         this._draft.assignedTo = raw.DSU_HeadEmail || raw.DSU_HeadPersonalEmail || '';
         this._draft.assignedToTitle = raw.DSU_HeadTitle || raw.Title || '';
         this._draft.primaryDSU = raw.DSU_KEY;
-      } else if (raw.email) {
-        this._draft.assignedTo = raw.email;
-        this._draft.assignedToTitle = raw.name || raw.jobTitle || '';
-        this._draft.primaryDSU = raw.department || this._draft.primaryDSU;
+      } else {
+        this._draft.assignedTo = e.detail.value || raw.email || raw.Email || '';
+        this._draft.assignedToTitle = raw.name || raw.displayName || raw.jobTitle || raw.Title || '';
+        this._draft.primaryDSU = raw.department || raw.DSU_KEY || this._draft.primaryDSU;
       }
       this._clearError('si-assignee'); this._refreshSummary();
     });
@@ -141,10 +143,10 @@ class SingleItemOpsModule extends BaseModule {
         this._draft.supportAssignedTo = raw.DSU_HeadEmail || raw.DSU_HeadPersonalEmail || '';
         this._draft.supportAssignedToTitle = raw.DSU_HeadTitle || raw.Title || '';
         this._draft.supportDSU = raw.DSU_KEY;
-      } else if (raw.email) {
-        this._draft.supportAssignedTo = raw.email;
-        this._draft.supportAssignedToTitle = raw.name || '';
-        this._draft.supportDSU = raw.department || '';
+      } else {
+        this._draft.supportAssignedTo = e.detail.value || raw.email || raw.Email || '';
+        this._draft.supportAssignedToTitle = raw.name || raw.displayName || raw.jobTitle || '';
+        this._draft.supportDSU = raw.department || raw.DSU_KEY || '';
       }
       this._refreshSummary();
     });

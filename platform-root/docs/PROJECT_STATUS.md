@@ -1232,3 +1232,29 @@ authoritative) and the B-1/OTP reconciliation (bulk OTP stays removed per in-ses
 
 Gate: 12/12 PASS. K-2 fix is `[browser-unverified]` end-to-end (approve a real item to confirm the
 success toast/navigation now fires).
+
+---
+
+## 11. 2026-06-10 — Assignment surfaces: forensic fixes + upload-aligned UI
+
+Reported: single-assign dropdowns dead, bulk dropdowns "not complete." Forensic pass found three
+real bugs (all fixed), plus a design pass aligned to the operator upload.
+
+**Bugs**
+- **pf-rich-picker lazy-property wipe** (single-assign root cause). onConnect ran after the constructor
+  attached shadowRoot and reset _items/_tabs/_itemsByTab/_mode — clobbering properties set on the
+  detached element by _mkPicker(). Now preserves instance > attribute > default. Every single-assign
+  picker (category/assignee/co-assignee/CC) was opening empty.
+- **Single-assign layout squash.** styles.css capped .pf-si__form at max-width:34rem, collapsing the
+  global two-column .pf-si__grid (form + 360px sticky summary). Cap removed.
+- **Assignee "By User" silent miss.** Handler read raw.email only; Lookups resolves the email into the
+  option VALUE and source records may spell it Email/upn. Now keys off e.detail.value first
+  (assignee + co-assignee).
+
+**UI (from upload's src/index.css selection aesthetic, mapped to tokens — hex-lock safe)**
+- Bulk selectable rows: brand-tinted fill + 3px left accent bar on selection, soft brand hover.
+- Assign-To typeahead: hover/active states + full keyboard nav (Arrow/Enter/Escape) — previously
+  mouse-only.
+
+Note: the upload is a React/Vite *roadmap viewer*, not a design system; its dark-slate/emerald palette
+was adopted as the selection PATTERN via var(--color-brand-primary), not hardcoded. Gate 12/12.
