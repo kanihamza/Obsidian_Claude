@@ -1488,3 +1488,23 @@ Completed deep-interaction coverage for the last six surfaces (18 new assertions
 
 Every admin surface now has deep-interaction coverage. No bugs surfaced this round.
 Integrated gate: 12 static + ui-smoke 126/126.
+
+---
+
+## 24. 2026-06-11 — Dark-theme contrast scan (automated) + 8 contrast fixes (140 assertions)
+
+Added a smart automated dark-mode check: scans every leaf text node across 13 surfaces in dark theme,
+computes WCAG contrast vs its effective background, and fails any near-invisible text (< 2:1).
+
+Real bug found + fixed: brand-green (--color-brand-primary = green-700 #05583B) was used as a *text*
+color in several places; dark theme rebinds --dgo-color-fg-link (→ smart-300) but NOT action-primary,
+so brand-green text rendered at ~1.98:1 (unreadable) on dark surfaces. Flagged: approvals detail h2,
+single-assign overline. Fixed all 8 foreground-text usages (kept borders/backgrounds as brand) by
+switching to the theme-aware --dgo-color-fg-link (identical green-700 in light, light-green in dark):
+  components.css: .pf-subnav__tab.is-active, .pf-md__detail h2, .pf-timeline__ref,
+    .pf-stepper__step--current .pf-stepper__label, .pf-chip:hover, .pf-md__bulkcount,
+    .pf-lookup__search-icon
+  approvals .pf-ap__dethead h2 · correspondence .pf-corr__detail h2 · single-item-ops .pf-si__tools .pf-overline
+Light theme pixel-identical (fg-link == green-700 in light); dark now readable. Dark screenshots captured.
+
+Integrated gate: 12 static + ui-smoke 140/140.

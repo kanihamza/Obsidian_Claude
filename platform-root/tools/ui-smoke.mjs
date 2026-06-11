@@ -463,6 +463,43 @@ try {
   }
   check('reduced-motion: surfaces render with no console errors', rm.errs.length === 0, rm.errs.slice(0, 3).join(' | '));
   await rm.ctx.close();
+
+  console.log('\n==================== DARK-THEME CONTRAST SCAN ====================');
+  // Smart check: in dark mode, flag any visible text whose colour is near-invisible against its
+  // effective background (WCAG contrast < 2:1) — the classic "dark text left on a dark surface" bug
+  // that error/overflow checks can't see.
+  const scanContrast = () => {
+    const parse = (s) => { const m = s && s.match(/rgba?\(([^)]+)\)/); if (!m) return null; const p = m[1].split(',').map((x) => parseFloat(x)); return { r: p[0], g: p[1], b: p[2], a: p[3] === undefined ? 1 : p[3] }; };
+    const lum = (r, g, b) => { const f = (c) => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
+    const effBg = (el) => { let e = el; while (e && e.nodeType === 1) { const b = parse(getComputedStyle(e).backgroundColor); if (b && b.a >= 0.5) return [b.r, b.g, b.b]; e = e.parentElement; } return [11, 20, 16]; };
+    const bad = [];
+    for (const el of document.querySelectorAll('#module-outlet *')) {
+      if (el.children.length) continue;                       // leaf elements only
+      const txt = (el.textContent || '').trim(); if (txt.length < 2) continue;
+      const rect = el.getBoundingClientRect(); if (rect.width < 2 || rect.height < 2) continue;
+      const cs = getComputedStyle(el); if (cs.visibility === 'hidden' || cs.opacity === '0') continue;
+      const fg = parse(cs.color); if (!fg || fg.a < 0.5) continue;
+      const bg = effBg(el);
+      const L1 = lum(fg.r, fg.g, fg.b) + 0.05, L2 = lum(bg[0], bg[1], bg[2]) + 0.05;
+      const ratio = L1 > L2 ? L1 / L2 : L2 / L1;
+      if (ratio < 2) bad.push({ tag: el.tagName.toLowerCase(), cls: (el.className || '').toString().slice(0, 24), ratio: Math.round(ratio * 100) / 100, sample: txt.slice(0, 24) });
+    }
+    return bad;
+  };
+  const dk = await newAdminPage({ viewport: { width: 1280, height: 800 } });
+  await dk.p.evaluate(() => globalThis.Platform.Theme.set('dark'));
+  await dk.p.waitForTimeout(150);
+  const dkSurfaces = ['home', 'ops-hub', 'response-tracking', 'single-item-ops', 'bulk-assignment', 'approvals', 'correspondence', 'registry', 'lookup', 'diagnostics', 'stats', 'executive', 'settings'];
+  for (const id of dkSurfaces) {
+    await dk.p.evaluate((m) => globalThis.Platform.Router.navigate(m), id);
+    await dk.p.locator(`#module-${id}`).first().waitFor({ timeout: 10000 }).catch(() => {});
+    await dk.p.waitForTimeout(180);
+    const bad = await dk.p.evaluate(scanContrast);
+    check(`dark-contrast: ${id} no near-invisible text`, bad.length === 0, bad.slice(0, 3).map((b) => `${b.tag}.${b.cls}="${b.sample}"@${b.ratio}:1`).join(' | '));
+    if (['home', 'ops-hub', 'single-item-ops'].includes(id)) await dk.p.screenshot({ path: `/tmp/dark-${id}.png`, fullPage: false }).catch(() => {});
+  }
+  check('dark-contrast: no console errors across sweep', dk.errs.length === 0, dk.errs.slice(0, 3).join(' | '));
+  await dk.ctx.close();
 } catch (e) {
   fail++; console.log('  FAIL  harness error — ' + e.message.split('\n')[0]);
   try {

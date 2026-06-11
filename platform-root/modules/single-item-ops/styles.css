@@ -11,5 +11,5 @@
   /* Live-preview summary reads as a distinct, branded panel beside the form. */
   #module-single-item-ops .pf-si__summary { border-top:3px solid var(--color-brand-primary); }
   #module-single-item-ops .pf-si__summary .pf-detail__title { display:flex; align-items:center; gap:var(--space-2); font-size:var(--size-h3); }
-  #module-single-item-ops .pf-si__tools .pf-overline { color:var(--color-brand-primary); }
+  #module-single-item-ops .pf-si__tools .pf-overline { color:var(--dgo-color-fg-link); }
 }
