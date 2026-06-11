@@ -1473,3 +1473,18 @@ overflow check. Added an activity fixture (for registry). 13 new assertions, all
   no console errors.
 
 Integrated gate: 12 static + ui-smoke 108/108.
+
+---
+
+## 23. 2026-06-11 — Deep-interaction checks for analytics/AI surfaces (126 assertions)
+
+Completed deep-interaction coverage for the last six surfaces (18 new assertions, all pass):
+- stats: KPI tiles render from fabric counts; charts region renders.
+- reports: KPI tiles render; reference table populates.
+- executive: KPI cards render; clicking a card cross-navigates (hash changes).
+- orchestrator: task list renders (mountListLens); selecting a row reveals detail.
+- fasttrack: 3 SLA tiles render; clicking a tile applies the filter (is-active).
+- assistant: typing + send renders the user turn AND a reply turn in the log (AI_CHAT path).
+
+Every admin surface now has deep-interaction coverage. No bugs surfaced this round.
+Integrated gate: 12 static + ui-smoke 126/126.

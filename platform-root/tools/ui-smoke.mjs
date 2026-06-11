@@ -311,6 +311,76 @@ try {
     'tiles=' + await page.locator('#module-diagnostics .pf-stat__value').count());
   check('diagnostics: no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
 
+  console.log('\n==================== STATS DEEP CHECK ====================');
+  consoleErrors.length = 0;
+  await page.evaluate(() => globalThis.Platform.Router.navigate('stats'));
+  await page.locator('#module-stats').first().waitFor({ timeout: 15000 });
+  await page.waitForTimeout(250);
+  check('stats: KPI tiles render from fabric counts', await page.locator('#module-stats .pf-stat__value').count() >= 1,
+    'tiles=' + await page.locator('#module-stats .pf-stat__value').count());
+  check('stats: charts region renders', await page.locator('#module-stats #stats-charts').count() === 1);
+  check('stats: no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
+
+  console.log('\n==================== REPORTS DEEP CHECK ====================');
+  consoleErrors.length = 0;
+  await page.evaluate(() => globalThis.Platform.Router.navigate('reports'));
+  await page.locator('#module-reports').first().waitFor({ timeout: 15000 });
+  await page.waitForTimeout(250);
+  check('reports: KPI tiles render', await page.locator('#module-reports .pf-stat__value').count() >= 1);
+  check('reports: reference table populates', await page.locator('#module-reports .pf-table tbody tr').count() >= 1,
+    'rows=' + await page.locator('#module-reports .pf-table tbody tr').count());
+  check('reports: no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
+
+  console.log('\n==================== EXECUTIVE DEEP CHECK ====================');
+  consoleErrors.length = 0;
+  await page.evaluate(() => globalThis.Platform.Router.navigate('executive'));
+  await page.locator('#module-executive').first().waitFor({ timeout: 15000 });
+  await page.waitForTimeout(250);
+  check('executive: KPI cards render', await page.locator('#module-executive .pf-stat__value').count() >= 1);
+  const hashBefore = await page.evaluate(() => location.hash);
+  await page.locator('#module-executive .pf-stat').first().click();
+  await page.waitForTimeout(300);
+  check('executive: clicking a KPI card cross-navigates', await page.evaluate(() => location.hash) !== hashBefore,
+    'hash=' + await page.evaluate(() => location.hash));
+  check('executive: no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
+
+  console.log('\n==================== ORCHESTRATOR DEEP CHECK ====================');
+  consoleErrors.length = 0;
+  await page.evaluate(() => globalThis.Platform.Router.navigate('orchestrator'));
+  await page.locator('#module-orchestrator').first().waitFor({ timeout: 15000 });
+  await page.waitForTimeout(300);
+  const orchRows = page.locator('#module-orchestrator .pf-table tbody tr');
+  check('orchestrator: task list renders from fabric', await orchRows.count() >= 1, 'rows=' + await orchRows.count());
+  await orchRows.first().click();
+  await page.waitForTimeout(300);
+  const orchDetail = (await page.locator('#module-orchestrator .pf-list__detail').first().textContent().catch(() => '') || '').trim();
+  check('orchestrator: selecting a row reveals detail', orchDetail.length > 0, 'detail.len=' + orchDetail.length);
+  check('orchestrator: no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
+
+  console.log('\n==================== FASTTRACK DEEP CHECK ====================');
+  consoleErrors.length = 0;
+  await page.evaluate(() => globalThis.Platform.Router.navigate('fasttrack'));
+  await page.locator('#module-fasttrack').first().waitFor({ timeout: 15000 });
+  await page.waitForTimeout(250);
+  check('fasttrack: SLA tiles render', await page.locator('#module-fasttrack .pf-stat').count() >= 3,
+    'tiles=' + await page.locator('#module-fasttrack .pf-stat').count());
+  await page.locator('#module-fasttrack .pf-stat').first().click();
+  await page.waitForTimeout(300);
+  check('fasttrack: clicking an SLA tile applies the filter', await page.locator('#module-fasttrack .pf-stat.is-active').count() === 1);
+  check('fasttrack: no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
+
+  console.log('\n==================== ASSISTANT DEEP CHECK ====================');
+  consoleErrors.length = 0;
+  await page.evaluate(() => globalThis.Platform.Router.navigate('assistant'));
+  await page.locator('#module-assistant').first().waitFor({ timeout: 15000 });
+  await page.locator('#module-assistant .pf-asst__input').waitFor({ timeout: 10000 });
+  await page.fill('#module-assistant .pf-asst__input', 'What is pending for procurement?');
+  await page.locator('#module-assistant .pf-btn--primary').first().click();
+  await page.waitForTimeout(500);
+  check('assistant: sent message renders in the conversation log', await page.locator('#module-assistant .pf-asst__msg--user').count() >= 1);
+  check('assistant: a reply turn is rendered', await page.locator('#module-assistant .pf-asst__msg--ai').count() >= 1);
+  check('assistant: no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
+
   console.log('\n==================== THEME MATRIX (light / dark / high-contrast) ====================');
   consoleErrors.length = 0;
   const bodyBg = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
