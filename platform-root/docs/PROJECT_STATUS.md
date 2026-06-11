@@ -1390,3 +1390,28 @@ Deepened interaction coverage (no new bugs found — all pass, confirming the fi
   → bulk-assignment opens with the selection carried (bulk-sum-count = 1).
 
 Integrated gate: RUN_UI_SMOKE=1 bash tools/verify.sh → 12 static checks PASS + ui-smoke 40/40.
+
+---
+
+## 19. 2026-06-11 — Branding/responsiveness conformance review vs DGO v2.1 + mobile touch-floor
+
+Reviewed the platform against the uploaded **DGO Design System v2.1** bundle (tokens, component CSS,
+foundations/a11y/motion/i18n docs). Findings:
+- **Branding/tokens: already conformant.** v2.1 is explicitly *additive* over v2.0 (no breaking
+  changes, no value changes); the platform's tokens.css already adopts the v2.0 token set. No re-brand
+  needed. The v4.1 shared-layer uplift (§13) already filled the missing .pf-input/.pf-muted/header
+  hierarchy.
+- **Shell IS responsive.** The real shell is <pf-app-shell> (custom element) with a drawer; my earlier
+  "no @media" read was of the orphaned light-DOM styles/shell.css (.pf-shell — referenced nowhere; dead).
+- **Real gaps (fixed):**
+  - Touch targets below the DGO a11y **44px floor** (header icon btns/hamburger 36px, nav links ~36px,
+    buttons 40px) — matters for the CLAUDE.md mobile-tablet target / B-2 Must-Fix. Added
+    `@media (pointer:coarse)` 44px floors in pf-app-header, pf-app-nav, and components.css (.pf-btn,
+    .pf-input, .pf-subnav__tab, .pf-field controls). Desktop metrics untouched.
+  - Breakpoint drift: shell/header collapsed at 768px; DGO system uses 900/600. Aligned shell+header to 900px.
+- **Noted (not changed):** styles/shell.css is dead (safe to remove later); per-surface mobile reflow
+  (tables→cards, master-detail stacking) is a larger pass needing direction.
+
+Verified: ui-smoke extended with a touch context (834×1112, hasTouch) — hamburger visible+44px, drawer
+hidden by default and slides in on tap, .pf-btn meets 44px floor, no console errors.
+Integrated gate: 12 static + ui-smoke 46/46. Screenshot: /tmp/mobile-tablet-smoke.png.

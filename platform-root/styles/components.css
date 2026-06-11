@@ -484,4 +484,14 @@
   /* Cards lift gently on hover. */
   .pf-card{ transition:box-shadow var(--duration-base) var(--easing-standard),
       transform var(--duration-base) var(--easing-standard); }
+
+  /* DGO a11y: 44px touch-target floor on touch devices only (B-2 mobile-tablet target).
+     pointer:coarse keeps desktop metrics untouched. */
+  @media (pointer:coarse){
+    .pf-btn{ min-height:44px; }
+    .pf-input,select.pf-input{ min-height:44px; }
+    .pf-subnav__tab{ min-height:44px; }
+    .pf-field input,.pf-field select,.pf-field textarea{ min-height:44px; }
+    .pf-table--selectable tbody tr td{ padding-block:var(--space-3); }
+  }
 }

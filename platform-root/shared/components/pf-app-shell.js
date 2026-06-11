@@ -33,7 +33,7 @@ class PfAppShell extends PfBaseElement {
         border-right-color:transparent; border-radius:50%; animation:spin 1s linear infinite; }
       .orbit .core{ position:absolute; inset:42%; border-radius:50%; background:var(--motif-core); }
       @keyframes spin{ to{ transform:rotate(360deg); } }
-      @media (max-width:768px){
+      @media (max-width:900px){
         .shell{ grid-template-columns:1fr; grid-template-areas:"header" "banner" "main" "footer"; }
         .nav{ position:fixed; top:var(--header-h,56px); left:0; bottom:0; width:min(80vw,300px);
           z-index:var(--z-drawer); transform:translateX(-105%);

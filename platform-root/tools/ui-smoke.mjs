@@ -75,7 +75,7 @@ const consoleErrors = [];
 page.on('console', (m) => { if (m.type() === 'error') consoleErrors.push(m.text()); });
 page.on('pageerror', (e) => consoleErrors.push('pageerror: ' + e.message));
 
-await page.route('**/*', async (route) => {
+const routeHandler = async (route) => {
   const req = route.request();
   if (req.url().includes('powerplatform.com')) {
     let action = '';
@@ -83,7 +83,8 @@ await page.route('**/*', async (route) => {
     return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mockBody(action)) });
   }
   return route.continue();
-});
+};
+await page.route('**/*', routeHandler);
 
 let pass = 0, fail = 0;
 const check = (n, ok, d) => { ok ? (pass++, console.log('  PASS  ' + n)) : (fail++, console.log('  FAIL  ' + n + (d ? '  — ' + d : ''))); };
@@ -227,6 +228,41 @@ try {
   check('no console errors in approvals journey', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
   await page.screenshot({ path: '/tmp/approvals-smoke.png', fullPage: true });
   console.log('  screenshot → /tmp/approvals-smoke.png');
+
+  console.log('\n==================== MOBILE / TABLET (touch) CHECK ====================');
+  const mctx = await browser.newContext({ viewport: { width: 834, height: 1112 }, hasTouch: true, isMobile: true });
+  const mpage = await mctx.newPage();
+  const mErrors = [];
+  mpage.on('console', (m) => { if (m.type() === 'error') mErrors.push(m.text()); });
+  mpage.on('pageerror', (e) => mErrors.push('pageerror: ' + e.message));
+  await mpage.route('**/*', routeHandler);
+  await mpage.goto(`${BASE}/`, { waitUntil: 'load' });
+  await mpage.waitForFunction(() => globalThis.Platform && globalThis.Platform.Persona, null, { timeout: 15000 });
+  await mpage.evaluate(() => globalThis.Platform.Persona.switch('admin'));
+  await mpage.evaluate(() => globalThis.Platform.Router.navigate('single-item-ops'));
+  await mpage.locator('#module-single-item-ops').first().waitFor({ timeout: 15000 });
+
+  // At tablet-portrait (≤900px) the sidebar collapses to a drawer behind a hamburger.
+  const burger = mpage.locator('pf-app-header').locator('.menu');
+  check('mobile: hamburger visible at ≤900px', await burger.isVisible());
+  const bx = await burger.boundingBox();
+  check('mobile: hamburger meets 44px touch floor', !!bx && bx.width >= 44 && bx.height >= 44, bx ? `${Math.round(bx.width)}x${Math.round(bx.height)}` : 'no box');
+  // Drawer is off-canvas by default, slides in on tap (transform translateX(-105%) → 0).
+  const nav = mpage.locator('pf-app-shell').locator('.nav');
+  const navClosed = await nav.boundingBox();
+  await burger.click();
+  await mpage.waitForTimeout(400);
+  const navOpen = await nav.boundingBox();
+  check('mobile: nav drawer hidden by default', !!navClosed && navClosed.x < 0, navClosed ? `x=${Math.round(navClosed.x)}` : 'no box');
+  check('mobile: drawer slides in on hamburger tap', !!navOpen && navOpen.x > (navClosed ? navClosed.x : -999) && navOpen.x >= -1, navOpen ? `x=${Math.round(navOpen.x)}` : 'no box');
+  // A primary button honours the 44px floor under coarse pointer.
+  const btn = mpage.locator('#module-single-item-ops .pf-btn').first();
+  const btnBox = await btn.boundingBox().catch(() => null);
+  check('mobile: .pf-btn meets 44px touch floor', !!btnBox && btnBox.height >= 44, btnBox ? `h=${Math.round(btnBox.height)}` : 'no btn');
+  check('mobile: no console errors', mErrors.length === 0, mErrors.slice(0, 3).join(' | '));
+  await mpage.screenshot({ path: '/tmp/mobile-tablet-smoke.png', fullPage: false });
+  console.log('  screenshot → /tmp/mobile-tablet-smoke.png');
+  await mctx.close();
 } catch (e) {
   fail++; console.log('  FAIL  harness error — ' + e.message.split('\n')[0]);
   try {

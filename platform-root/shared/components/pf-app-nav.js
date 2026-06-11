@@ -20,6 +20,8 @@ class PfAppNav extends PfBaseElement {
         background:var(--color-brand-accent); color:var(--color-text-inverse);
         font-size:var(--size-caption); display:inline-grid; place-items:center; }
       .dep{ margin-left:auto; font-size:var(--size-caption); color:var(--color-warning); }
+      /* DGO a11y: 44px touch-target floor on touch devices (B-2 mobile-tablet target). */
+      @media (pointer:coarse){ a{ min-height:44px; } }
     </style><nav aria-label="${this.t('shell.nav.aria')}"></nav>`);
     this.bus('platform:nav:rebuilt', (m) => this.paint(m));
     const model = globalThis.Platform?.Nav?.model?.(); if (model) this.paint(model);

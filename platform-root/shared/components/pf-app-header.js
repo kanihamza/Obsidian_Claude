@@ -37,7 +37,9 @@ class PfAppHeader extends PfBaseElement {
       .utils button:hover{ background:var(--color-surface-sunken); color:var(--color-text); }
       .iconbtn{ display:inline-grid; place-items:center; width:36px; height:36px; border-radius:var(--radius-md); color:var(--color-text-muted); }
       .iconbtn:hover{ background:var(--color-surface-sunken); color:var(--color-text); }
-      @media (max-width:768px){ .menu{ display:inline-grid; place-items:center; width:36px; height:36px; }
+      /* DGO a11y: 44px touch-target floor on touch devices (B-2 mobile-tablet target). */
+      @media (pointer:coarse){ .iconbtn,.utils button{ width:44px; height:44px; } }
+      @media (max-width:900px){ .menu{ display:inline-grid; place-items:center; width:44px; height:44px; }
         .endorse{ display:none; } }
     </style>
     <button class="menu" aria-label="${this.t('shell.menu.toggle')}"><pf-icon name="menu"></pf-icon></button>
