@@ -818,6 +818,7 @@ export function renderFabricTable(container, rows, columns, onRow, opts = {}) {
     function rerender() {
       clear(container);
       container.append(el('div', { class: 'pf-card pf-table-wrap' }, [_fabricTable(visibleRows(), columns, onRow, false)]));
+      const lg0 = rowLegend(rows); if (lg0) container.append(lg0);
       const p = pager(); if (p) container.append(p);
     }
     rerender();
@@ -843,7 +844,7 @@ export function renderFabricTable(container, rows, columns, onRow, opts = {}) {
     const p = pager(); if (p) main.append(p);
   }
   rerender();
-  main.append(wrap); split.append(main, detailEl); container.append(split);
+  main.append(wrap); const lg = rowLegend(rows); if (lg) main.append(lg); split.append(main, detailEl); container.append(split);
   renderRichDetail(detailEl, null, mod, { type, columns, linked, actions, selectHintKey });   // initial: empty hint
 }
 
@@ -865,6 +866,25 @@ function rowStateClass(r) {
     }
   }
   return cls.join(' ');
+}
+
+/** Self-explaining legend for the conditional row formatting — renders only the states actually present
+ *  in the given rows, so it stays relevant and quiet when nothing is flagged. */
+function rowLegend(rows) {
+  const present = new Set();
+  for (const r of rows) {
+    const c = rowStateClass(r);
+    if (c.includes('pf-row--overdue')) present.add('overdue');
+    if (c.includes('pf-row--due-soon')) present.add('dueSoon');
+    if (c.includes('pf-row--alert')) present.add('alert');
+    if (c.includes('pf-row--pending')) present.add('pending');
+  }
+  if (!present.size) return null;
+  const order = [['overdue', 'lens.legendOverdue'], ['dueSoon', 'lens.legendDueSoon'], ['alert', 'lens.legendAlert'], ['pending', 'lens.legendPending']];
+  const items = order.filter(([k]) => present.has(k)).map(([k, key]) =>
+    el('span', { class: 'pf-row-legend__item pf-row-legend__item--' + k }, [
+      el('span', { class: 'pf-row-legend__swatch', 'aria-hidden': 'true' }), el('span', { text: t(key) })]));
+  return el('div', { class: 'pf-row-legend', role: 'note', 'aria-label': t('lens.legendTitle') }, items);
 }
 
 function _fabricTable(rows, columns, onRow, selectable) {

@@ -491,6 +491,15 @@
   .pf-table tbody tr.pf-row--pending td { background:color-mix(in srgb, var(--color-warning) 6%, transparent); }
   .pf-table tbody tr.pf-row--overdue  td:first-child { box-shadow:inset 3px 0 0 0 var(--color-danger); }
   .pf-table tbody tr.pf-row--due-soon td:first-child { box-shadow:inset 3px 0 0 0 var(--color-warning); }
+  /* Legend for the conditional row formatting. */
+  .pf-row-legend { display:flex; flex-wrap:wrap; gap:var(--space-3); margin-top:var(--space-2);
+    font-size:var(--size-caption); color:var(--color-text-muted); }
+  .pf-row-legend__item { display:inline-flex; align-items:center; gap:var(--space-1_5,6px); }
+  .pf-row-legend__swatch { width:10px; height:10px; border-radius:var(--radius-xs); display:inline-block; }
+  .pf-row-legend__item--overdue  .pf-row-legend__swatch { background:var(--color-danger); }
+  .pf-row-legend__item--due-soon .pf-row-legend__swatch { background:var(--color-warning); }
+  .pf-row-legend__item--alert    .pf-row-legend__swatch { background:color-mix(in srgb, var(--color-danger) 35%, transparent); }
+  .pf-row-legend__item--pending  .pf-row-legend__swatch { background:color-mix(in srgb, var(--color-warning) 35%, transparent); }
 
   /* DGO a11y: 44px touch-target floor on touch devices only (B-2 mobile-tablet target).
      pointer:coarse keeps desktop metrics untouched. */

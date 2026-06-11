@@ -534,6 +534,11 @@
     "pagerInfo": "Showing {from}–{to} of {total}",
     "pagerPrev": "Prev",
     "pagerNext": "Next",
+    "legendTitle": "Row status key",
+    "legendOverdue": "Overdue",
+    "legendDueSoon": "Due soon",
+    "legendAlert": "Needs attention",
+    "legendPending": "Pending",
     "heatmap": {
       "legend": "Less",
       "more": "More",

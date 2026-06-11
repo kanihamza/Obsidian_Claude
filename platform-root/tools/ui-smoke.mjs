@@ -235,6 +235,7 @@ try {
   check('response-tracking renders rows from fabric', rtRows >= 1, 'rows=' + rtRows);
   const fmtRows = await page.locator('#module-response-tracking .pf-row--alert, #module-response-tracking .pf-row--overdue, #module-response-tracking .pf-row--pending, #module-response-tracking .pf-row--due-soon').count();
   check('response-tracking: conditional row formatting applied', fmtRows >= 1, 'formatted-rows=' + fmtRows);
+  check('response-tracking: conditional-format legend renders', await page.locator('#module-response-tracking .pf-row-legend').count() >= 1);
   check('no console errors in response-tracking', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
 
   console.log('\n==================== APPROVALS DEEP CHECK (verifies K-2 in browser) ====================');

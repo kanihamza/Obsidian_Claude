@@ -136,7 +136,7 @@ export const UI = {
               P.Entities.upsert('task', { ...task, status: draft.status, priority: draft.priority, dueDate: draft.dueDate });
               P.UI.actionCompleted('task.updated', { module: 'response-tracking', target: ref });
               close({ ok: true, draft });
-            } else { submitting = false; }
+            } else { submitting = false; (P.Actions ? P.Actions.feedback(res) : UI.toastError(res)); }
           } catch (err) { submitting = false; }
         });
       });
@@ -228,7 +228,7 @@ export const UI = {
               status: 'Created', ts: new Date().toISOString() });
             P.UI.actionCompleted('opshub.flagged', { module: 'ops-hub', target: ref });
             close({ ok: true, draft });
-          } else { submitting = false; }
+          } else { submitting = false; (globalThis.Platform.Actions ? globalThis.Platform.Actions.feedback(res) : UI.toastError(res)); }
         });
       });
     });
@@ -502,7 +502,7 @@ export const UI = {
           refresh();
           const c = document.getElementById('cm-count'); if (c) c.textContent = String(thread.items.length);
           P.UI.toast({ messageKey: 'comments.added', variant: 'success' });
-        }
+        } else { P.Actions && P.Actions.feedback ? P.Actions.feedback(res) : UI.toastError(res); }
       };
       thread.addEventListener('pf-comment:submit', submitHandler);
 

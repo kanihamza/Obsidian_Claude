@@ -1607,3 +1607,20 @@ i18n: added flow.confirmTitle/done/failed/syncFailed + triage.ackTitle/ackConfir
 Verified: describe() unit-tested (success/error/v4 shapes). ui-smoke asserts the modal appears BEFORE any
 flow fires, NO flow fires pre-confirmation, and the confirmed action persists the dynamic envelope.
 Integrated gate: 12 static + ui-smoke 144/144.
+
+---
+
+## 29. 2026-06-11 — Parsed failure feedback for flow modals + conditional-format legend
+
+Continued the flow-action lifecycle. Found a real gap: three flow-triggering modals SILENTLY swallowed
+flow failures — addComment had no else branch; openFlagDocument and openTaskUpdate only set
+submitting=false. Now each surfaces the parsed flow response on failure via Platform.Actions.feedback(res)
+(falls back to UI.toastError). The compose modals already serve as the preview/confirm; this closes the
+"feedback from the flow response" loop for them.
+
+Conditional-format legend: lens.rowLegend renders a self-explaining key (.pf-row-legend) below fabric
+tables, showing ONLY the row states actually present (overdue / due-soon / needs-attention / pending).
+Token-based swatches; i18n lens.legend* keys.
+
+Verified: ui-smoke asserts the legend renders on response-tracking (which has an alert row). describe()
+parser previously unit-tested. Integrated gate: 12 static + ui-smoke 145/145.
