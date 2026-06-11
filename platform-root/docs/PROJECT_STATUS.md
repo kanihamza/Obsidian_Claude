@@ -1580,3 +1580,30 @@ flow (attached contract v2.0.0); also implement dynamic/conditional row formatti
 Verified: ui-smoke captures PA request bodies; new assertions confirm (a) triage acknowledge POSTs the
 dynamic envelope (action:'transition', client.app:'obsidian', requestId present), (b) conditional row
 formatting appears. Integrated gate: 12 static + ui-smoke 142/142.
+
+---
+
+## 28. 2026-06-11 — Flow-action lifecycle: preview + confirm → execute → parsed feedback
+
+Operator directive: every flow-triggering action must show an intermediary preview + confirmation before
+execution and surface parsed feedback from the flow response.
+
+dynamic-actions.js (Platform.Actions) extended:
+- describe(res): parses the normalized flow response into { ok, kind, message } — prefers the flow's own
+  message (data.message / body.Message / errors[0].message) so feedback reflects the real server reply.
+- feedback(res, opts): toasts the parsed outcome (success message or parsed error).
+- run(action, opts): the canonical user-action runner — UI.confirm preview (titleKey/summary/details) →
+  dispatch → parsed feedback. Cancels cleanly ({ok:false, cancelled:true}).
+- emit(action): fire-and-forget for fabric transitions now ALSO surfaces the parsed flow response (the
+  flow's message on success if present; a warning with the parsed reason on failure) + audit.
+
+Applied: pf-triage-bar acknowledge now shows a confirm preview before running the triage flow (the one
+flow action that was a one-click). Send-to-routing already confirmed; approvals/single/bulk/flag/task-
+update already confirm + parse errors. transitionStatus persistence (added §27) now carries parsed
+feedback for every endpoint-less verb.
+
+i18n: added flow.confirmTitle/done/failed/syncFailed + triage.ackTitle/ackConfirm.
+
+Verified: describe() unit-tested (success/error/v4 shapes). ui-smoke asserts the modal appears BEFORE any
+flow fires, NO flow fires pre-confirmation, and the confirmed action persists the dynamic envelope.
+Integrated gate: 12 static + ui-smoke 144/144.

@@ -925,6 +925,8 @@
     "routeSummary": "Complete triage and hand this correspondence to Phase 2 (Routing).",
     "duplicateHint": "Possible duplicate of {ref} — review before routing.",
     "duplicateConfirmed": "Marked as duplicate.",
+    "ackTitle": "Acknowledge correspondence",
+    "ackConfirm": "Acknowledge this correspondence and mark it triaged? This runs the triage flow.",
     "metaCategory": "Category",
     "metaUrgency": "Urgency",
     "urgency": {
@@ -937,5 +939,11 @@
   },
   "lookups": {
     "failed": "Reference data failed to load — category and assignee dropdowns may be empty."
+  },
+  "flow": {
+    "confirmTitle": "Confirm action",
+    "done": "Action completed.",
+    "failed": "Action failed ({kind}).",
+    "syncFailed": "Saved locally, but the {action} flow did not confirm — it will be retried."
   }
 }

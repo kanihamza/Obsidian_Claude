@@ -290,12 +290,16 @@ try {
   await page.waitForTimeout(250);
   check('correspondence: selecting a row reveals the triage bar (Phase-1 intake)', await page.locator('#module-correspondence pf-triage-bar').count() === 1);
   check('correspondence: detail shows cross-lens actions', await page.locator('#module-correspondence .pf-corr__links button').count() >= 2);
-  // Triage acknowledge → transitionStatus → persists through the Dynamic Global Actions flow.
+  // Flow-action lifecycle: preview + confirm BEFORE the flow, then persist via Dynamic Global Actions.
   paCalls.length = 0;
   await page.locator('#module-correspondence pf-triage-bar #ack').first().click();
-  await page.waitForTimeout(450);
+  await page.locator('pf-modal[open] .primary').first().waitFor({ timeout: 8000 });
+  check('correspondence: triage acknowledge shows preview + confirmation before the flow', await page.locator('pf-modal[open] .primary').count() >= 1);
+  check('correspondence: no flow fired before confirmation', paCalls.length === 0, 'premature=[' + paCalls.map((c) => c.action).join(',') + ']');
+  await page.locator('pf-modal[open] .primary').first().click();
+  await page.waitForTimeout(500);
   const dynCall = paCalls.find((c) => c.action === 'transition' && c.client && c.client.app === 'obsidian' && c.requestId);
-  check('correspondence: triage action persists via Dynamic Global Actions', !!dynCall, 'captured actions=[' + paCalls.map((c) => c.action).join(',') + ']');
+  check('correspondence: confirmed action persists via Dynamic Global Actions', !!dynCall, 'captured actions=[' + paCalls.map((c) => c.action).join(',') + ']');
   check('correspondence: no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
 
   console.log('\n==================== REGISTRY DEEP CHECK ====================');

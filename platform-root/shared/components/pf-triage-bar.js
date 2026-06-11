@@ -271,8 +271,15 @@ class PfTriageBar extends PfBaseElement {
     return { ok: true, finalStatus: cur };
   }
 
-  _acknowledge() {
+  async _acknowledge() {
     if (!this._ref) { this._toast('triage.noRef', 'danger'); return; }
+    // Intermediary preview + confirmation before the triage flow runs (operator directive).
+    const UI = globalThis.Platform && globalThis.Platform.UI;
+    if (UI && typeof UI.confirm === 'function') {
+      const ok = await UI.confirm({ titleKey: 'triage.ackTitle', summaryKey: 'triage.ackConfirm',
+        details: [{ label: this.t('entity.reference'), value: this._ref }], confirmKey: 'triage.acknowledge' });
+      if (!ok) return;
+    }
     const r = this._advance('triaged');
     if (!r.ok) { this._toastError(r.error); this._reflect(); return; }
     this._meta.acknowledged = true;

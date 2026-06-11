@@ -4,8 +4,12 @@
  *  dynamic-global-actions, v2.0.0): builds the standardized envelope —
  *    action · operation · mode · source · userEmail · requestId · timestamp · client · payload
  *  — and dispatches through BaseService so every endpoint-less action is contract-correct, idempotency-
- *  keyed, and recorded in the request log. Consumed by fabric status transitions, the triage bar, and
- *  any module action that lacks its own flow (acknowledge / triage / route / escalate / reopen / …). */
+ *  keyed, and recorded in the request log.
+ *
+ *  Action lifecycle (operator directive): every flow-triggering action goes
+ *    preview + confirm  →  execute  →  parsed feedback from the flow response.
+ *  Use DynamicActions.run() for discrete user actions (it owns the whole cycle); transitions persisted
+ *  by the fabric use emit() (optimistic) and still surface the parsed flow response. */
 import { BaseService } from '../../core/base-service.js';
 
 const APP_VERSION = '4.0';
@@ -22,10 +26,7 @@ function currentUserEmail() {
 }
 
 export const DynamicActions = {
-  /** Dispatch an endpoint-less action through the Dynamic Global Actions flow and await the result.
-   *  @param {string} action  canonical workflow verb (acknowledge / triage / route / escalate / …)
-   *  @param {object} fields  { operation?, mode?, payload?, ...topLevel } merged into the envelope
-   *                          (top-level contract fields like ref / docId / taskId / status pass through). */
+  /** Low-level dispatch through the Dynamic Global Actions flow; awaits the normalized result. */
   async dispatch(action, fields = {}) {
     const { operation, mode, payload, ...rest } = fields;
     const now = new Date().toISOString();
@@ -43,14 +44,67 @@ export const DynamicActions = {
     return _dispatch(envelope);
   },
 
-  /** Fire-and-forget variant for optimistic UI: dispatch without blocking the local mutation, but log
-   *  failures and emit an audit event so a server-side reject is visible without diverging local state. */
+  /** Parse a normalized API result into a human-facing outcome { ok, kind, message, data }. The flow's
+   *  own message (data.message / body.message / errors[0].message) is preferred so feedback reflects the
+   *  actual server response, not a generic string. */
+  describe(res) {
+    if (!res) return { ok: false, kind: 'error', message: null, data: null };
+    const data = res.data;
+    const body = res.body || {};
+    const raw =
+      (data && (data.message || data.Message || data.result || data.status)) ||
+      body.message || body.Message ||
+      (Array.isArray(res.errors) && res.errors[0] && res.errors[0].message) || null;
+    return { ok: !!res.ok, kind: res.kind || (res.ok ? 'ok' : 'error'), message: (typeof raw === 'string' && raw.trim()) ? raw.trim() : null, data: data || null };
+  },
+
+  /** Toast the parsed outcome of a flow response. Success shows the flow's message (or successKey);
+   *  failure shows the parsed error so the user sees WHY the flow rejected. */
+  feedback(res, opts = {}) {
+    const UI = globalThis.Platform && globalThis.Platform.UI;
+    const d = DynamicActions.describe(res);
+    if (!UI || !UI.toast) return d;
+    if (d.ok) UI.toast({ messageKey: opts.successKey || 'flow.done', message: d.message || undefined, variant: 'success', vars: opts.vars });
+    else UI.toast({ messageKey: 'flow.failed', message: d.message || undefined, variant: 'danger', vars: { kind: d.kind } });
+    return d;
+  },
+
+  /** The canonical user-action runner: intermediary preview + confirmation → execute → parsed feedback.
+   *  @param {string} action  workflow verb (acknowledge / route / escalate / reopen / …)
+   *  @param {object} opts     { preview:{titleKey,summaryKey,summary,details,confirmKey}, danger,
+   *                             successKey, vars, payload, ...topLevelContractFields } */
+  async run(action, opts = {}) {
+    const { preview, danger, successKey, vars, payload, ...fields } = opts;
+    const UI = globalThis.Platform && globalThis.Platform.UI;
+    if (preview && UI && typeof UI.confirm === 'function') {
+      const ok = await UI.confirm({
+        titleKey: preview.titleKey || 'flow.confirmTitle',
+        summaryKey: preview.summaryKey, summary: preview.summary,
+        details: preview.details || [],
+        confirmKey: preview.confirmKey || 'common.actions.confirm',
+        danger: !!danger
+      });
+      if (!ok) return { ok: false, cancelled: true };
+    }
+    const res = await DynamicActions.dispatch(action, { payload, ...fields });
+    DynamicActions.feedback(res, { successKey, vars });
+    return res;
+  },
+
+  /** Fire-and-forget variant for optimistic UI (fabric transitions): dispatch without blocking the local
+   *  mutation, but still surface the parsed flow response — the flow's own message on success (if any)
+   *  and a warning with the parsed reason on failure — plus a request-log warning + audit event. */
   emit(action, fields = {}) {
     Promise.resolve()
       .then(() => DynamicActions.dispatch(action, fields))
       .then((res) => {
-        if (res && res.ok) return;
         const P = globalThis.Platform;
+        const d = DynamicActions.describe(res);
+        if (res && res.ok) {
+          if (d.message && P && P.UI && P.UI.toast) P.UI.toast({ message: d.message, variant: 'info', timeout: 4000 });
+          return;
+        }
+        if (P && P.UI && P.UI.toast) P.UI.toast({ messageKey: 'flow.syncFailed', message: d.message || undefined, variant: 'warning', vars: { action } });
         P && P.Log && P.Log.warn && P.Log.warn('actions.dispatch-failed', { action, kind: res && res.kind, ref: (fields && fields.ref) || null });
         P && P.Bus && P.Bus.emit && P.Bus.emit('audit:action-dispatch-failed', { action, ref: (fields && fields.ref) || null, ts: new Date().toISOString() });
       })
