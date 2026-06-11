@@ -1258,3 +1258,28 @@ real bugs (all fixed), plus a design pass aligned to the operator upload.
 
 Note: the upload is a React/Vite *roadmap viewer*, not a design system; its dark-slate/emerald palette
 was adopted as the selection PATTERN via var(--color-brand-primary), not hardcoded. Gate 12/12.
+
+---
+
+## 12. 2026-06-11 — Sweep fix + bulk parity + draft-autosave
+
+Per operator direction (bulk parity + sweep + D-3):
+
+**Sweep finding (fixed).** core/ui.js carried the same `raw.email` fragility as single-item-ops in its
+modal assignee/co-assignee pf-picker handlers — now resolves email from e.detail.value first. Also
+confirmed core/ui.js uses the same createElement→set-props mkPicker pattern, so the pf-rich-picker
+lazy-property fix repairs those modal pickers too (openEmailToTask / openFlagDocument). Noted but left
+alone: tools/deploy-s0-s1-a11.sh is a stale one-time Termux deploy snapshot (not referenced; repo is
+source of truth).
+
+**Bulk feature parity (diverges from SPA-exact, operator-authorized 2026-06-11).** Added Co-Assignee
+(typeahead), CC (semicolon/comma list), Action Required (select), and Ack/Task due-date pickers to
+bulk-assignment, wired through the summary, confirm dialog, and the BULK_ASSIGNMENT payload
+(NewActivityTask + payload.task: SupportAssignedTo/CopyTo/ActionRequired, operator due dates win over
+the tomorrow fallback).
+
+**D-3 draft-autosave.** single-item-ops persists this._draft to localStorage
+(obsidian.single-item-ops.draft.v1) on every change, restores on open (with an info toast), reflects
+restored selections into pickers/comments, and clears on successful submit. Best-effort (try/catch).
+
+Gate 12/12; boot-smoke 19 modules. All [browser-unverified].

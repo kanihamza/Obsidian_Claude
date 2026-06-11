@@ -308,15 +308,17 @@ export const UI = {
             draft.assignedTo = raw.DSU_HeadEmail || raw.DSU_HeadPersonalEmail || '';
             draft.assignedToTitle = raw.DSU_HeadTitle || raw.Title || '';
             draft.primaryDSU = raw.DSU_KEY;
-          } else if (raw.email) {
-            draft.assignedTo = raw.email; draft.assignedToTitle = raw.name || '';
-            draft.primaryDSU = raw.department || draft.primaryDSU;
+          } else {
+            // user option: email lives in the option VALUE (Lookups resolves email/upn/id), not always raw.email
+            draft.assignedTo = e.detail.value || raw.email || raw.Email || '';
+            draft.assignedToTitle = raw.name || raw.displayName || raw.jobTitle || '';
+            draft.primaryDSU = raw.department || raw.DSU_KEY || draft.primaryDSU;
           }
         });
         coassPicker.addEventListener('pf-picker:change', (e) => {
           const raw = e.detail.raw || {};
           if (raw.DSU_KEY) { draft.supportAssignedTo = raw.DSU_HeadEmail || raw.DSU_HeadPersonalEmail || ''; draft.supportDSU = raw.DSU_KEY; }
-          else if (raw.email) draft.supportAssignedTo = raw.email;
+          else draft.supportAssignedTo = e.detail.value || raw.email || raw.Email || '';
         });
         ccPicker.addEventListener('pf-picker:change', (e) => { draft.copyTo = Array.isArray(e.detail.value) ? e.detail.value : []; });
 

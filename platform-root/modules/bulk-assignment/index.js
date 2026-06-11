@@ -1,7 +1,8 @@
 /** OBSIDIAN v4.0 — module 'bulk-assignment' (ROUTING · audience:admin).
- *  EXACT port of the NITDA Digital Ops Hub SPA bulk-assignment form + logic (authorized in-session,
- *  2026-06-10). Faithful to the SPA: Category/Sub-Category <select>s, a single Assign-To email
- *  typeahead (no co-assignee/CC), Priority <select>, Comments, and a DUAL-MODE submit —
+ *  Port of the NITDA Digital Ops Hub SPA bulk-assignment form + logic (authorized in-session,
+ *  2026-06-10), extended for operator-requested parity with single-assign (2026-06-11): Category/
+ *  Sub-Category <select>s, Assign-To + Co-Assignee email typeaheads, CC list, Priority + Action-Required
+ *  <select>s, Ack/Task due-date pickers, Comments, and a DUAL-MODE submit —
  *  Direct (E06 / BULK_ASSIGNMENT_DIRECT) and Optimized (E07 / BULK_ASSIGNMENT) — gated by a
  *  confirm step. No OTP (the SPA has none). The submit payload mirrors the SPA's executeBulkAssign
  *  byte-for-byte (action/AssignmentType/NewActivityTask/SelectedItems/payload), including the SPA's
@@ -51,7 +52,8 @@ class BulkAssignmentModule extends BaseModule {
   }
 
   _freshDraft() {
-    return { category: '', subCategory: '', assignee: '', priority: 'P3 (Normal)', comments: '' };
+    return { category: '', subCategory: '', assignee: '', coAssignee: '', copyTo: [],
+      priority: 'P3 (Normal)', actionRequired: '', ackDue: '', taskDue: '', comments: '' };
   }
 
   _docs() {
@@ -172,18 +174,42 @@ class BulkAssignmentModule extends BaseModule {
       [el('option', { value: '', text: 'Select Sub-Category...' })]);
     this.on(subSel, 'change', () => { this._draft.subCategory = subSel.value; this._applyCategoryCascade(); this._updateSummary(); });
 
-    // Assign To (email) — typeahead over the user option set (min 2 chars, top 8). SPA filterBulkUsers.
-    const assigneeInput = el('input', { id: 'bulk-assignee', class: 'pf-input', type: 'text', maxlength: '254',
-      placeholder: 'Start typing name or email...', value: this._draft.assignee, autocomplete: 'off' });
-    const suggestions = el('div', { id: 'bulk-user-suggestions', class: 'pf-bulk__suggest', hidden: true });
-    this.on(assigneeInput, 'input', () => { this._draft.assignee = assigneeInput.value.trim(); this._filterUsers(assigneeInput, suggestions); this._updateSummary(); });
-    this.on(assigneeInput, 'keydown', (e) => this._suggestKeydown(e, suggestions));
+    // Email typeahead factory over the user option set (min 2 chars, top 8). SPA filterBulkUsers,
+    // generalized so Assign-To and Co-Assignee share the same behaviour, each bound to its draft key.
+    const mkUserTypeahead = (id, key, placeholder) => {
+      const input = el('input', { id, class: 'pf-input', type: 'text', maxlength: '254',
+        placeholder, value: this._draft[key] || '', autocomplete: 'off' });
+      const sugg = el('div', { class: 'pf-bulk__suggest', hidden: true });
+      this.on(input, 'input', () => { this._draft[key] = input.value.trim(); this._filterUsers(input, sugg, key); this._updateSummary(); });
+      this.on(input, 'keydown', (e) => this._suggestKeydown(e, sugg));
+      return { input, sugg };
+    };
+    const assignee = mkUserTypeahead('bulk-assignee', 'assignee', 'Start typing name or email...');
+    const coass = mkUserTypeahead('bulk-coassignee', 'coAssignee', 'Optional co-assignee email...');
+
+    // CC recipients — semicolon/comma-separated email list applied to every selected item.
+    const ccInput = el('input', { id: 'bulk-cc', class: 'pf-input', type: 'text', autocomplete: 'off',
+      placeholder: 'CC emails, separated by ; or ,', value: (this._draft.copyTo || []).join('; ') });
+    this.on(ccInput, 'input', () => { this._draft.copyTo = ccInput.value.split(/[;,]/).map((s) => s.trim()).filter(Boolean); this._updateSummary(); });
 
     // Priority <select>.
     const prioSel = el('select', { id: 'bulk-priority', class: 'pf-input' },
       PRIORITIES.map((p) => el('option', { value: p, text: p })));
     prioSel.value = this._draft.priority;
     this.on(prioSel, 'change', () => { this._draft.priority = prioSel.value; this._updateSummary(); });
+
+    // Action Required <select>.
+    const actionSel = el('select', { id: 'bulk-action', class: 'pf-input' },
+      [['', 'Not set'], ['Review', 'Review'], ['Approval', 'Approval'], ['Information', 'Information']]
+        .map(([v, l]) => el('option', { value: v, text: l })));
+    actionSel.value = this._draft.actionRequired;
+    this.on(actionSel, 'change', () => { this._draft.actionRequired = actionSel.value; });
+
+    // Due-date pickers — operator value wins, else the SPA's tomorrow fallback at submit.
+    const ackDue = el('input', { id: 'bulk-ackdue', class: 'pf-input', type: 'date', value: this._draft.ackDue });
+    const taskDue = el('input', { id: 'bulk-taskdue', class: 'pf-input', type: 'date', value: this._draft.taskDue });
+    this.on(ackDue, 'change', () => { this._draft.ackDue = ackDue.value; });
+    this.on(taskDue, 'change', () => { this._draft.taskDue = taskDue.value; });
 
     // Comments.
     const comments = el('textarea', { id: 'bulk-comments', class: 'pf-input', rows: '3',
@@ -214,14 +240,24 @@ class BulkAssignmentModule extends BaseModule {
       el('tr', {}, [el('td', { text: 'Items' }), el('td', { id: 'bulk-sum-count', text: '0' })]),
       el('tr', {}, [el('td', { text: 'Category' }), el('td', { id: 'bulk-sum-category', text: '—' })]),
       el('tr', {}, [el('td', { text: 'Assigned To' }), el('td', { id: 'bulk-sum-assignee', text: '—' })]),
+      el('tr', {}, [el('td', { text: 'Co-Assignee' }), el('td', { id: 'bulk-sum-coassignee', text: '—' })]),
+      el('tr', {}, [el('td', { text: 'CC' }), el('td', { id: 'bulk-sum-cc', text: '—' })]),
       el('tr', {}, [el('td', { text: 'Priority' }), el('td', { id: 'bulk-sum-priority', text: 'P3 (Normal)' })])
+    ]);
+
+    const dueRow = el('div', { class: 'pf-bulk__duerow' }, [
+      field('Acknowledgement Due', ackDue), field('Task Due', taskDue)
     ]);
 
     form.append(
       field('Category', catSel, { required: true }),
       field('Sub-Category', subSel),
-      field('Assign To (email)', assigneeInput, { required: true, after: suggestions }),
+      field('Assign To (email)', assignee.input, { required: true, after: assignee.sug }),
+      field('Co-Assignee (email, optional)', coass.input, { after: coass.sug }),
+      field('CC Recipients (optional)', ccInput),
       field('Priority', prioSel, { required: true }),
+      field('Action Required', actionSel),
+      dueRow,
       field('Comments', comments),
       el('div', { class: 'pf-bulk__actions' }, [count, directBtn, optimizedBtn]),
       summary
@@ -278,8 +314,8 @@ class BulkAssignmentModule extends BaseModule {
     }
   }
 
-  /** SPA filterBulkUsers / selectBulkUser. */
-  _filterUsers(input, host) {
+  /** SPA filterBulkUsers / selectBulkUser — `key` is the draft field the chosen email is written to. */
+  _filterUsers(input, host, key = 'assignee') {
     const q = (input.value || '').toLowerCase();
     if (!q || q.length < 2) { host.hidden = true; clear(host); return; }
     const matches = Lookups.users()
@@ -290,7 +326,7 @@ class BulkAssignmentModule extends BaseModule {
     matches.forEach((u) => {
       const opt = el('div', { class: 'pf-bulk__suggest-item', text: `${u.label} — ${u.value}` });
       opt.addEventListener('click', () => {
-        input.value = u.value; this._draft.assignee = u.value;
+        input.value = u.value; this._draft[key] = u.value;
         host.hidden = true; clear(host); this._updateSummary();
       });
       host.append(opt);
@@ -320,6 +356,8 @@ class BulkAssignmentModule extends BaseModule {
     set('bulk-sum-count', String(this._selected ? this._selected.size : 0));
     set('bulk-sum-category', this._draft.category + (this._draft.subCategory ? ' / ' + this._draft.subCategory : ''));
     set('bulk-sum-assignee', this._draft.assignee);
+    set('bulk-sum-coassignee', this._draft.coAssignee);
+    set('bulk-sum-cc', (this._draft.copyTo || []).join('; '));
     set('bulk-sum-priority', this._draft.priority || 'P3 (Normal)');
   }
 
@@ -345,6 +383,8 @@ class BulkAssignmentModule extends BaseModule {
         { label: 'Items', value: `${n} item${n !== 1 ? 's' : ''}` },
         { label: 'Category', value: d.category + (d.subCategory ? ' / ' + d.subCategory : '') },
         { label: 'Assigned To', value: d.assignee },
+        { label: 'Co-Assignee', value: d.coAssignee || '—' },
+        { label: 'CC', value: (d.copyTo || []).length ? d.copyTo.join('; ') : '—' },
         { label: 'Priority', value: d.priority },
         { label: 'Mode', value: mode === 'optimized' ? '⚡ Optimized' : '📤 Direct' },
         { label: this.t('confirm.endpoint'), value: mode === 'optimized' ? 'BULK_ASSIGNMENT' : 'BULK_ASSIGNMENT_DIRECT' },
@@ -363,6 +403,7 @@ class BulkAssignmentModule extends BaseModule {
     const d = this._draft;
 
     const category = d.category, subcategory = d.subCategory, assignee = d.assignee, priority = d.priority, comments = d.comments;
+    const coAssignee = d.coAssignee || '', copyTo = (d.copyTo || []).join(';'), actionRequired = d.actionRequired || '';
     const cats = Lookups.categories();
     const catRecord = (cats.find((c) => c.raw && c.raw.Category === category && (!subcategory || c.raw.Subcategory === subcategory)) || {}).raw;
     const catCode = catRecord ? (catRecord['Category Code'] || '') : '';
@@ -374,6 +415,7 @@ class BulkAssignmentModule extends BaseModule {
     const today = new Date().toISOString().split('T')[0];
     const tDate = new Date(); tDate.setDate(tDate.getDate() + 1);
     const tomorrow = tDate.toISOString().split('T')[0];
+    const ackDue = d.ackDue || tomorrow, taskDue = d.taskDue || tomorrow;
 
     const E = P.Entities;
     const selectedItems = [...this._selected].map((key) => {
@@ -407,13 +449,16 @@ class BulkAssignmentModule extends BaseModule {
         AssignedTo: assignee,
         AssignedToTitle: assignedToTitle,
         AssignedDSU: primaryDSU,
-        supportingAssignedTo: '',
-        SupportAssignedTo: '',
+        supportingAssignedTo: coAssignee,
+        SupportAssignedTo: coAssignee,
+        SupportAssignedToTitle: '',
         SupportDSU: '',
         Priority: priority,
-        AcknowledgementDueBy: tomorrow,
-        AcknolwedgementDueBy: tomorrow,
-        TaskDueDate: tomorrow,
+        AcknowledgementDueBy: ackDue,
+        AcknolwedgementDueBy: ackDue,
+        TaskDueDate: taskDue,
+        CopyTo: copyTo,
+        ActionRequired: actionRequired,
         Comments: comments,
         CreatedBy: userEmail,
         Timeline: 'N/A',
@@ -424,8 +469,9 @@ class BulkAssignmentModule extends BaseModule {
         task: {
           Category: category, CategoryCode: catCode, SubCategory: subcategory, SubCategoryCode: subCatCode,
           PrimaryDSU: primaryDSU, AssignedTo: assignee, AssignedToTitle: assignedToTitle,
-          AssignedDSU: primaryDSU, Priority: priority, AcknowledgementDueBy: tomorrow, AcknolwedgementDueBy: tomorrow,
-          TaskDueDate: tomorrow, Comments: comments, CreatedBy: userEmail
+          AssignedDSU: primaryDSU, supportingAssignedTo: coAssignee, SupportAssignedTo: coAssignee, SupportDSU: '',
+          Priority: priority, AcknowledgementDueBy: ackDue, AcknolwedgementDueBy: ackDue,
+          TaskDueDate: taskDue, CopyTo: copyTo, ActionRequired: actionRequired, Comments: comments, CreatedBy: userEmail
         },
         selection: { items: selectedItems },
         assignment: { type: 'bulkassignment' }

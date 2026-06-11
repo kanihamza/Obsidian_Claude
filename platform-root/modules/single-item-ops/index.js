@@ -43,9 +43,32 @@ class SingleItemOpsModule extends BaseModule {
     if (!Lookups.isLoaded()) await Lookups.load();
     this._preRef = params && params.path && params.path[0] || '';
     this._draft = this._freshDraft();
+    // D-3: restore an autosaved draft so tablet sleep / reload doesn't lose in-progress input.
+    const restored = this._loadDraft();
+    if (restored) this._draft = { ...this._draft, ...restored };
     if (this._preRef) this._draft.ref = this._preRef;
     this._render(root);
+    if (restored && (restored.ref || restored.category || restored.assignedTo || restored.comments)) {
+      P.UI?.toast?.({ message: 'Draft restored from your last session.', variant: 'info', timeout: 4000 });
+    }
   }
+
+  // ──────── D-3: localStorage draft autosave ────────
+  _draftKey() { return 'obsidian.single-item-ops.draft.v1'; }
+  _loadDraft() {
+    try { const raw = globalThis.localStorage?.getItem(this._draftKey()); return raw ? JSON.parse(raw) : null; }
+    catch { return null; }
+  }
+  _saveDraft() {
+    try {
+      const d = this._draft;
+      if (!d || (!d.ref && !d.category && !d.assignedTo && !d.comments && !d.activityTask && !(d.copyTo || []).length)) {
+        globalThis.localStorage?.removeItem(this._draftKey()); return;
+      }
+      globalThis.localStorage?.setItem(this._draftKey(), JSON.stringify(d));
+    } catch { /* storage unavailable / quota — autosave is best-effort */ }
+  }
+  _clearDraft() { try { globalThis.localStorage?.removeItem(this._draftKey()); } catch { /* ignore */ } }
 
   _freshDraft() {
     return {
@@ -175,8 +198,25 @@ class SingleItemOpsModule extends BaseModule {
     const comments = el('textarea', { id: 'si-comments', class: 'pf-input', rows: '3', placeholder: this.t('module.single-item-ops.commentsHint') });
     this.on(ackDue, 'change', () => { this._draft.ackDue = ackDue.value; this._refreshSummary(); });
     this.on(taskDue, 'change', () => { this._draft.taskDue = taskDue.value; this._refreshSummary(); });
-    this.on(activityTask, 'input', () => { this._draft.activityTask = activityTask.value; });
-    this.on(comments, 'input', () => { this._draft.comments = comments.value; });
+    this.on(activityTask, 'input', () => { this._draft.activityTask = activityTask.value; this._saveDraft(); });
+    this.on(comments, 'input', () => { this._draft.comments = comments.value; this._saveDraft(); });
+    comments.value = this._draft.comments || '';
+
+    // Reflect any restored selection into the rich pickers (the simple inputs/chips/dates already
+    // read from this._draft when built above). Setting .value via the setter does not re-emit change.
+    if (this._draft.category) {
+      catPicker.value = this._draft.categoryCode || this._draft.category;
+      catPicker.selectedLabel = '📂 ' + this._draft.category + (this._draft.subCategory ? ' / ' + this._draft.subCategory : '');
+    }
+    if (this._draft.assignedTo) {
+      assigneePicker.value = this._draft.assignedTo;
+      assigneePicker.selectedLabel = '👤 ' + (this._draft.assignedToTitle || this._draft.assignedTo);
+    }
+    if (this._draft.supportAssignedTo) {
+      coassPicker.value = this._draft.supportAssignedTo;
+      coassPicker.selectedLabel = '👥 ' + (this._draft.supportAssignedToTitle || this._draft.supportAssignedTo);
+    }
+    if ((this._draft.copyTo || []).length) ccPicker.value = this._draft.copyTo;
 
     // ──────── ASSEMBLE THE FORM (left) ────────
     const field = ({ labelKey, labelText, control, required, helpKey, id }) => {
@@ -334,6 +374,7 @@ class SingleItemOpsModule extends BaseModule {
       ['Task Due', d.taskDue || '—']
     ];
     rows.forEach(([k, v]) => dl.append(el('dt', { text: k }), el('dd', { text: String(v) })));
+    this._saveDraft();
   }
 
   // ──────── Notification preview ────────
@@ -523,6 +564,7 @@ class SingleItemOpsModule extends BaseModule {
       el('span', { text: this.t('module.single-item-ops.resultSummary', { ref: d.ref, who: d.assignedTo }) })
     ])); }
     P.UI.actionCompleted('single.success', { module: 'response-tracking', target: d.ref });
+    this._clearDraft();  // D-3: submitted successfully — drop the autosaved draft
     this._busy = false;
   }
 }
