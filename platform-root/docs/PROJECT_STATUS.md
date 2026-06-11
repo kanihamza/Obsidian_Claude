@@ -1508,3 +1508,27 @@ switching to the theme-aware --dgo-color-fg-link (identical green-700 in light, 
 Light theme pixel-identical (fg-link == green-700 in light); dark now readable. Dark screenshots captured.
 
 Integrated gate: 12 static + ui-smoke 140/140.
+
+---
+
+## 25. 2026-06-11 — Wave 1 register reconciliation + A-12 (audit ref-index)
+
+User directed: execute the CLAUDE.md register. Per Rule 11.4, verified each Wave 1 item against actual
+source FIRST. Result: the register (written at the 20260601a handoff) is STALE — Wave 1 is already
+~90% implemented by in-session S0/S1.5 slices:
+  A-1 sealFabric() closure + frozen readers ✓ | A-2 __directorate hierarchical derivation ✓
+  A-3 _quarantine ✓ | A-4 _archive + archive() ✓ | A-5 canClose ✓ | A-6 _dedup + 30-day window ✓
+  A-7 Context.directorate() getter + sealed setDirectorate ✓ | A-10 api.js error-kind taxonomy ✓
+  A-11 idempotency 5-min bucket + isReadAction ✓ | C-7 transitionStatus state machine ✓
+
+Genuinely outstanding in Wave 1:
+  • A-12 (audit ref-index) — UNBLOCKED → DONE this entry.
+  • A-8 (Persona.directorateScope) — outstanding but UNDERSPECIFIED: personas are 3 generic UX roles
+    (audienceSees only), no directorate↔persona binding exists, and canSee(audience) takes no record/
+    scope. Implementing directorate isolation needs the directorate model (Q-6) + a persona→DSU map
+    that doesn't exist. Flagged for user input; NOT guessed (Rules 11.5/11.7).
+
+A-12 implemented in core/audit-log.js: every audit:* entry now captures `ref`; a ref→entries index is
+maintained in lockstep with the ring buffer (eviction-safe); added AuditLog.forRef(ref) (full
+chronological thread), a `ref` filter on log(), and refs(). Functionally tested (forRef counts, ref+kind
+filter, refs()). Integrated gate: 12 static + ui-smoke 140/140 (no regression).
