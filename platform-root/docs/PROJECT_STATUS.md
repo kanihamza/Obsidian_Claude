@@ -1302,3 +1302,26 @@ the selection screen.
   the record up (document then reference) and populates + cascades instead of leaving a bare ref.
 
 Gate 12/12; boot-smoke 19 modules. [browser-unverified].
+
+---
+
+## 14. 2026-06-11 — Platform-wide design uplift (shared layer)
+
+Operator: state/UX/UIUX still poor. Direction: all of the above, platform-wide. Highest-leverage,
+lowest-risk approach in a token system = lift the SHARED layer every module inherits.
+
+Forensic finds (both were silent gaps):
+- **No base `.pf-input` rule existed** — every `.pf-input` outside a `.pf-field` rendered browser-default.
+- **No `.pf-muted` rule existed** — every view subtitle/hint rendered as plain (un-muted) text.
+- `.pf-bulk__h` used an invalid `font: var(--font-display)` shorthand (no size) → silently ignored.
+
+Applied (styles/components.css, token-only / hex-lock safe):
+- Base `.pf-input` (consistent height/border/radius, hover, focus glow) + custom select caret + textarea.
+- `.pf-muted` text style.
+- `.pf-view__head` hierarchy: title tracking + full-width subtitle + divider — lifts every module header.
+- `.pf-btn` tactile motion (hover lift, active press, disabled) + the `.pf-btn--accent` variant the bulk
+  surface referenced but was never defined.
+- `.pf-card` hover transition.
+- Assignment showcase: branded live-preview summary (single) and proper pane headers (bulk).
+
+Gate 12/12; hex-lock PASS. ALL [browser-unverified] — design changes especially need a real-browser pass.

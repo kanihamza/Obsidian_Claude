@@ -8,4 +8,8 @@
   #module-single-item-ops .pf-label { color:var(--color-text-muted); font-size:.85em; }
   #module-single-item-ops .pf-si__actions { margin-top:var(--space-3); }
   #module-single-item-ops .pf-si__result { display:flex; gap:var(--space-3); align-items:center; padding:var(--space-3); margin-bottom:var(--space-4); border:1px solid var(--color-border); border-radius:var(--radius-md); background:var(--color-surface-raised); }
+  /* Live-preview summary reads as a distinct, branded panel beside the form. */
+  #module-single-item-ops .pf-si__summary { border-top:3px solid var(--color-brand-primary); }
+  #module-single-item-ops .pf-si__summary .pf-detail__title { display:flex; align-items:center; gap:var(--space-2); font-size:var(--size-h3); }
+  #module-single-item-ops .pf-si__tools .pf-overline { color:var(--color-brand-primary); }
 }

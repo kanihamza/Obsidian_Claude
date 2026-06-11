@@ -432,3 +432,56 @@
   .pf-shortcuts__sep { font-size:var(--size-caption); color:var(--color-text-muted); padding:0 var(--space-1); }
   .pf-shortcuts__desc { margin:0; color:var(--color-text); }
 }
+
+/* ============================================================
+   v4.1 platform-wide uplift — shared primitives that every module inherits.
+   Token-only (hex-lock safe). Adds the previously-missing .pf-muted and base
+   .pf-input, lifts the view header into a real hierarchy, and gives buttons/cards
+   tactile motion. No module markup changes required.
+   ============================================================ */
+@layer components {
+  /* Muted text — used by every view subtitle / hint, but never had a rule until now. */
+  .pf-muted{ color:var(--color-text-muted); font-size:var(--size-body-sm); line-height:var(--lh-normal); }
+
+  /* Base control styling — every .pf-input (input / select / textarea) now reads consistently
+     instead of falling back to browser defaults when not nested in a .pf-field. */
+  .pf-input{ width:100%; box-sizing:border-box; font:inherit; font-size:var(--size-body-sm);
+    min-height:var(--dgo-input-h); padding:var(--space-2) var(--space-3);
+    background:var(--color-surface); color:var(--color-text);
+    border:1px solid var(--color-border-strong); border-radius:var(--radius-md);
+    transition:border-color var(--duration-fast) var(--easing-standard),
+      box-shadow var(--duration-fast) var(--easing-standard); }
+  .pf-input::placeholder{ color:var(--color-text-subtle); }
+  .pf-input:hover:not(:disabled){ border-color:var(--color-border-stronger); }
+  .pf-input:focus,.pf-input:focus-visible{ outline:none; border-color:var(--color-brand-primary);
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--color-brand-primary) 18%, transparent); }
+  select.pf-input{ cursor:pointer; appearance:none; -webkit-appearance:none; padding-right:var(--space-8);
+    background-image:linear-gradient(45deg,transparent 50%,var(--color-text-muted) 50%),
+      linear-gradient(135deg,var(--color-text-muted) 50%,transparent 50%);
+    background-position:calc(100% - 18px) center,calc(100% - 13px) center;
+    background-size:5px 5px,5px 5px; background-repeat:no-repeat; }
+  textarea.pf-input{ min-height:5rem; line-height:var(--lh-normal); }
+
+  /* View header — eyebrow/title/subtitle hierarchy with a divider, applied to every module head. */
+  .pf-view__head{ align-items:flex-end; gap:var(--space-2) var(--space-4);
+    padding-bottom:var(--space-4); border-bottom:1px solid var(--color-border); }
+  .pf-view__head h1{ letter-spacing:var(--tracking-display); line-height:var(--lh-tight); }
+  .pf-view__head > .pf-muted{ flex-basis:100%; margin:0; }
+
+  /* Buttons — tactile depth + smooth multi-property motion, plus the accent variant the bulk
+     surface already references but never had defined. */
+  .pf-btn{ cursor:pointer; transition:background var(--duration-fast) var(--easing-standard),
+      box-shadow var(--duration-fast) var(--easing-standard),
+      transform var(--duration-fast) var(--easing-standard),
+      border-color var(--duration-fast) var(--easing-standard); }
+  .pf-btn--primary{ box-shadow:var(--shadow-xs); }
+  .pf-btn--primary:hover{ box-shadow:var(--shadow-sm); transform:translateY(-1px); }
+  .pf-btn--accent{ background:var(--color-brand-accent); color:var(--color-text-inverse); box-shadow:var(--shadow-xs); }
+  .pf-btn--accent:hover{ background:var(--dgo-color-action-accent-hover); box-shadow:var(--shadow-sm); transform:translateY(-1px); }
+  .pf-btn:active{ transform:translateY(1px); box-shadow:none; }
+  .pf-btn:disabled,.pf-btn[disabled]{ opacity:.55; cursor:not-allowed; transform:none; box-shadow:none; }
+
+  /* Cards lift gently on hover. */
+  .pf-card{ transition:box-shadow var(--duration-base) var(--easing-standard),
+      transform var(--duration-base) var(--easing-standard); }
+}
