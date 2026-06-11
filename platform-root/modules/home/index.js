@@ -53,7 +53,7 @@ class HomeModule extends BaseModule {
     this._region.append(this._renderAttentionAndPulse(c));
     this._region.append(this._renderStatusMix(c));
     this._region.append(this._renderQuickActions());
-    this._renderHeatmap(host);
+    this._renderHeatmap(this._region);
   }
 
   _renderGreeting(c) {

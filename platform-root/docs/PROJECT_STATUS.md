@@ -1325,3 +1325,22 @@ Applied (styles/components.css, token-only / hex-lock safe):
 - Assignment showcase: branded live-preview summary (single) and proper pane headers (bulk).
 
 Gate 12/12; hex-lock PASS. ALL [browser-unverified] — design changes especially need a real-browser pass.
+
+---
+
+## 15. 2026-06-11 — Real-browser verification (Playwright) + home crash fix
+
+Stood up tools/ui-smoke.mjs: serves platform-root, mocks REFERENCE_DATA ('lookups') + FETCH_ALL
+('fetchAll'), switches to the admin persona, and drives single-assign in Chromium. 7/7 pass:
+category dropdown populates, cascade fills assignee + sets priority P1 (High→p1), item dropdown
+populates from FETCH_ALL, document selection passes ref into the summary, no console errors.
+Screenshot: /tmp/single-assign-smoke.png.
+
+Browser verification caught a real crash static gates can't: **modules/home/index.js:56** called
+`_renderHeatmap(host)` with an undefined `host` → ReferenceError on mount of the DEFAULT landing
+route. Fixed to `_renderHeatmap(this._region)`.
+
+Noted (not yet fixed): the router host element and the view.html root share id="module-<id>"
+(duplicate id, two matches) — benign for getElementById (returns first) but worth cleaning.
+
+Gate 12/12; ui-smoke 7/7.
