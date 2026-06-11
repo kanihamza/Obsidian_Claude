@@ -45,10 +45,14 @@ const APPROVALS = [
   { ReferenceID: 'REF-2001', ApprovalID: 'AP-1', Title: 'Budget sign-off', Status: 'pending',
     AssignedTo: 'bola.eze@nitda.gov.ng', from: 'ada.obi@nitda.gov.ng', ts: '2026-06-02', summary: 'Approve Q3 budget line.' }
 ];
+const ACTIVITIES = [
+  { ReferenceID: 'REF-1001', ActivityID: 'ACT-1', action: 'Routed to Procurement', status: 'routed', ts: '2026-06-03T10:00:00Z' },
+  { ReferenceID: 'REF-1002', ActivityID: 'ACT-2', action: 'Registered', status: 'registered', ts: '2026-06-02T09:00:00Z' }
+];
 
 function mockBody(action) {
   if (action === 'lookups') return { ok: true, status: { http: 200 }, users: USERS, categories: CATEGORIES, departments: DEPARTMENTS };
-  if (action === 'fetchAll') return { ok: true, status: { http: 200 }, data: { documents: DOCUMENTS, tasks: TASKS, approvals: APPROVALS, categories: CATEGORIES, departments: DEPARTMENTS, users: USERS } };
+  if (action === 'fetchAll') return { ok: true, status: { http: 200 }, data: { documents: DOCUMENTS, tasks: TASKS, approvals: APPROVALS, activities: ACTIVITIES, categories: CATEGORIES, departments: DEPARTMENTS, users: USERS } };
   return { ok: true, status: { http: 200 }, success: true, statusCode: 200, data: {} };
 }
 
@@ -255,6 +259,57 @@ try {
   check('no console errors in approvals journey', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
   await page.screenshot({ path: '/tmp/approvals-smoke.png', fullPage: true });
   console.log('  screenshot → /tmp/approvals-smoke.png');
+
+  console.log('\n==================== LOOKUP DEEP CHECK ====================');
+  consoleErrors.length = 0;
+  await page.evaluate(() => globalThis.Platform.Router.navigate('lookup'));
+  await page.locator('#module-lookup').first().waitFor({ timeout: 15000 });
+  await page.locator('#lookup-q').waitFor({ timeout: 10000 });
+  await page.fill('#lookup-q', 'Contract');
+  await page.waitForTimeout(450); // debounce
+  check('lookup: matching query yields grouped results', await page.locator('#lookup-results .pf-lookup__group').count() >= 1,
+    'groups=' + await page.locator('#lookup-results .pf-lookup__group').count());
+  await page.fill('#lookup-q', 'zzqxnomatch');
+  await page.waitForTimeout(450);
+  check('lookup: non-matching query yields no result groups', await page.locator('#lookup-results .pf-lookup__group').count() === 0,
+    'groups=' + await page.locator('#lookup-results .pf-lookup__group').count());
+  check('lookup: no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
+
+  console.log('\n==================== CORRESPONDENCE DEEP CHECK ====================');
+  consoleErrors.length = 0;
+  await page.evaluate(() => globalThis.Platform.Router.navigate('correspondence'));
+  await page.locator('#module-correspondence').first().waitFor({ timeout: 15000 });
+  await page.locator('#module-correspondence tr[data-ref]').first().waitFor({ timeout: 10000 });
+  check('correspondence: records table populates from fabric', await page.locator('#module-correspondence tr[data-ref]').count() >= 1);
+  await page.locator('#module-correspondence tr[data-ref]').first().click();
+  await page.waitForTimeout(250);
+  check('correspondence: selecting a row reveals the triage bar (Phase-1 intake)', await page.locator('#module-correspondence pf-triage-bar').count() === 1);
+  check('correspondence: detail shows cross-lens actions', await page.locator('#module-correspondence .pf-corr__links button').count() >= 2);
+  check('correspondence: no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
+
+  console.log('\n==================== REGISTRY DEEP CHECK ====================');
+  consoleErrors.length = 0;
+  await page.evaluate(() => globalThis.Platform.Router.navigate('registry'));
+  await page.locator('#module-registry').first().waitFor({ timeout: 15000 });
+  await page.locator('#module-registry .pf-timeline__ref').first().waitFor({ timeout: 10000 });
+  check('registry: movement timeline renders from activity fabric', await page.locator('#module-registry .pf-timeline__group').count() >= 1,
+    'groups=' + await page.locator('#module-registry .pf-timeline__group').count());
+  await page.locator('#module-registry .pf-timeline__ref').first().click();
+  await page.locator('#module-response-tracking').first().waitFor({ timeout: 10000 });
+  check('registry: clicking a ref cross-navigates to response-tracking', await page.locator('#module-response-tracking').first().isVisible());
+  check('registry: no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
+
+  console.log('\n==================== DIAGNOSTICS DEEP CHECK ====================');
+  consoleErrors.length = 0;
+  await page.evaluate(() => globalThis.Platform.Router.navigate('diagnostics'));
+  await page.locator('#module-diagnostics').first().waitFor({ timeout: 15000 });
+  await page.locator('#module-diagnostics .pf-btn--primary').first().click(); // run endpoint health
+  await page.waitForTimeout(700);
+  const diagLastRun = (await page.locator('#diag-last-run').textContent() || '').trim();
+  check('diagnostics: run updates the last-run timestamp', diagLastRun.length > 0, 'last-run="' + diagLastRun + '"');
+  check('diagnostics: fabric/health stat tiles render', await page.locator('#module-diagnostics .pf-stat__value').count() >= 1,
+    'tiles=' + await page.locator('#module-diagnostics .pf-stat__value').count());
+  check('diagnostics: no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
 
   console.log('\n==================== THEME MATRIX (light / dark / high-contrast) ====================');
   consoleErrors.length = 0;

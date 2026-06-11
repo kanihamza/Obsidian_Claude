@@ -1456,3 +1456,20 @@ Real bug found + fixed (caught by the landscape no-console-errors check): base-m
 styles.css → 404 on every visit. Created both (scoped, tokens-only). 404 eliminated.
 
 Integrated gate: 12 static + ui-smoke 95/95.
+
+---
+
+## 22. 2026-06-11 — Deep-interaction checks for the remaining surfaces (108 assertions)
+
+Extended ui-smoke with real interaction coverage for the surfaces that previously only had a mount/
+overflow check. Added an activity fixture (for registry). 13 new assertions, all pass:
+- lookup: typing a matching query ('Contract') yields grouped results; a non-matching query yields
+  zero groups (search actually filters); no console errors.
+- correspondence: records table populates; selecting a row reveals the <pf-triage-bar> (Phase-1 intake)
+  and the cross-lens action buttons; no console errors.
+- registry: movement timeline renders from the activity fabric; clicking a ref cross-navigates to
+  response-tracking; no console errors.
+- diagnostics: clicking Run updates the last-run timestamp and renders the health/fabric stat tiles;
+  no console errors.
+
+Integrated gate: 12 static + ui-smoke 108/108.
