@@ -285,33 +285,30 @@ class BulkAssignmentModule extends BaseModule {
     this._updateSummary();
   }
 
-  /** SPA applyBulkCategoryCascade: fill assignee email from primary DSU head if empty; auto-set
-   *  priority from the category's Priority only while the user is still on the P3 default. */
+  /** Smart category cascade (extends SPA applyBulkCategoryCascade): from the category's routing defaults
+   *  fill — while still empty / on the P3 default — the assignee (Default Primary Responsible head),
+   *  co-assignee (Default Supporting Dept head), CC (INFORMDSU1..3 heads) and priority. */
   _applyCategoryCascade() {
     const cat = this._draft.category, sub = this._draft.subCategory;
     if (!cat) return;
-    const cats = Lookups.categories();
-    const catRecord = (cats.find((c) => c.raw && c.raw.Category === cat && (!sub || c.raw.Subcategory === sub))
-      || cats.find((c) => c.raw && c.raw.Category === cat) || {}).raw;
-    if (!catRecord) return;
-
-    const primaryDSU = catRecord['Default Primary Responsible'] || '';
-    const catPriority = catRecord.Priority || '';
+    const r = Lookups.resolveCategory(cat, sub);
+    if (!r) return;
 
     const assigneeEl = document.getElementById('bulk-assignee');
-    if (assigneeEl && !assigneeEl.value.trim() && primaryDSU) {
-      const primDept = (Lookups.departments().find((d) => d.raw && d.raw.DSU_KEY === primaryDSU) || {}).raw;
-      if (primDept) {
-        const email = primDept.DSU_HeadEmail || primDept.DSU_HeadPersonalEmail || '';
-        assigneeEl.value = email; this._draft.assignee = email;
-      }
-    }
+    if (assigneeEl && !assigneeEl.value.trim() && r.assignee) { assigneeEl.value = r.assignee; this._draft.assignee = r.assignee; }
+
+    const coassEl = document.getElementById('bulk-coassignee');
+    if (coassEl && !coassEl.value.trim() && r.coAssignee) { coassEl.value = r.coAssignee; this._draft.coAssignee = r.coAssignee; }
+
+    const ccEl = document.getElementById('bulk-cc');
+    if (ccEl && !ccEl.value.trim() && r.cc && r.cc.length) { this._draft.copyTo = r.cc.slice(); ccEl.value = r.cc.join('; '); }
 
     const prioEl = document.getElementById('bulk-priority');
-    if (prioEl && catPriority && prioEl.value === 'P3 (Normal)') {
-      const matched = PRIORITY_MAP[catPriority] || catPriority;
+    const matched = r.priority ? (PRIORITY_MAP[r.priority] || r.priority) : '';
+    if (prioEl && matched && prioEl.value === 'P3 (Normal)') {
       if ([...prioEl.options].some((o) => o.value === matched)) { prioEl.value = matched; this._draft.priority = matched; }
     }
+    this._updateSummary();
   }
 
   /** SPA filterBulkUsers / selectBulkUser — `key` is the draft field the chosen email is written to. */

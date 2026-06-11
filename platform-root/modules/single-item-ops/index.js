@@ -93,20 +93,20 @@ class SingleItemOpsModule extends BaseModule {
 
     // ──────── ITEM SOURCE (top section: source document + manual ref) ────────
     const docs = (globalThis.Platform?.Entities?.all('document')) || [];
-    const itemSel = el('select', { id: 'si-item', class: 'pf-input', 'aria-required': 'true' },
-      [el('option', { value: '', text: '— ' + this.t('module.single-item-ops.pickLabel') + ' —' }),
-        ...docs.slice(0, 200).map((d) => el('option', { value: d.__ref || d.__id, text: `${(d.title || d.__id || '').slice(0, 90)} (${d.__ref || '—'})` }))]);
+    const docItems = docs.slice(0, 500).map((dd) => ({
+      value: dd.__ref || dd.__id,
+      label: dd.title || dd.subject || dd.__id || '(untitled)',
+      sub: `${dd.__ref || dd.__id || '—'}${(dd.category || dd.Category) ? ' · ' + (dd.category || dd.Category) : ''}`,
+      raw: dd
+    }));
+    const itemSel = this._mkPicker({ id: 'si-item', placeholder: 'Search a document to assign…',
+      placeholderIcon: '📄', searchable: true, items: docItems });
+    itemSel.addEventListener('pf-picker:change', (e) => {
+      this._applyDocument(e.detail.raw, e.detail.value);
+      this._clearError('si-item'); this._clearError('si-ref');
+    });
     const manualRef = el('input', { id: 'si-ref', class: 'pf-input', type: 'text',
       placeholder: this.t('module.single-item-ops.manualRef'), value: this._draft.ref });
-
-    this.on(itemSel, 'change', () => {
-      const v = itemSel.value;
-      const doc = docs.find((d) => (d.__ref || d.__id) === v);
-      this._draft.sourceDoc = doc || null;
-      this._draft.ref = v || manualRef.value || '';
-      this._draft.title = (doc && (doc.title || doc.Title)) || this._draft.title;
-      this._clearError('si-item'); this._clearError('si-ref'); this._refreshSummary();
-    });
     this.on(manualRef, 'input', () => { this._draft.ref = manualRef.value.trim(); this._clearError('si-ref'); this._clearError('si-item'); this._refreshSummary(); });
 
     // ──────── CATEGORY PICKER (with subcategory cascade) ────────
@@ -124,7 +124,7 @@ class SingleItemOpsModule extends BaseModule {
       this._draft.subCategory = raw.Subcategory || '';
       this._draft.subCategoryCode = raw['SubCategory Code'] || '';
       this._draft.categoryRaw = raw;
-      this._applyCategoryCascade(raw);
+      this._applyCascade({ announce: true });
       this._clearError('si-category');
       this._refreshSummary();
     });
@@ -281,6 +281,18 @@ class SingleItemOpsModule extends BaseModule {
     tools.append(el('div', { class: 'pf-overline', text: this.t('ai.toolsTitle') }), aiBtn, aiOut, att);
     form.append(tools);
 
+    // Pre-populate from a handed-off ref (ops-hub / response-tracking "Assign" pass single-item-ops/<ref>)
+    // or a restored draft — look the record up so its details flow into the form instead of arriving as a
+    // bare ref. Runs after the controls are in the DOM so the pickers/chips can be reflected.
+    if (this._draft.ref && !this._draft.category) {
+      const findByRef = (type) => (globalThis.Platform?.Entities?.all(type) || []).find((rr) => (rr.__ref || rr.__id) === this._draft.ref);
+      const pre = docs.find((dd) => (dd.__ref || dd.__id) === this._draft.ref) || findByRef('document') || findByRef('reference');
+      if (pre) this._applyDocument(pre, this._draft.ref);
+      else this._reflectPicker('si-item', this._draft.ref, `📄 ${this._draft.ref}`);
+    } else if (this._draft.ref) {
+      this._reflectPicker('si-item', this._draft.ref, this._draft.title ? `📄 ${this._draft.title}` : `📄 ${this._draft.ref}`);
+    }
+
     this._refreshSummary();
   }
 
@@ -326,25 +338,73 @@ class SingleItemOpsModule extends BaseModule {
     }));
   }
 
-  /** Category cascade: when a category is chosen, default the assignee to the dept matching
-   *  the category's 'Default Primary Responsible' DSU_KEY (mirrors the SPA cascade). */
-  _applyCategoryCascade(catRaw) {
-    if (!catRaw) return;
-    const dsuKey = catRaw['Default Primary Responsible']; if (!dsuKey) return;
-    const dept = Lookups.departments().find((d) => d.raw && d.raw.DSU_KEY === dsuKey);
-    if (!dept) return;
-    if (this._draft.assignedTo) return; // don't override user's pick
-    this._draft.assignedTo = dept.raw.DSU_HeadEmail || dept.raw.DSU_HeadPersonalEmail || '';
-    this._draft.assignedToTitle = dept.raw.DSU_HeadTitle || dept.raw.Title || '';
-    this._draft.primaryDSU = dept.raw.DSU_KEY;
-    // Reflect in the assignee picker UI
-    const ap = document.getElementById('si-assignee');
-    if (ap) {
-      ap.value = this._draft.assignedTo;
-      ap.selectedLabel = `👤 ${dept.raw.Title} — ${dept.raw.DSU_HeadTitle || ''}`;
+  /** Smart category cascade — fills primary DSU, assignee, co-assignee, CC and priority from the
+   *  category's routing defaults via Lookups.resolveCategory (Default Primary Responsible head,
+   *  Default Supporting Dept head, INFORMDSU1..3 heads, category Priority). Manual picks are preserved
+   *  unless force=true; the assignee/co-assignee/CC pickers and the priority chip row are reflected. */
+  _applyCascade({ force = false, announce = false } = {}) {
+    const d = this._draft;
+    if (!d.category) return;
+    const r = Lookups.resolveCategory(d.category, d.subCategory);
+    if (!r) return;
+    if (r.primaryDSU) d.primaryDSU = r.primaryDSU;
+    let filled = false;
+    if (r.assignee && (force || !d.assignedTo)) {
+      d.assignedTo = r.assignee; d.assignedToTitle = r.assigneeName || '';
+      this._reflectPicker('si-assignee', r.assignee, `👤 ${r.assigneeName || r.assignee}`); filled = true;
     }
-    globalThis.Platform.UI.toast({ messageKey: 'module.single-item-ops.cascadeApplied',
-      vars: { dept: dept.raw.Title }, variant: 'info', timeout: 3000 });
+    if (r.coAssignee && (force || !d.supportAssignedTo)) {
+      d.supportAssignedTo = r.coAssignee; d.supportAssignedToTitle = ''; d.supportDSU = r.supportDSU || '';
+      this._reflectPicker('si-coassignee', r.coAssignee, `👥 ${r.coAssignee}`); filled = true;
+    }
+    if (r.cc && r.cc.length && (force || !(d.copyTo || []).length)) {
+      d.copyTo = r.cc.slice();
+      const cc = document.getElementById('si-cc'); if (cc) cc.value = d.copyTo; filled = true;
+    }
+    if (r.priorityToken && (force || d.priority === 'P3 (Normal)')) {
+      const p = { p1: 'P1 (High)', p2: 'P2 (Medium)', p3: 'P3 (Normal)', p4: 'P4 (Low)' }[r.priorityToken];
+      if (p) { d.priority = p; this._reflectChip('si-priority', p); }
+    }
+    if (announce && filled) globalThis.Platform.UI.toast({ messageKey: 'module.single-item-ops.cascadeApplied',
+      vars: { dept: r.assigneeName || r.primaryDSU || r.category }, variant: 'info', timeout: 3000 });
+    this._refreshSummary();
+  }
+
+  /** Pull category/title/source from a selected document and run the cascade — this is the
+   *  "details passed from the document selection" path, used both when the operator picks an item
+   *  and when the screen is opened with a handed-off ref from ops-hub / response-tracking. */
+  _applyDocument(doc, ref) {
+    const d = this._draft;
+    d.sourceDoc = doc || null;
+    d.ref = ref || d.ref || '';
+    if (doc) {
+      d.title = doc.title || doc.Title || doc.subject || d.title;
+      const cat = doc.category || doc.Category || '';
+      const sub = doc.subCategory || doc.SubCategory || doc.subcategory || '';
+      if (cat) {
+        const opt = Lookups.categories().find((o) => o.raw && String(o.raw.Category) === String(cat) && (!sub || String(o.raw.Subcategory || '') === String(sub)))
+                 || Lookups.categories().find((o) => o.raw && String(o.raw.Category) === String(cat));
+        d.category = cat; d.subCategory = sub || (opt && opt.raw && opt.raw.Subcategory) || '';
+        if (opt && opt.raw) { d.categoryCode = opt.raw['Category Code'] || ''; d.subCategoryCode = opt.raw['SubCategory Code'] || ''; d.categoryRaw = opt.raw; }
+        this._reflectPicker('si-category', d.categoryCode || cat, `📂 ${d.category}${d.subCategory ? ' / ' + d.subCategory : ''}`);
+        this._applyCascade({ force: false });
+      }
+    }
+    this._reflectPicker('si-item', d.ref, d.title ? `📄 ${d.title}` : `📄 ${d.ref}`);
+    this._refreshSummary();
+  }
+
+  _reflectPicker(id, value, label) {
+    const elx = document.getElementById(id);
+    if (elx) { elx.value = value; if (label != null) elx.selectedLabel = label; }
+  }
+  _reflectChip(groupId, value) {
+    const host = document.getElementById(groupId); if (!host) return;
+    [...host.querySelectorAll('.pf-chip')].forEach((c) => {
+      const on = c.dataset.val === value;
+      c.classList.toggle('pf-chip--selected', on);
+      c.setAttribute('aria-checked', on ? 'true' : 'false');
+    });
   }
 
   // ──────── Summary card ────────

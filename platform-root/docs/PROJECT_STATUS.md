@@ -1283,3 +1283,22 @@ the tomorrow fallback).
 restored selections into pickers/comments, and clears on successful submit. Best-effort (try/catch).
 
 Gate 12/12; boot-smoke 19 modules. All [browser-unverified].
+
+---
+
+## 13. 2026-06-11 — Single-assign cascade + document handoff (provisioning the smart logic)
+
+Operator feedback: dropdowns active but cascade not provisioned and item details not passed from
+the selection screen.
+
+- **Smart cascade now wired (single + bulk).** Replaced the assignee-only stub with Lookups.resolveCategory
+  so choosing a category fills primary DSU + assignee + co-assignee + CC[] + priority (Default Primary
+  Responsible head, Default Supporting Dept head, INFORMDSU1..3 heads, category Priority), reflected into
+  the pickers and the priority chip row. Manual picks preserved unless forced; auto-load is silent,
+  manual category pick toasts.
+- **Document details now flow in.** The item selector is now a searchable rich picker; picking a document
+  pulls its title + category/subcategory, resolves codes, and runs the cascade (_applyDocument).
+- **Handoff populated.** ops-hub / response-tracking pass single-item-ops/<ref>; onVisible/_render now looks
+  the record up (document then reference) and populates + cascades instead of leaving a bare ref.
+
+Gate 12/12; boot-smoke 19 modules. [browser-unverified].
