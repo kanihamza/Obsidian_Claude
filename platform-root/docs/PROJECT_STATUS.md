@@ -1532,3 +1532,27 @@ A-12 implemented in core/audit-log.js: every audit:* entry now captures `ref`; a
 maintained in lockstep with the ring buffer (eviction-safe); added AuditLog.forRef(ref) (full
 chronological thread), a `ref` filter on log(), and refs(). Functionally tested (forRef counts, ref+kind
 filter, refs()). Integrated gate: 12 static + ui-smoke 140/140 (no regression).
+
+---
+
+## 26. 2026-06-11 — Register reconciliation (Waves 2-3 + cross-cutting) + A-21, A-9
+
+Continued verify-against-source reconciliation. Already-done (no action): A-16 (audit:* folded into the
+activity timeline via AuditLog), A-23 (danger toasts -> assertive live region), A-24 (pf-modal focus
+trap via A11y.trapFocus/focusFirst/release), C-3 (pf-triage-bar exists).
+
+Outstanding + unblocked -> DONE this entry:
+  • A-21: boot.js registered the service worker at an absolute '/service-worker.js' (breaks under a
+    path-prefix deploy). Now resolves new URL('../service-worker.js', import.meta.url) — prefix-safe.
+  • A-9: api._resolveUrl honoured a localStorage endpoint override with no persona check, while the
+    Settings UI gates writes to admin. Now only the admin persona's override is honoured (defence-in-
+    depth; personas are UX-only, real control stays the Settings write-gate).
+
+Outstanding but BLOCKED (flagged, not guessed):
+  • A-8 (Persona.directorateScope) — no persona->DSU model (Q-6).
+  • D-5 (delete modules/assignment + redirect) — CLAUDE.md K-section records an UNRESOLVED disposition
+    conflict (redirect to single/bulk vs executive); needs a user ruling before deletion.
+  • A-13 (Bus middleware replacing the audit monkey-patch) — Should-Fix defensive refactor; deferred
+    (touches the audit interceptor; low payoff vs risk right now).
+
+Integrated gate: 12 static + ui-smoke 140/140 (no regression).

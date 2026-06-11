@@ -213,6 +213,11 @@ function normalizeBody(body, headers, durationMs, correlationId, httpStatus) {
 /** Resolve an endpoint URL, honouring any operator-set override in localStorage. */
 function _resolveUrl(endpointKey, defaultUrl) {
   try {
+    // A-9 — only the admin persona may redirect an endpoint, mirroring the Settings write-gate so read
+    // and write authority stay consistent. Personas are UX/audit-only (no auth), so this is
+    // defence-in-depth, not a security boundary; the real control is the Settings write-gate.
+    const persona = globalThis.Platform && Platform.Persona && Platform.Persona.current && Platform.Persona.current();
+    if (persona !== 'admin') return defaultUrl;
     const k = 'obsidian.endpoint.' + endpointKey;
     const v = (globalThis.localStorage && localStorage.getItem(k)) || '';
     if (v && /^https?:\/\//.test(v)) return v;

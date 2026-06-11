@@ -47,7 +47,10 @@ export async function boot({ outlet } = {}) {
   Platform.Lookups?.load?.().catch((e) => Platform.Log.warn('lookups.warm-failed', { message: String(e && e.message || e) }));
 
   if (Platform.Flags.serviceWorker && typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js').catch((e) => Platform.Log.warn('sw.register-failed', { message: String(e) }));
+    // A-21 — resolve the worker URL relative to this module (boot.js lives in /core/) so registration
+    // survives a path-prefix deployment instead of anchoring to the domain root.
+    const swUrl = new URL('../service-worker.js', import.meta.url);
+    navigator.serviceWorker.register(swUrl).catch((e) => Platform.Log.warn('sw.register-failed', { message: String(e) }));
   }
   return Platform;
 }
