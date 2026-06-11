@@ -1,0 +1,693 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Dynamic Global Actions Trigger Contract",
+  "description": "Standardized HTTP trigger schema for dynamic multi-action orchestration flows spanning task, document, email, and AI-assisted actions.",
+  "properties": {
+    "action": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "operation": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "mode": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "userEmail": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "email"
+    },
+    "method": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "string",
+        "integer",
+        "null"
+      ]
+    },
+    "device": {
+      "type": [
+        "object",
+        "string",
+        "null"
+      ],
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "docId": {
+      "type": [
+        "string",
+        "integer",
+        "null"
+      ]
+    },
+    "taskId": {
+      "type": [
+        "string",
+        "integer",
+        "null"
+      ]
+    },
+    "emailId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "email": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "acknowledgedBy": {},
+    "status": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "trackingID": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "client": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "app": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "submittedAt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "payload": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "email": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subject": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "webLink": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "receivedDateTime": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "fromAddress": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "conversationId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "internetMessageId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "bodyPreview": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "bodyContent": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "task": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "category": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "categoryCode": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "priority": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "directiveHtml": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "assignee": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": true,
+              "properties": {
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "email": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "email"
+                }
+              }
+            }
+          }
+        },
+        "selection": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "single": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": true
+            },
+            "items": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "assignment": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": true
+        },
+        "ai": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "summary": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "actionRequired": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "recommendedAction": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "suggestedCategoryCode": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "suggestedPriority": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "suggestedAssigneeEmail": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "email"
+            }
+          }
+        }
+      }
+    },
+    "items": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "requestId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "Action": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "Operation": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "UserEmail": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "DocId": {
+      "type": [
+        "string",
+        "integer",
+        "null"
+      ]
+    },
+    "TaskId": {
+      "type": [
+        "string",
+        "integer",
+        "null"
+      ]
+    },
+    "AssignmentType": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "Selected": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "ID": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ]
+        },
+        "RefIDD": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "Title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "SelectedItems": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "ID": {
+            "type": [
+              "string",
+              "integer",
+              "null"
+            ]
+          },
+          "RefIDD": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "Title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "NewActivityTask": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "StartDate": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ActivityID": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ]
+        },
+        "AttachmentLink": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "Title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "Description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "Status": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "Category": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "CategoryCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "SubCategory": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "SubCategoryCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "PrimaryDSU": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "AssignedTo": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "AssignedToTitle": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "AssignedDSU": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "supportingAssignedTo": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "SupportAssignedTo": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "SupportAssignedToTitle": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "SupportDSU": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "SupportDSUKey": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "AckDue": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "AcknolwedgementDueBy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "TaskDue": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "TaskDueDate": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "Timeline": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "CopyTo": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "Priority": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "PreReferenceID": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "Categorization": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "Comments": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "CreatedBy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "Email": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "subject": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "webLink": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  },
+  "required": [],
+  "additionalProperties": true,
+  "x-contract-version": "2.0.0",
+  "x-schema-family": "action-orchestration",
+  "x-flow-variant": "dynamic-global-actions",
+  "x-compatibility-mode": "backward-compatible"
+}
