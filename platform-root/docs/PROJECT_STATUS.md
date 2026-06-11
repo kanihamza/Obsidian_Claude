@@ -1415,3 +1415,22 @@ foundations/a11y/motion/i18n docs). Findings:
 Verified: ui-smoke extended with a touch context (834×1112, hasTouch) — hamburger visible+44px, drawer
 hidden by default and slides in on tap, .pf-btn meets 44px floor, no console errors.
 Integrated gate: 12 static + ui-smoke 46/46. Screenshot: /tmp/mobile-tablet-smoke.png.
+
+---
+
+## 20. 2026-06-11 — Per-surface mobile reflow (audit + verify) vs DGO reference branch
+
+Active reference: the consolidated DGO v2.1 design-system branch (Consolidated_reference_sub-brand_
+dgo-design-system) on GitHub. v2.1 remains additive over the adopted v2.0 — branding unchanged.
+
+Audited every fixed multi-column grid for a mobile breakpoint. Most already stack:
+.pf-md__split / .pf-list__split / .pf-home-split / .pf-corr__split @900px, .pf-si__grid @1024px,
+bulk .pf-bulk @880px, stepper @680px. The system's table pattern is scroll-wrap (already present),
+not card-transform — so no forced table→card change.
+
+Real bug found + fixed: **#module-approvals .pf-ap (360px 1fr) had NO breakpoint** — master-detail
+wouldn't stack on mobile (squeezed detail / overflow). Added @900px stack (list capped 50vh).
+
+Verified: ui-smoke mobile pass extended with an 8-surface horizontal-overflow sweep at 834px
+(home, ops-hub, response-tracking, single-item-ops, bulk-assignment, correspondence, approvals,
+registry) — all reflow with no overflow. Integrated gate: 12 static + ui-smoke 54/54.

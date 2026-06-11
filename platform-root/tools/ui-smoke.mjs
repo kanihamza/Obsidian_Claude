@@ -260,6 +260,18 @@ try {
   const btnBox = await btn.boundingBox().catch(() => null);
   check('mobile: .pf-btn meets 44px touch floor', !!btnBox && btnBox.height >= 44, btnBox ? `h=${Math.round(btnBox.height)}` : 'no btn');
   check('mobile: no console errors', mErrors.length === 0, mErrors.slice(0, 3).join(' | '));
+
+  // Reflow sweep — no surface should overflow horizontally at tablet-portrait (splits must stack).
+  await mpage.evaluate(() => globalThis.Platform.Bus.emit('platform:nav:toggle', {})); // close drawer if open
+  await mpage.waitForTimeout(200);
+  const reflowSurfaces = ['home', 'ops-hub', 'response-tracking', 'single-item-ops', 'bulk-assignment', 'correspondence', 'approvals', 'registry'];
+  for (const id of reflowSurfaces) {
+    await mpage.evaluate((m) => globalThis.Platform.Router.navigate(m), id);
+    await mpage.locator(`#module-${id}`).first().waitFor({ timeout: 10000 }).catch(() => {});
+    await mpage.waitForTimeout(200);
+    const overflow = await mpage.evaluate(() => Math.max(0, document.documentElement.scrollWidth - window.innerWidth));
+    check(`mobile reflow: ${id} no horizontal overflow`, overflow <= 2, `overflow=${overflow}px`);
+  }
   await mpage.screenshot({ path: '/tmp/mobile-tablet-smoke.png', fullPage: false });
   console.log('  screenshot → /tmp/mobile-tablet-smoke.png');
   await mctx.close();

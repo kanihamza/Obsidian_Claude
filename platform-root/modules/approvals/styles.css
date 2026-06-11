@@ -2,6 +2,11 @@
 @layer modules {
   #module-approvals .pf-ap{ display:grid; grid-template-columns:360px 1fr; gap:var(--space-4);
     min-height:60vh; }
+  /* Stack master-detail on tablet-portrait / mobile (DGO 900px breakpoint). */
+  @media (max-width:900px){
+    #module-approvals .pf-ap{ grid-template-columns:1fr; min-height:0; }
+    #module-approvals .pf-ap__list{ max-height:50vh; }
+  }
   #module-approvals .pf-ap__list{ background:var(--color-surface-raised); border:1px solid var(--color-border);
     border-radius:var(--radius-lg); overflow:hidden; display:flex; flex-direction:column; }
   #module-approvals .pf-ap__listhead{ padding:var(--space-3) var(--space-4); border-bottom:1px solid var(--color-border);
