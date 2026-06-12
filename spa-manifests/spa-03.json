@@ -1,0 +1,841 @@
+{
+  "schema_version": "1.1",
+  "spa_id": "spa-03",
+  "source_filename": "Optimized_NITDA DGO Smart Orchestrator Merged Launcher.html",
+  "title": "NITDA DGO – Smart Orchestrator (Merged Launcher)",
+  "purpose": "[AUTO-DRAFT — needs review] NITDA DGO – Smart Orchestrator (Merged Launcher). Inventoried from Optimized_NITDA DGO Smart Orchestrator Merged Launcher.html.",
+  "offerings": [
+    {
+      "name": "NITDA SMART ORCHESTRATOR",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Merged Launcher",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Runtime Details",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Source Documents",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Relational Matrix Explorer",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Relationship Matrix",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Tracking & Tracing Timeline",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Reporting",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Trends",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Dashboard",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Diagnostics",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Explorer",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Matrix",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Timeline",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Reports",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "🏠 HOME",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "▶ RUN SYNC",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "⚙ SETTINGS",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "🧾 LOG",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "🚀 Launch Live",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    }
+  ],
+  "views": [
+    {
+      "name": "NITDA SMART ORCHESTRATOR",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Merged Launcher",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Runtime Details",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Source Documents",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Relational Matrix Explorer",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Relationship Matrix",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Tracking & Tracing Timeline",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Reporting",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Trends",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Dashboard",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Diagnostics",
+      "type": "section",
+      "trigger": "[auto]"
+    }
+  ],
+  "js_utilities": [
+    {
+      "name": "esc",
+      "signature": "esc(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "safeStr",
+      "signature": "safeStr(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "safeLower",
+      "signature": "safeLower(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "parseDateToMs",
+      "signature": "parseDateToMs(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "fmtDateTime",
+      "signature": "fmtDateTime(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "debounce",
+      "signature": "debounce(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "uid",
+      "signature": "uid(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "clamp",
+      "signature": "clamp(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "downloadBlob",
+      "signature": "downloadBlob(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toast",
+      "signature": "toast(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "loadJson",
+      "signature": "loadJson(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "saveJson",
+      "signature": "saveJson(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "withTTLSet",
+      "signature": "withTTLSet(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "withTTLGet",
+      "signature": "withTTLGet(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "keyOf",
+      "signature": "keyOf(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateRuntimePanel",
+      "signature": "updateRuntimePanel(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "setSystemStatus",
+      "signature": "setSystemStatus(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "setLoading",
+      "signature": "setLoading(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "callFlow",
+      "signature": "callFlow(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "normalizeDoc",
+      "signature": "normalizeDoc(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "normalizeTask",
+      "signature": "normalizeTask(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "normalizeEmail",
+      "signature": "normalizeEmail(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "registerEntities",
+      "signature": "registerEntities(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "addOrUpdateEdge",
+      "signature": "addOrUpdateEdge(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "removeEdge",
+      "signature": "removeEdge(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "loadPersistedEdges",
+      "signature": "loadPersistedEdges(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "persistEdges",
+      "signature": "persistEdges(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "logEvent",
+      "signature": "logEvent(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "getEvents",
+      "signature": "getEvents(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "tokenize",
+      "signature": "tokenize(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "indexData",
+      "signature": "indexData(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildHeuristicEdges",
+      "signature": "buildHeuristicEdges(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "processChunk",
+      "signature": "processChunk(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "edgesForEntity",
+      "signature": "edgesForEntity(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "relatedEntitiesForDoc",
+      "signature": "relatedEntitiesForDoc(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "showLauncher",
+      "signature": "showLauncher(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "showApp",
+      "signature": "showApp(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "setView",
+      "signature": "setView(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "populateCategoryFilter",
+      "signature": "populateCategoryFilter(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "getVisibleDocs",
+      "signature": "getVisibleDocs(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderExplorer",
+      "signature": "renderExplorer(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderDocDetail",
+      "signature": "renderDocDetail(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "sectionLinkedTasks",
+      "signature": "sectionLinkedTasks(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "sectionLinkedEmails",
+      "signature": "sectionLinkedEmails(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "sectionMetadata",
+      "signature": "sectionMetadata(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "getConfidenceBetween",
+      "signature": "getConfidenceBetween(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderMatrix",
+      "signature": "renderMatrix(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderTimeline",
+      "signature": "renderTimeline(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "datasetRows",
+      "signature": "datasetRows(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "groupRows",
+      "signature": "groupRows(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderDataTable",
+      "signature": "renderDataTable(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderReports",
+      "signature": "renderReports(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "exportCSV",
+      "signature": "exportCSV(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "exportJSON",
+      "signature": "exportJSON(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "bucketKey",
+      "signature": "bucketKey(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "drawLineChart",
+      "signature": "drawLineChart(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "runTrends",
+      "signature": "runTrends(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "computeKPIs",
+      "signature": "computeKPIs(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderDashboard",
+      "signature": "renderDashboard(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "openModal",
+      "signature": "openModal(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    }
+  ],
+  "dom_contract": {
+    "element_ids": [
+      "system-status",
+      "app-tabs",
+      "btn-home",
+      "btn-run-sync",
+      "btn-settings",
+      "btn-diagnostics",
+      "view-launcher",
+      "btn-launch-live",
+      "btn-quick-sync",
+      "btn-launch-demo",
+      "btn-reset-local",
+      "btn-export-edges",
+      "btn-import-edges",
+      "btn-export-state",
+      "btn-selfcheck",
+      "self-dot",
+      "self-status",
+      "runtime-badge",
+      "kv-mode",
+      "kv-email",
+      "kv-device",
+      "kv-data",
+      "kv-sync",
+      "kv-storage",
+      "app-filters",
+      "global-search",
+      "category-filter",
+      "status-filter",
+      "view-explorer",
+      "src-dot",
+      "src-status",
+      "doc-count",
+      "doc-list",
+      "detail-title",
+      "detail-actions",
+      "detail-view",
+      "view-matrix",
+      "matrix-mode",
+      "btn-matrix-refresh",
+      "matrix-grid-wrap",
+      "view-timeline",
+      "timeline-type",
+      "timeline-search",
+      "timeline-view",
+      "view-reports",
+      "report-dataset",
+      "report-group",
+      "btn-export-csv",
+      "btn-export-json",
+      "btn-print",
+      "reports-view",
+      "view-trends",
+      "trend-source",
+      "trend-bucket",
+      "trend-from",
+      "trend-to",
+      "btn-trend-run",
+      "trend-chart",
+      "trend-summary",
+      "btn-trend-drill"
+    ],
+    "css_classes": [
+      "app-container",
+      "brand-group",
+      "brand-text",
+      "tabs",
+      "hidden",
+      "tab",
+      "header-actions",
+      "btn",
+      "btn-primary",
+      "launcher",
+      "hero",
+      "grid2",
+      "quick",
+      "title",
+      "desc",
+      "actions",
+      "pill",
+      "dot",
+      "glass-card",
+      "card-header",
+      "badge",
+      "scroll-area",
+      "kv",
+      "k",
+      "v",
+      "action-bar",
+      "search-input",
+      "select",
+      "dashboard-grid",
+      "flex-row",
+      "matrix-grid-wrap",
+      "date",
+      "chart",
+      "kpi-grid",
+      "btn-danger",
+      "log",
+      "spinner",
+      "msg",
+      "label",
+      "value",
+      "sub",
+      "field"
+    ],
+    "inline_styles_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "event_handling": {
+    "inline_handlers": [],
+    "listener_bound": [
+      "click",
+      "keydown",
+      "input",
+      "change",
+      "load"
+    ],
+    "global_listeners": [
+      "keydown"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "global_scope": {
+    "global_functions": [
+      "esc",
+      "safeStr",
+      "safeLower",
+      "parseDateToMs",
+      "fmtDateTime",
+      "debounce",
+      "uid",
+      "clamp",
+      "downloadBlob",
+      "toast",
+      "loadJson",
+      "saveJson",
+      "withTTLSet",
+      "withTTLGet",
+      "keyOf",
+      "updateRuntimePanel",
+      "setSystemStatus",
+      "setLoading",
+      "callFlow",
+      "normalizeDoc",
+      "normalizeTask",
+      "normalizeEmail",
+      "registerEntities",
+      "addOrUpdateEdge",
+      "removeEdge",
+      "loadPersistedEdges",
+      "persistEdges",
+      "logEvent",
+      "getEvents",
+      "tokenize",
+      "indexData",
+      "buildHeuristicEdges",
+      "processChunk",
+      "edgesForEntity",
+      "relatedEntitiesForDoc",
+      "showLauncher",
+      "showApp",
+      "setView",
+      "populateCategoryFilter",
+      "getVisibleDocs",
+      "renderExplorer",
+      "renderDocDetail",
+      "sectionLinkedTasks",
+      "sectionLinkedEmails",
+      "sectionMetadata",
+      "getConfidenceBetween",
+      "renderMatrix",
+      "renderTimeline",
+      "datasetRows",
+      "groupRows",
+      "renderDataTable",
+      "renderReports",
+      "exportCSV",
+      "exportJSON",
+      "bucketKey",
+      "drawLineChart",
+      "runTrends",
+      "computeKPIs",
+      "renderDashboard",
+      "openModal",
+      "escHandler",
+      "openEdgeEditor",
+      "openSettings",
+      "loadDemoData",
+      "syncAll",
+      "postSyncRebuild",
+      "updateSourcePill",
+      "resetLocalData",
+      "exportEdges",
+      "importEdges",
+      "exportState",
+      "selfCheck",
+      "bindEvents",
+      "boot"
+    ],
+    "global_variables": [],
+    "notes": "[auto: globals not fully resolved]"
+  },
+  "state_management": "[AUTO-DRAFT — review] uses localStorage; module-scope variables.",
+  "design_tokens": {
+    "framework": null,
+    "colors": [
+      "#008751",
+      "#00A69D",
+      "#05583B",
+      "#f0f2f5",
+      "#ffffff",
+      "#e1e4e8",
+      "#1a202c",
+      "#718096",
+      "#107c10",
+      "#d97706",
+      "#dc2626",
+      "#2563eb",
+      "#93c5fd",
+      "#0f172a",
+      "#1e293b",
+      "#334155",
+      "#f1f5f9",
+      "#94a3b8",
+      "#7f1d1d",
+      "#fff"
+    ],
+    "fonts": [
+      "var(--font-family)",
+      "var(--mono)"
+    ],
+    "spacing_or_layout_notes": "inline styles present"
+  },
+  "assets": [],
+  "external_libraries": [],
+  "power_automate_flows": [
+    {
+      "name": "flow_1",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/818ec4053f1e4f0b87845114241d8b74/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_2",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/37642ba3597f4cf58288cc71b5e6b519/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_3",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3931e2ff995242b6b2c920c8b2209797/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    }
+  ],
+  "behaviors": {
+    "loading_states": true,
+    "error_states": true,
+    "polling_present": false,
+    "timers_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "accessibility": {
+    "aria_present": true,
+    "keyboard_nav": true,
+    "notes": "[auto-extracted]"
+  },
+  "localization": {
+    "i18n_present": false,
+    "languages": [
+      "en"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "risks_and_quirks": [
+    "[AUTO-DRAFT manifest — mechanical extraction; prose/semantic fields (purpose, offerings, flow shapes) must be reviewed before treating as verified.]"
+  ],
+  "extraction_meta": {
+    "complete": false,
+    "unparseable_sections": [
+      "auto-draft: semantic fields pending review"
+    ],
+    "source_lines_approx": 2738
+  }
+}

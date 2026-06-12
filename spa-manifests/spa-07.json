@@ -1,0 +1,897 @@
+{
+  "schema_version": "1.1",
+  "spa_id": "spa-07",
+  "source_filename": "DAA_DGO_HUB_ASSIGN_ITEM_DIRECT_Build_v2.0.html",
+  "title": "NITDA Digital Operations Hub - Lookup Variant",
+  "purpose": "[AUTO-DRAFT — needs review] NITDA Digital Operations Hub - Lookup Variant. Inventoried from DAA_DGO_HUB_ASSIGN_ITEM_DIRECT_Build_v2.0.html.",
+  "offerings": [
+    {
+      "name": "🔍 System Record Lookup",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "🚀 Access System",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "↪ Sign out / Switch user",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "🔄 Reload Dictionaries",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Fetch Item",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "← Back to Search",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "➕ Create Task",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "✕ Cancel",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "👁️ Preview Task",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Cancel",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "New Assignment",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Re-Assignment",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "📂 Click to choose a Category",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "👤 Click to select Assignee",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "👥 Click to select Co-Assignee",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "📋 Click to choose CC",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "🔴 P1 (High)",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "🟡 P2 (Medium)",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "🟢 P3 (Normal)",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "⚪ P4 (Low)",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    }
+  ],
+  "views": [
+    {
+      "name": "🔍 System Record Lookup",
+      "type": "section",
+      "trigger": "[auto]"
+    }
+  ],
+  "js_utilities": [
+    {
+      "name": "_send",
+      "signature": "_send(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "_req",
+      "signature": "_req(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "setIdentity",
+      "signature": "setIdentity(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "startApp",
+      "signature": "startApp(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "bootApp",
+      "signature": "bootApp(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "applyTheme",
+      "signature": "applyTheme(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toggleUserMenu",
+      "signature": "toggleUserMenu(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "signOut",
+      "signature": "signOut(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "navigateTo",
+      "signature": "navigateTo(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "showLoader",
+      "signature": "showLoader(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "hideLoader",
+      "signature": "hideLoader(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "escHtml",
+      "signature": "escHtml(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "escAttr",
+      "signature": "escAttr(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "safeFormatDate",
+      "signature": "safeFormatDate(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "isSafeUrl",
+      "signature": "isSafeUrl(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "normalizePriority",
+      "signature": "normalizePriority(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "showNotify",
+      "signature": "showNotify(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "logTelemetry",
+      "signature": "logTelemetry(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderTelemetryLog",
+      "signature": "renderTelemetryLog(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "clearTelemetry",
+      "signature": "clearTelemetry(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "populateEndpointTable",
+      "signature": "populateEndpointTable(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "callAPI",
+      "signature": "callAPI(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "parseResponse",
+      "signature": "parseResponse(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "executeSubsidiaryAction",
+      "signature": "executeSubsidiaryAction(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "fetchLookups",
+      "signature": "fetchLookups(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "executeLookup",
+      "signature": "executeLookup(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "resetLookup",
+      "signature": "resetLookup(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderDocFullView",
+      "signature": "renderDocFullView(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderTaskFullView",
+      "signature": "renderTaskFullView(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderEmailFullView",
+      "signature": "renderEmailFullView(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "openAssignmentFromDoc",
+      "signature": "openAssignmentFromDoc(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "initAssignScreen",
+      "signature": "initAssignScreen(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderAssignActionBar",
+      "signature": "renderAssignActionBar(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "setAssignType",
+      "signature": "setAssignType(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "populateCatList",
+      "signature": "populateCatList(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "filterCatDropdown",
+      "signature": "filterCatDropdown(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toggleCatDropdown",
+      "signature": "toggleCatDropdown(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "selectCategory",
+      "signature": "selectCategory(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "switchAssigneeTab",
+      "signature": "switchAssigneeTab(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toggleAssigneeDropdown",
+      "signature": "toggleAssigneeDropdown(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "filterAssigneeList",
+      "signature": "filterAssigneeList(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "selectAssignee",
+      "signature": "selectAssignee(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "selectAssigneeUser",
+      "signature": "selectAssigneeUser(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "switchCoAssigneeTab",
+      "signature": "switchCoAssigneeTab(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toggleCoAssigneeDropdown",
+      "signature": "toggleCoAssigneeDropdown(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "filterCoAssigneeList",
+      "signature": "filterCoAssigneeList(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "selectCoAssignee",
+      "signature": "selectCoAssignee(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "switchCCTab",
+      "signature": "switchCCTab(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toggleCCDropdown",
+      "signature": "toggleCCDropdown(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "filterCCList",
+      "signature": "filterCCList(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toggleCCItem",
+      "signature": "toggleCCItem(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "togglePriorityDropdown",
+      "signature": "togglePriorityDropdown(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "setPriority",
+      "signature": "setPriority(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toggleActionReqDropdown",
+      "signature": "toggleActionReqDropdown(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "setActionReq",
+      "signature": "setActionReq(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "closeAllDropdowns",
+      "signature": "closeAllDropdowns(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateAssignSummary",
+      "signature": "updateAssignSummary(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "clearField",
+      "signature": "clearField(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "openAssignComments",
+      "signature": "openAssignComments(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "saveComments",
+      "signature": "saveComments(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    }
+  ],
+  "dom_contract": {
+    "element_ids": [
+      "nitda-embed-overrides",
+      "screen-landing",
+      "email-input",
+      "name-input",
+      "app",
+      "global-loader",
+      "global-loader-msg",
+      "sidebar",
+      "theme-selector",
+      "sidebar-nav",
+      "user-info-btn",
+      "user-avatar",
+      "sidebar-username",
+      "sidebar-role",
+      "user-menu",
+      "screen-title",
+      "screen-lookup",
+      "lookup-wrapper",
+      "lookup-type",
+      "lookup-id",
+      "lookup-notify",
+      "lookup-result-area",
+      "generic-detail-container",
+      "email-detail-area",
+      "email-detail-header-card",
+      "email-detail-subject",
+      "email-detail-from",
+      "email-detail-date",
+      "email-detail-attachments",
+      "email-detail-body",
+      "email-to-task-form",
+      "etask-title",
+      "etask-category",
+      "etask-subcategory",
+      "etask-assignee",
+      "etask-user-suggestions",
+      "etask-priority",
+      "etask-coassignee",
+      "etask-coassignee-suggestions",
+      "etask-cc",
+      "etask-cc-suggestions",
+      "etask-cc-tags",
+      "etask-action-req",
+      "etask-comments",
+      "etask-notify",
+      "etask-email-subject-preview",
+      "etask-email-from-preview",
+      "etask-body-preview",
+      "email-empty-state",
+      "screen-assign",
+      "assign-action-bar",
+      "assign-notify",
+      "assign-body",
+      "assign-entry",
+      "assign-activity-banner",
+      "assign-activity-title",
+      "assign-activity-id",
+      "assign-type-chips",
+      "cat-toggle-label",
+      "cat-clear-btn"
+    ],
+    "css_classes": [
+      "landing-inner",
+      "landing-logo-ring",
+      "landing-title",
+      "landing-subtitle",
+      "identity-form",
+      "identity-preset-btns",
+      "preset-btn",
+      "identity-input",
+      "launch-btn",
+      "loading-overlay",
+      "spinner",
+      "sidebar",
+      "sidebar-header",
+      "sidebar-logo",
+      "sidebar-title",
+      "theme-selector",
+      "sidebar-nav",
+      "sidebar-footer",
+      "user-info",
+      "user-avatar",
+      "user-name",
+      "user-role",
+      "user-menu",
+      "danger",
+      "main-content",
+      "top-bar",
+      "top-bar-title",
+      "top-bar-actions",
+      "btn",
+      "btn-secondary",
+      "btn-sm",
+      "screen-area",
+      "screen",
+      "active",
+      "lookup-wrapper",
+      "lookup-box",
+      "fade-in",
+      "form-group",
+      "form-label",
+      "form-control",
+      "notify-banner",
+      "btn-primary",
+      "action-bar",
+      "card",
+      "email-frame",
+      "email-html-body",
+      "chip-group",
+      "chip",
+      "selected",
+      "toggle-label",
+      "placeholder",
+      "btn-icon",
+      "btn-ghost",
+      "collapsible-content",
+      "tab-bar",
+      "tab",
+      "card-header",
+      "card-title",
+      "preview-table",
+      "highlight",
+      "btn-destructive",
+      "data-table",
+      "modal-overlay",
+      "modal-box",
+      "modal-header",
+      "modal-title",
+      "modal-footer",
+      "nav-item",
+      "nav-label",
+      "badge",
+      "badge-success",
+      "badge-warning",
+      "btn-warning",
+      "btn-teal",
+      "btn-info",
+      "detail-section",
+      "detail-section-title",
+      "detail-row",
+      "detail-label",
+      "detail-value"
+    ],
+    "inline_styles_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "event_handling": {
+    "inline_handlers": [
+      "onclick",
+      "onchange",
+      "onkeydown",
+      "oninput"
+    ],
+    "listener_bound": [
+      "message",
+      "DOMContentLoaded",
+      "keydown",
+      "click"
+    ],
+    "global_listeners": [
+      "message",
+      "keydown"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "global_scope": {
+    "global_functions": [
+      "_send",
+      "_req",
+      "setIdentity",
+      "startApp",
+      "bootApp",
+      "applyTheme",
+      "toggleUserMenu",
+      "signOut",
+      "navigateTo",
+      "showLoader",
+      "hideLoader",
+      "escHtml",
+      "escAttr",
+      "safeFormatDate",
+      "isSafeUrl",
+      "normalizePriority",
+      "showNotify",
+      "logTelemetry",
+      "renderTelemetryLog",
+      "clearTelemetry",
+      "populateEndpointTable",
+      "callAPI",
+      "parseResponse",
+      "executeSubsidiaryAction",
+      "fetchLookups",
+      "executeLookup",
+      "resetLookup",
+      "renderDocFullView",
+      "renderTaskFullView",
+      "renderEmailFullView",
+      "openAssignmentFromDoc",
+      "initAssignScreen",
+      "renderAssignActionBar",
+      "setAssignType",
+      "populateCatList",
+      "filterCatDropdown",
+      "toggleCatDropdown",
+      "selectCategory",
+      "switchAssigneeTab",
+      "toggleAssigneeDropdown",
+      "filterAssigneeList",
+      "selectAssignee",
+      "selectAssigneeUser",
+      "switchCoAssigneeTab",
+      "toggleCoAssigneeDropdown",
+      "filterCoAssigneeList",
+      "selectCoAssignee",
+      "switchCCTab",
+      "toggleCCDropdown",
+      "filterCCList",
+      "toggleCCItem",
+      "togglePriorityDropdown",
+      "setPriority",
+      "toggleActionReqDropdown",
+      "setActionReq",
+      "closeAllDropdowns",
+      "updateAssignSummary",
+      "clearField",
+      "openAssignComments",
+      "saveComments",
+      "cancelComments",
+      "editAssignEntries",
+      "resetAssignmentForm",
+      "previewAssignment",
+      "submitAssignment",
+      "flagDocAction",
+      "closeFlagModal",
+      "submitFlagAction",
+      "openTaskUpdateModal",
+      "closeTaskUpdateModal",
+      "submitTaskUpdate",
+      "openEmailToTask",
+      "closeEmailToTask",
+      "onETaskCategoryChange",
+      "applyETaskCategoryCascade",
+      "filterEmailTaskUsers",
+      "filterEmailTaskCoAssignee",
+      "filterEmailTaskCC",
+      "renderETaskCCTags",
+      "previewEmailTask"
+    ],
+    "global_variables": [],
+    "notes": "[auto: globals not fully resolved]"
+  },
+  "state_management": "[AUTO-DRAFT — review] module-scope variables.",
+  "design_tokens": {
+    "framework": null,
+    "colors": [
+      "#F0F4F2",
+      "#008751",
+      "#00A69D",
+      "#373435",
+      "#2D3748",
+      "#6B7280",
+      "#D1D5DB",
+      "#E5E7EB",
+      "#F3F4F6",
+      "#FFFFFF",
+      "#05583B",
+      "#A92323",
+      "#E05606",
+      "#107C10",
+      "#E6F7F9",
+      "#0557D8",
+      "#FFCC00",
+      "#9CA3AF",
+      "#4B5563",
+      "#374151",
+      "#1F2937",
+      "#121212",
+      "#1E1E1E",
+      "#FF6B6B",
+      "#E0A500",
+      "#4ADE80",
+      "#2C2C2C",
+      "#fff",
+      "#000000",
+      "#000",
+      "#006b40",
+      "#fffde7",
+      "#dcfce7",
+      "#166534",
+      "#fee2e2",
+      "#991b1b",
+      "#fef9c3",
+      "#854d0e",
+      "#dbeafe",
+      "#1e40af"
+    ],
+    "fonts": [
+      "inherit",
+      "monospace"
+    ],
+    "spacing_or_layout_notes": "inline styles present"
+  },
+  "assets": [
+    {
+      "type": "image/svg",
+      "delivery": "inline-svg",
+      "ref": "inline <svg> icon(s)",
+      "approx_size": "small"
+    }
+  ],
+  "external_libraries": [],
+  "power_automate_flows": [
+    {
+      "name": "flow_1",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ff455c68e9ac493e858fb984bcfd01fb/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_2",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/5de1fc934e2944bb9cf9d9a0f9bd38e3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_3",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/37642ba3597f4cf58288cc71b5e6b519/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_4",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3931e2ff995242b6b2c920c8b2209797/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_5",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6b3bad3005b44bf6bced0f8074d3f2ed/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    }
+  ],
+  "behaviors": {
+    "loading_states": true,
+    "error_states": true,
+    "polling_present": false,
+    "timers_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "accessibility": {
+    "aria_present": true,
+    "keyboard_nav": true,
+    "notes": "[auto-extracted]"
+  },
+  "localization": {
+    "i18n_present": false,
+    "languages": [
+      "en"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "risks_and_quirks": [
+    "[AUTO-DRAFT manifest — mechanical extraction; prose/semantic fields (purpose, offerings, flow shapes) must be reviewed before treating as verified.]"
+  ],
+  "extraction_meta": {
+    "complete": false,
+    "unparseable_sections": [
+      "auto-draft: semantic fields pending review"
+    ],
+    "source_lines_approx": 1171
+  }
+}

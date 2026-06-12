@@ -1,0 +1,11 @@
+SPA spa-14 — Reports_Dashboard_Live.html (577 lines)
+TITLE: NITDA Reports Screen Dashboard
+HEADINGS (10): NITDA PORTAL | REPORTS DASHBOARD | Document and Task Summary | Sender Info | NITDA Management Report | 1. Key Insights | Total Activities | Completed Tasks | Pending Approvals | 2. Activity Summary
+BUTTONS (1): Cancel
+TABS: 
+FLOW URLS (2):
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ff455c68e9ac493e858fb984bcfd01fb/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6b3bad3005b44bf6bced0f8074d3f2ed/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+LIBS: cdn.tailwindcss.com, lucide@latest
+KEY FNS (25): getDaysAgo, showToast, initializeData, setLoading, toggleSidebar, switchUserRole, updateCounts, renderRBAC, renderTags, setTag, updateLabel, requestAction, closeConfirmModal, executeFlow, generateDGOReport, generateGTQReport, generateDualReport, renderViewers, buildTemplate, genH4, genH9, genH2, genH17, genH21, genH10
+EVENTS: inline=onclick,onchange | listeners=click,DOMContentLoaded

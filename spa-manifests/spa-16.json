@@ -1,0 +1,264 @@
+{
+  "schema_version": "1.1",
+  "spa_id": "spa-16",
+  "source_filename": "registry_movement.html",
+  "title": "DGO Digital Ops - File Movement",
+  "purpose": "[AUTO-DRAFT — needs review] DGO Digital Ops - File Movement. Inventoried from registry_movement.html.",
+  "offerings": [
+    {
+      "name": "Incoming Correspondence",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "RE: BUDGET APPROVAL REQUEST FOR Q1",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Movement Log",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "↻ Sync",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Incoming",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Outgoing",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Pending",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "View Attachment (PDF)",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Send File ➔",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    }
+  ],
+  "views": [
+    {
+      "name": "Incoming Correspondence",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "RE: BUDGET APPROVAL REQUEST FOR Q1",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Movement Log",
+      "type": "section",
+      "trigger": "[auto]"
+    }
+  ],
+  "js_utilities": [
+    {
+      "name": "openFile",
+      "signature": "openFile(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "addMinute",
+      "signature": "addMinute(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    }
+  ],
+  "dom_contract": {
+    "element_ids": [
+      "file-view",
+      "new-minute",
+      "empty-state"
+    ],
+    "css_classes": [
+      "bg-gray-100",
+      "font-sans",
+      "text-gray-800",
+      "h-screen",
+      "flex",
+      "flex-col",
+      "overflow-hidden",
+      "nitda-gradient",
+      "text-white",
+      "shadow-md",
+      "sticky",
+      "top-0",
+      "z-50",
+      "shrink-0",
+      "max-w-7xl",
+      "mx-auto",
+      "px-4",
+      "justify-between",
+      "h-14",
+      "items-center",
+      "space-x-4",
+      "md:space-x-8",
+      "font-bold",
+      "text-lg",
+      "tracking-wider",
+      "hidden",
+      "md:flex",
+      "space-x-1",
+      "px-3",
+      "py-1.5",
+      "rounded-md",
+      "text-sm",
+      "font-medium",
+      "hover:bg-white/10",
+      "transition",
+      "bg-white/20",
+      "text-xs",
+      "px-2",
+      "py-1",
+      "rounded",
+      "shadow-sm",
+      "flex-1",
+      "relative",
+      "w-full",
+      "md:w-[350px]",
+      "bg-white",
+      "border-r",
+      "z-10",
+      "p-3",
+      "border-b",
+      "bg-gray-50",
+      "text-[#05583B]",
+      "border",
+      "hover:bg-gray-100",
+      "py-2",
+      "border-b-2",
+      "border-[#05583B]",
+      "bg-green-50",
+      "text-gray-500",
+      "hover:bg-gray-50",
+      "overflow-y-auto",
+      "p-2",
+      "space-y-2",
+      "border-gray-200",
+      "hover:bg-green-50",
+      "cursor-pointer",
+      "transition-colors",
+      "items-start",
+      "mb-1",
+      "bg-red-100",
+      "text-red-800",
+      "text-[10px]",
+      "text-gray-400",
+      "text-gray-700",
+      "mt-2",
+      "gap-2",
+      "w-5",
+      "h-5",
+      "rounded-full",
+      "bg-gray-300"
+    ],
+    "inline_styles_present": false,
+    "notes": "[auto-extracted]"
+  },
+  "event_handling": {
+    "inline_handlers": [
+      "onclick"
+    ],
+    "listener_bound": [],
+    "global_listeners": [],
+    "notes": "[auto-extracted]"
+  },
+  "global_scope": {
+    "global_functions": [
+      "openFile",
+      "addMinute"
+    ],
+    "global_variables": [],
+    "notes": "[auto: globals not fully resolved]"
+  },
+  "state_management": "[AUTO-DRAFT — review] module-scope variables.",
+  "design_tokens": {
+    "framework": "Tailwind",
+    "colors": [
+      "#05583B",
+      "#00A69D",
+      "#fffdf0",
+      "#d1d5db",
+      "#ccc",
+      "#b91c1c",
+      "#1e3a8a",
+      "#e5e7eb"
+    ],
+    "fonts": [],
+    "spacing_or_layout_notes": null
+  },
+  "assets": [
+    {
+      "type": "image/svg",
+      "delivery": "inline-svg",
+      "ref": "inline <svg> icon(s)",
+      "approx_size": "small"
+    },
+    {
+      "type": "image",
+      "delivery": "external-url",
+      "ref": "1 external image url(s)",
+      "approx_size": null
+    }
+  ],
+  "external_libraries": [
+    {
+      "name": "cdn.tailwindcss.com",
+      "version": null,
+      "source": "https://cdn.tailwindcss.com"
+    },
+    {
+      "name": "htmx.org@1.9.10",
+      "version": "1.9.10",
+      "source": "https://unpkg.com/htmx.org@1.9.10"
+    }
+  ],
+  "power_automate_flows": [],
+  "behaviors": {
+    "loading_states": false,
+    "error_states": true,
+    "polling_present": false,
+    "timers_present": false,
+    "notes": "[auto-extracted]"
+  },
+  "accessibility": {
+    "aria_present": false,
+    "keyboard_nav": false,
+    "notes": "[auto-extracted]"
+  },
+  "localization": {
+    "i18n_present": false,
+    "languages": [
+      "en"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "risks_and_quirks": [
+    "[AUTO-DRAFT manifest — mechanical extraction; prose/semantic fields (purpose, offerings, flow shapes) must be reviewed before treating as verified.]"
+  ],
+  "extraction_meta": {
+    "complete": false,
+    "unparseable_sections": [
+      "auto-draft: semantic fields pending review"
+    ],
+    "source_lines_approx": 270
+  }
+}

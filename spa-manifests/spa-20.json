@@ -1,0 +1,899 @@
+{
+  "schema_version": "1.1",
+  "spa_id": "spa-20",
+  "source_filename": "HTML Reports_Builder_SPA.html",
+  "title": "NITDA DGO FAST-Track | Reports",
+  "purpose": "[AUTO-DRAFT — needs review] NITDA DGO FAST-Track | Reports. Inventoried from HTML Reports_Builder_SPA.html.",
+  "offerings": [
+    {
+      "name": "Title",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Document and Task Summary",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Sender Information",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Documents",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "NITDA Management Report",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "1. Key Insights",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Total Activities",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Completed Tasks",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Pending Approvals",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "2. Activity Summary",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Activity Summary",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "3. Task Summary",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "4. Document Management",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "5. Conclusion",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Task Report",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "${escapeHtml(t.label)}",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "${escapeHtml(kind)} Report",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "⌂ Home",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "📧 Send DGO Report Email",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "📧 Send GTQ Report Email",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    }
+  ],
+  "views": [
+    {
+      "name": "Title",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Document and Task Summary",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Sender Information",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Documents",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "NITDA Management Report",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "1. Key Insights",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Total Activities",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Completed Tasks",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Pending Approvals",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "2. Activity Summary",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Activity Summary",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "3. Task Summary",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "4. Document Management",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "5. Conclusion",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Task Report",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "${escapeHtml(t.label)}",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "${escapeHtml(kind)} Report",
+      "type": "section",
+      "trigger": "[auto]"
+    }
+  ],
+  "js_utilities": [
+    {
+      "name": "todayMinus",
+      "signature": "todayMinus(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "fmtIsoDate",
+      "signature": "fmtIsoDate(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "fmtIsoDateTime",
+      "signature": "fmtIsoDateTime(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "fmtDate",
+      "signature": "fmtDate(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "escapeHtml",
+      "signature": "escapeHtml(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "safe",
+      "signature": "safe(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "deviceInfo",
+      "signature": "deviceInfo(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "uuid",
+      "signature": "uuid(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "showLoader",
+      "signature": "showLoader(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "hideLoader",
+      "signature": "hideLoader(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toast",
+      "signature": "toast(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "logActivity",
+      "signature": "logActivity(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "callFlow",
+      "signature": "callFlow(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildLookupsRequest",
+      "signature": "buildLookupsRequest(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildDocsRequest",
+      "signature": "buildDocsRequest(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildTasksRequest",
+      "signature": "buildTasksRequest(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildEmailsRequest",
+      "signature": "buildEmailsRequest(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildEmailToTaskRequest",
+      "signature": "buildEmailToTaskRequest(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildBulkAssignRequest",
+      "signature": "buildBulkAssignRequest(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildSingleAssignRequest",
+      "signature": "buildSingleAssignRequest(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "parseEnvelope",
+      "signature": "parseEnvelope(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "extractList",
+      "signature": "extractList(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "UpdateContext",
+      "signature": "UpdateContext(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "galleryOnSelect",
+      "signature": "galleryOnSelect(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildTagGallery",
+      "signature": "buildTagGallery(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "syncTagGalleryHighlight",
+      "signature": "syncTagGalleryHighlight(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "syncStatusLabel",
+      "signature": "syncStatusLabel(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "syncReportVisibility",
+      "signature": "syncReportVisibility(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "pickRowsForTemplate",
+      "signature": "pickRowsForTemplate(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderTemplate",
+      "signature": "renderTemplate(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "fetchAndStoreLookups",
+      "signature": "fetchAndStoreLookups(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "fetchTasksByDateRange",
+      "signature": "fetchTasksByDateRange(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "fetchDocsByDateRange",
+      "signature": "fetchDocsByDateRange(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "handleSendDGOReportEmail",
+      "signature": "handleSendDGOReportEmail(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "handleSendGTQReportEmail",
+      "signature": "handleSendGTQReportEmail(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "handleSendDualReportEmail",
+      "signature": "handleSendDualReportEmail(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "handleDGOShowR3",
+      "signature": "handleDGOShowR3(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "handleGTQShowR3",
+      "signature": "handleGTQShowR3(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "handleGenerateDualReport",
+      "signature": "handleGenerateDualReport(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildBlobReportHTML",
+      "signature": "buildBlobReportHTML(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "openEmailComposer",
+      "signature": "openEmailComposer(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "openModal",
+      "signature": "openModal(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "closeModal",
+      "signature": "closeModal(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildNavigationModel",
+      "signature": "buildNavigationModel(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderNavigation",
+      "signature": "renderNavigation(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "navigateTo",
+      "signature": "navigateTo(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "openNav",
+      "signature": "openNav(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "closeNav",
+      "signature": "closeNav(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "wireEvents",
+      "signature": "wireEvents(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "initOnVisible",
+      "signature": "initOnVisible(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "init",
+      "signature": "init(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "$",
+      "signature": "$(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "$$",
+      "signature": "$$(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    }
+  ],
+  "dom_contract": {
+    "element_ids": [
+      "cmpScreenHeader_16",
+      "userEmailSelect",
+      "navToggleBtn",
+      "homeBtn",
+      "Label1_7",
+      "statusLabelText",
+      "galSuggestedTags_7",
+      "TableNameContainer1_34",
+      "Button2_26",
+      "Button2_38",
+      "Button2_38_label",
+      "Button2_28",
+      "Button2_37",
+      "Button2_27",
+      "Button2_39",
+      "dpReportStartDate",
+      "dpReportEndDate",
+      "dpReportStartDate_1",
+      "dpReportEndDate_1",
+      "Container4",
+      "activeTemplateBadge",
+      "recordCountBadge",
+      "btnRefreshLookups",
+      "btnPrint",
+      "btnDownloadHtml",
+      "btnExpand",
+      "reportStage",
+      "reportEmpty",
+      "HtmlText4",
+      "HtmlText9",
+      "HtmlText2",
+      "HtmlText21",
+      "HtmlText22",
+      "HtmlText17",
+      "HtmlText18",
+      "HtmlText10",
+      "navBackdrop",
+      "cmpScreenNavigation_23",
+      "navList",
+      "loader",
+      "loaderText",
+      "toaster",
+      "modalBackdrop",
+      "modalTitle",
+      "modalClose",
+      "modalBody",
+      "modalFooter",
+      "activityToggle",
+      "activityStrip",
+      "actClear",
+      "actClose",
+      "activityLog",
+      "emTo",
+      "emSubj",
+      "emImp",
+      "emPreview"
+    ],
+    "css_classes": [
+      "app-shell",
+      "app-screen-container",
+      "cmp-screen-header",
+      "brand",
+      "brand-mark",
+      "header-meta",
+      "user-block",
+      "header-action",
+      "home-btn",
+      "cmp-status-label",
+      "cmp-tag-gallery",
+      "cmp-actions",
+      "act",
+      "act-blue",
+      "act-green",
+      "act-orange",
+      "dp-wrap",
+      "dp",
+      "cmp-reports-container",
+      "cmp-reports-toolbar",
+      "left",
+      "badge",
+      "right",
+      "mini-btn",
+      "primary",
+      "cmp-reports-stage",
+      "report-empty",
+      "ico",
+      "hint",
+      "report-template",
+      "nav-backdrop",
+      "cmp-nav-drawer",
+      "nav-header",
+      "loader-overlay",
+      "loader-spinner",
+      "loader-text",
+      "toaster",
+      "modal-backdrop",
+      "modal",
+      "modal-header",
+      "x",
+      "modal-body",
+      "modal-footer",
+      "activity-toggle",
+      "activity-strip",
+      "actions",
+      "log",
+      "t-title",
+      "t-body",
+      "head",
+      "url",
+      "meta",
+      "pill",
+      "${pillClass}",
+      "field",
+      "preview-frame",
+      "nm"
+    ],
+    "inline_styles_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "event_handling": {
+    "inline_handlers": [],
+    "listener_bound": [
+      "click",
+      "change",
+      "DOMContentLoaded"
+    ],
+    "global_listeners": [],
+    "notes": "[auto-extracted]"
+  },
+  "global_scope": {
+    "global_functions": [
+      "todayMinus",
+      "fmtIsoDate",
+      "fmtIsoDateTime",
+      "fmtDate",
+      "escapeHtml",
+      "safe",
+      "deviceInfo",
+      "uuid",
+      "showLoader",
+      "hideLoader",
+      "toast",
+      "logActivity",
+      "callFlow",
+      "buildLookupsRequest",
+      "buildDocsRequest",
+      "buildTasksRequest",
+      "buildEmailsRequest",
+      "buildEmailToTaskRequest",
+      "buildBulkAssignRequest",
+      "buildSingleAssignRequest",
+      "parseEnvelope",
+      "extractList",
+      "UpdateContext",
+      "galleryOnSelect",
+      "buildTagGallery",
+      "syncTagGalleryHighlight",
+      "syncStatusLabel",
+      "syncReportVisibility",
+      "pickRowsForTemplate",
+      "renderTemplate",
+      "fetchAndStoreLookups",
+      "fetchTasksByDateRange",
+      "fetchDocsByDateRange",
+      "handleSendDGOReportEmail",
+      "handleSendGTQReportEmail",
+      "handleSendDualReportEmail",
+      "handleDGOShowR3",
+      "handleGTQShowR3",
+      "handleGenerateDualReport",
+      "buildBlobReportHTML",
+      "openEmailComposer",
+      "openModal",
+      "closeModal",
+      "buildNavigationModel",
+      "renderNavigation",
+      "navigateTo",
+      "openNav",
+      "closeNav",
+      "wireEvents",
+      "initOnVisible",
+      "init"
+    ],
+    "global_variables": [],
+    "notes": "[auto: globals not fully resolved]"
+  },
+  "state_management": "[AUTO-DRAFT — review] module-scope variables.",
+  "design_tokens": {
+    "framework": "Bootstrap",
+    "colors": [
+      "#05583B",
+      "#00A69D",
+      "#FFC000",
+      "#373435",
+      "#0F6CBD",
+      "#2D8028",
+      "#E05606",
+      "#f4f4f4",
+      "#222",
+      "#f5f5f5",
+      "#0a7a51",
+      "#fff",
+      "#FFB400",
+      "#FFC940",
+      "#e5e5e5",
+      "#ccc",
+      "#fafafa",
+      "#ececec",
+      "#555",
+      "#eef",
+      "#333",
+      "#f0f0f0",
+      "#06734f",
+      "#888",
+      "#999",
+      "#eee",
+      "#f3f3f3",
+      "#ddd",
+      "#1e1e1e",
+      "#d4d4d4",
+      "#1f1f1f",
+      "#0a0a0a",
+      "#2a2a2a",
+      "#bbb",
+      "#9cdcfe",
+      "#fef3d4",
+      "#7a5a00",
+      "#ff8a65",
+      "#ffffff",
+      "#E2EFDA"
+    ],
+    "fonts": [
+      "Verdana",
+      "Geneva",
+      "sans-serif",
+      "inherit",
+      "Consolas",
+      "Monaco",
+      "monospace",
+      "Arial"
+    ],
+    "spacing_or_layout_notes": "inline styles present"
+  },
+  "assets": [],
+  "external_libraries": [],
+  "power_automate_flows": [
+    {
+      "name": "flow_1",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ff455c68e9ac493e858fb984bcfd01fb/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_2",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/818ec4053f1e4f0b87845114241d8b74/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_3",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/37642ba3597f4cf58288cc71b5e6b519/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_4",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3931e2ff995242b6b2c920c8b2209797/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_5",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6b3bad3005b44bf6bced0f8074d3f2ed/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_6",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/7e71fffe770a45ccb93bf216bb53786e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_7",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/1154b50e1d17420dadb3b012e7e2a02c/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    }
+  ],
+  "behaviors": {
+    "loading_states": true,
+    "error_states": true,
+    "polling_present": false,
+    "timers_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "accessibility": {
+    "aria_present": false,
+    "keyboard_nav": false,
+    "notes": "[auto-extracted]"
+  },
+  "localization": {
+    "i18n_present": false,
+    "languages": [
+      "en"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "risks_and_quirks": [
+    "[AUTO-DRAFT manifest — mechanical extraction; prose/semantic fields (purpose, offerings, flow shapes) must be reviewed before treating as verified.]"
+  ],
+  "extraction_meta": {
+    "complete": false,
+    "unparseable_sections": [
+      "auto-draft: semantic fields pending review"
+    ],
+    "source_lines_approx": 1
+  }
+}

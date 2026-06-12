@@ -1,0 +1,873 @@
+{
+  "schema_version": "1.1",
+  "spa_id": "spa-04",
+  "source_filename": "dg_ceo_office_platform-1.html",
+  "title": "DG/CEO Executive Office Operating System",
+  "purpose": "[AUTO-DRAFT — needs review] DG/CEO Executive Office Operating System. Inventoried from dg_ceo_office_platform-1.html.",
+  "offerings": [
+    {
+      "name": "Executive Office OS",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Office of the Director-General / CEO",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Today’s posture",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Office execution health",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Daily executive brief",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Calendar horizon",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Strategic priorities",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Attention hotspots",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Decision queue",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Recent office activity",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Decision desk",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Decision calendar",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Approval pipeline",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Operations board",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Meeting & protocol room",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Travel, visits & events",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Document control",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Document lifecycle",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Briefing pack composition",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Correspondence control center",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    }
+  ],
+  "views": [
+    {
+      "name": "Executive Office OS",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Office of the Director-General / CEO",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Today’s posture",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Office execution health",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Daily executive brief",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Calendar horizon",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Strategic priorities",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Attention hotspots",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Decision queue",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Recent office activity",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Decision desk",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Decision calendar",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Approval pipeline",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Operations board",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Meeting & protocol room",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Travel, visits & events",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Document control",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Document lifecycle",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Briefing pack composition",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Correspondence control center",
+      "type": "section",
+      "trigger": "[auto]"
+    }
+  ],
+  "js_utilities": [
+    {
+      "name": "clone",
+      "signature": "clone(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "loadState",
+      "signature": "loadState(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "persist",
+      "signature": "persist(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "resetToSeed",
+      "signature": "resetToSeed(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "formatDate",
+      "signature": "formatDate(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "formatDateTime",
+      "signature": "formatDateTime(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "daysUntil",
+      "signature": "daysUntil(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "severityClass",
+      "signature": "severityClass(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "hashCode",
+      "signature": "hashCode(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "initials",
+      "signature": "initials(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "calcStats",
+      "signature": "calcStats(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "generateBrief",
+      "signature": "generateBrief(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderAll",
+      "signature": "renderAll(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "applyTheme",
+      "signature": "applyTheme(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderSidebarStats",
+      "signature": "renderSidebarStats(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderOverview",
+      "signature": "renderOverview(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "createAgendaDays",
+      "signature": "createAgendaDays(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderApprovals",
+      "signature": "renderApprovals(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderOperations",
+      "signature": "renderOperations(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderDocuments",
+      "signature": "renderDocuments(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderCorrespondence",
+      "signature": "renderCorrespondence(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderInitiatives",
+      "signature": "renderInitiatives(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderEngagement",
+      "signature": "renderEngagement(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderRisk",
+      "signature": "renderRisk(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderResources",
+      "signature": "renderResources(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderPeople",
+      "signature": "renderPeople(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderWorkflows",
+      "signature": "renderWorkflows(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderReports",
+      "signature": "renderReports(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderSettingsRefs",
+      "signature": "renderSettingsRefs(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderRightRail",
+      "signature": "renderRightRail(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildTimeline",
+      "signature": "buildTimeline(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "populateSelect",
+      "signature": "populateSelect(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "formatCurrency",
+      "signature": "formatCurrency(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "syncSectionVisibility",
+      "signature": "syncSectionVisibility(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "switchSection",
+      "signature": "switchSection(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "findRecord",
+      "signature": "findRecord(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "openDrawer",
+      "signature": "openDrawer(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "humanize",
+      "signature": "humanize(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "closeDrawer",
+      "signature": "closeDrawer(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "openModal",
+      "signature": "openModal(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "closeModal",
+      "signature": "closeModal(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "saveModalRecord",
+      "signature": "saveModalRecord(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "openFlowModal",
+      "signature": "openFlowModal(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "closeFlowModal",
+      "signature": "closeFlowModal(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "saveFlow",
+      "signature": "saveFlow(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildPayload",
+      "signature": "buildPayload(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "loadTemplateIntoBuilder",
+      "signature": "loadTemplateIntoBuilder(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "sendFlow",
+      "signature": "sendFlow(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderCommandResults",
+      "signature": "renderCommandResults(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "openCommand",
+      "signature": "openCommand(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "closeCommand",
+      "signature": "closeCommand(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "handleCommandClick",
+      "signature": "handleCommandClick(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "exportWorkspace",
+      "signature": "exportWorkspace(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "importWorkspace",
+      "signature": "importWorkspace(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "showToast",
+      "signature": "showToast(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "copyText",
+      "signature": "copyText(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "registerEvents",
+      "signature": "registerEvents(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    }
+  ],
+  "dom_contract": {
+    "element_ids": [
+      "quickStatus",
+      "quickAddBtn",
+      "commandBtn",
+      "exportBtn",
+      "importBtn",
+      "importFile",
+      "themeBtn",
+      "briefBtn",
+      "resetDemoBtn",
+      "launchFlowBtn",
+      "heroChips",
+      "metricsGrid",
+      "priorityChips",
+      "healthLabel",
+      "healthScore",
+      "healthLegend",
+      "briefSummary",
+      "section-overview",
+      "briefStrip",
+      "executiveTimeline",
+      "calendarGrid",
+      "priorityList",
+      "heatmap",
+      "decisionQueue",
+      "activityFeed",
+      "section-decisions",
+      "approvalSearch",
+      "approvalStatusFilter",
+      "approvalPriorityFilter",
+      "clearApprovalFilters",
+      "approvalsTable",
+      "decisionTimeline",
+      "approvalPipeline",
+      "section-operations",
+      "taskBoard",
+      "meetingsList",
+      "tripsList",
+      "section-documents",
+      "documentSearch",
+      "documentClassFilter",
+      "documentStageFilter",
+      "clearDocumentFilters",
+      "documentsTable",
+      "documentLifecycle",
+      "briefingPacks",
+      "section-correspondence",
+      "correspondenceTable",
+      "slaWatch",
+      "routingMatrix",
+      "section-initiatives",
+      "initiativeCards",
+      "section-engagement",
+      "stakeholderList",
+      "engagementTimeline",
+      "section-risk",
+      "riskList",
+      "issueList",
+      "section-resources",
+      "budgetList",
+      "procurementList"
+    ],
+    "css_classes": [
+      "shell",
+      "sidebar",
+      "panel",
+      "brand",
+      "crest",
+      "quick-status",
+      "nav-section",
+      "nav-btn",
+      "active",
+      "nav-icon",
+      "nav-meta",
+      "sidebar-actions",
+      "btn",
+      "primary",
+      "secondary",
+      "main-column",
+      "topbar",
+      "headline",
+      "top-actions",
+      "hero",
+      "hero-card",
+      "toolbar-line",
+      "subtle",
+      "filters",
+      "hero-grid",
+      "chip-row",
+      "card-head",
+      "badge",
+      "info",
+      "score-ring",
+      "legend",
+      "note",
+      "workspace",
+      "section",
+      "full-grid",
+      "card",
+      "span-7",
+      "small",
+      "strip",
+      "timeline",
+      "span-5",
+      "calendar",
+      "span-8",
+      "stack",
+      "span-4",
+      "heatmap",
+      "span-6",
+      "list",
+      "searchbar",
+      "input",
+      "table-wrap",
+      "split",
+      "kanban",
+      "flow-grid",
+      "flow-card",
+      "small-text",
+      "flow-log",
+      "list-item",
+      "meta",
+      "warning",
+      "right-rail",
+      "rail-card",
+      "high",
+      "people",
+      "drawer",
+      "drawer-head",
+      "drawer-body",
+      "modal",
+      "modal-card",
+      "modal-head",
+      "modal-content",
+      "form-grid",
+      "full",
+      "command-palette",
+      "command-card",
+      "command-head",
+      "command-search",
+      "command-results",
+      "toast-wrap",
+      "toast"
+    ],
+    "inline_styles_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "event_handling": {
+    "inline_handlers": [],
+    "listener_bound": [
+      "click",
+      "change",
+      "input",
+      "keydown"
+    ],
+    "global_listeners": [
+      "keydown"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "global_scope": {
+    "global_functions": [
+      "clone",
+      "loadState",
+      "persist",
+      "resetToSeed",
+      "formatDate",
+      "formatDateTime",
+      "daysUntil",
+      "severityClass",
+      "hashCode",
+      "initials",
+      "calcStats",
+      "generateBrief",
+      "renderAll",
+      "applyTheme",
+      "renderSidebarStats",
+      "renderOverview",
+      "createAgendaDays",
+      "renderApprovals",
+      "renderOperations",
+      "renderDocuments",
+      "renderCorrespondence",
+      "renderInitiatives",
+      "renderEngagement",
+      "renderRisk",
+      "renderResources",
+      "renderPeople",
+      "renderWorkflows",
+      "renderReports",
+      "renderSettingsRefs",
+      "renderRightRail",
+      "buildTimeline",
+      "populateSelect",
+      "formatCurrency",
+      "syncSectionVisibility",
+      "switchSection",
+      "findRecord",
+      "openDrawer",
+      "humanize",
+      "closeDrawer",
+      "openModal",
+      "closeModal",
+      "saveModalRecord",
+      "openFlowModal",
+      "closeFlowModal",
+      "saveFlow",
+      "buildPayload",
+      "loadTemplateIntoBuilder",
+      "sendFlow",
+      "renderCommandResults",
+      "openCommand",
+      "closeCommand",
+      "handleCommandClick",
+      "exportWorkspace",
+      "importWorkspace",
+      "showToast",
+      "copyText",
+      "registerEvents"
+    ],
+    "global_variables": [],
+    "notes": "[auto: globals not fully resolved]"
+  },
+  "state_management": "[AUTO-DRAFT — review] uses localStorage; module-scope variables.",
+  "design_tokens": {
+    "framework": null,
+    "colors": [
+      "#0a1020",
+      "#101830",
+      "#121d34",
+      "#182541",
+      "#203156",
+      "#edf4ff",
+      "#9cafcf",
+      "#78a8ff",
+      "#5fe0d0",
+      "#74d98c",
+      "#f7bf66",
+      "#ff8d8d",
+      "#b59bff",
+      "#f3f6fc",
+      "#ffffff",
+      "#f7f9fe",
+      "#edf2fb",
+      "#0f1a2f",
+      "#657491",
+      "#365cff",
+      "#16b6a1",
+      "#1f9f57",
+      "#c78518",
+      "#c85f5f",
+      "#7a58ff",
+      "#0d1529",
+      "#eff4fb",
+      "#f7f9fd",
+      "#09111f",
+      "#95b8ff",
+      "#07111e",
+      "#0a1122",
+      "#f4f7fe"
+    ],
+    "fonts": [
+      "Inter",
+      "Segoe UI",
+      "Arial",
+      "sans-serif"
+    ],
+    "spacing_or_layout_notes": "inline styles present"
+  },
+  "assets": [],
+  "external_libraries": [],
+  "power_automate_flows": [
+    {
+      "name": "flow_1",
+      "method": "POST",
+      "endpoint_base": "https://prod-00.westeurope.logic.azure.com:443/workflows/...",
+      "has_sas_token": false,
+      "auth_scheme": null,
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    }
+  ],
+  "behaviors": {
+    "loading_states": false,
+    "error_states": true,
+    "polling_present": false,
+    "timers_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "accessibility": {
+    "aria_present": true,
+    "keyboard_nav": true,
+    "notes": "[auto-extracted]"
+  },
+  "localization": {
+    "i18n_present": false,
+    "languages": [
+      "en"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "risks_and_quirks": [
+    "[AUTO-DRAFT manifest — mechanical extraction; prose/semantic fields (purpose, offerings, flow shapes) must be reviewed before treating as verified.]"
+  ],
+  "extraction_meta": {
+    "complete": false,
+    "unparseable_sections": [
+      "auto-draft: semantic fields pending review"
+    ],
+    "source_lines_approx": 2362
+  }
+}

@@ -1,0 +1,413 @@
+{
+  "schema_version": "1.1",
+  "spa_id": "spa-13",
+  "source_filename": "Unified Smart Orchestrator.html",
+  "title": "NITDA DGO – Unified Smart Orchestrator",
+  "purpose": "[AUTO-DRAFT — needs review] NITDA DGO – Unified Smart Orchestrator. Inventoried from Unified Smart Orchestrator.html.",
+  "offerings": [
+    {
+      "name": "NITDA DGO – Smart Orchestrator",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "System Diagnostics & Telemetry",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Correspondence & Decision Hub",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Response Tracking & Matrix",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Active Tracking Nodes",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "DGO Enterprise Intelligence",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "${escapeHtml(metrics.total)}",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "${escapeHtml(metrics.critical)}",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "${escapeHtml(metrics.resolved)}",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "${escapeHtml(metrics.efficiency)}",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Execute Flow: Reload All",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Clear Telemetry",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Sync Hub",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    }
+  ],
+  "views": [
+    {
+      "name": "NITDA DGO – Smart Orchestrator",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "System Diagnostics & Telemetry",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Correspondence & Decision Hub",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Response Tracking & Matrix",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Active Tracking Nodes",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "DGO Enterprise Intelligence",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "${escapeHtml(metrics.total)}",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "${escapeHtml(metrics.critical)}",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "${escapeHtml(metrics.resolved)}",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "${escapeHtml(metrics.efficiency)}",
+      "type": "section",
+      "trigger": "[auto]"
+    }
+  ],
+  "js_utilities": [
+    {
+      "name": "escapeHtml",
+      "signature": "escapeHtml(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "showNotification",
+      "signature": "showNotification(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "formatDate",
+      "signature": "formatDate(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "telemetryLog",
+      "signature": "telemetryLog(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "executeUnifiedFlow",
+      "signature": "executeUnifiedFlow(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "syncRouteFromHash",
+      "signature": "syncRouteFromHash(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "triggerViewRenderer",
+      "signature": "triggerViewRenderer(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderDecisionHub",
+      "signature": "renderDecisionHub(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderModernDashboard",
+      "signature": "renderModernDashboard(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "$",
+      "signature": "$(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "$$",
+      "signature": "$$(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    }
+  ],
+  "dom_contract": {
+    "element_ids": [
+      "notification",
+      "view-dashboard",
+      "telemetryOutput",
+      "btnRunReload",
+      "btnClearTelemetry",
+      "view-decision-hub",
+      "btnSyncDecisions",
+      "hubBody",
+      "view-response-tracking",
+      "trackingNodesContainer",
+      "view-dgo-track",
+      "btnSyncModern",
+      "refreshIconModern",
+      "modernStatsCards",
+      "modernTable",
+      "modernTableHead",
+      "modernTableBody"
+    ],
+    "css_classes": [
+      "notification",
+      "spa-view",
+      "active",
+      "navbar",
+      "navbar-nav",
+      "nav-btn",
+      "matrix-card",
+      "hidden",
+      "theme-dark",
+      "p-6",
+      "flex",
+      "justify-between",
+      "items-center",
+      "mb-8",
+      "text-2xl",
+      "font-bold",
+      "text-sm",
+      "text-gray-400",
+      "gap-4",
+      "glass",
+      "p-4",
+      "rounded-lg",
+      "gap-2",
+      "cursor-pointer",
+      "hover:bg-white/5",
+      "transition-colors",
+      "w-6",
+      "h-6",
+      "grid",
+      "grid-cols-4",
+      "gap-6",
+      "rounded-xl",
+      "overflow-x-auto",
+      "min-w-full",
+      "text-center",
+      "text-gray-500",
+      "matrix-meta",
+      "px-6",
+      "py-4",
+      "${item.Progress",
+      "===",
+      "${item.Priority",
+      "mb-1",
+      "border-l-4",
+      "text-red-500",
+      "text-teal-400"
+    ],
+    "inline_styles_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "event_handling": {
+    "inline_handlers": [],
+    "listener_bound": [
+      "hashchange",
+      "DOMContentLoaded"
+    ],
+    "global_listeners": [
+      "hashchange"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "global_scope": {
+    "global_functions": [
+      "escapeHtml",
+      "showNotification",
+      "formatDate",
+      "telemetryLog",
+      "executeUnifiedFlow",
+      "syncRouteFromHash",
+      "triggerViewRenderer",
+      "renderDecisionHub",
+      "renderModernDashboard"
+    ],
+    "global_variables": [],
+    "notes": "[auto: globals not fully resolved]"
+  },
+  "state_management": "[AUTO-DRAFT — review] uses localStorage; module-scope variables.",
+  "design_tokens": {
+    "framework": "Tailwind",
+    "colors": [
+      "#008751",
+      "#00A69D",
+      "#373435",
+      "#FFB400",
+      "#FFFFFF",
+      "#F3F4F6",
+      "#050505",
+      "#2D3748",
+      "#6B7280",
+      "#ffffff",
+      "#107C10",
+      "#E05606",
+      "#A92323",
+      "#05583B",
+      "#E6F7F9",
+      "#fff",
+      "#eaecf0",
+      "#111",
+      "#9ca3af",
+      "#6b7280",
+      "#2dd4bf",
+      "#ef4444",
+      "#1e1e1e",
+      "#00ff00",
+      "#000",
+      "#039"
+    ],
+    "fonts": [
+      "var(--font-default)",
+      "monospace"
+    ],
+    "spacing_or_layout_notes": "inline styles present"
+  },
+  "assets": [
+    {
+      "type": "image/svg",
+      "delivery": "inline-svg",
+      "ref": "inline <svg> icon(s)",
+      "approx_size": "small"
+    }
+  ],
+  "external_libraries": [],
+  "power_automate_flows": [
+    {
+      "name": "flow_1",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ff455c68e9ac493e858fb984bcfd01fb/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_2",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/818ec4053f1e4f0b87845114241d8b74/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_3",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/37642ba3597f4cf58288cc71b5e6b519/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    }
+  ],
+  "behaviors": {
+    "loading_states": false,
+    "error_states": true,
+    "polling_present": false,
+    "timers_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "accessibility": {
+    "aria_present": false,
+    "keyboard_nav": false,
+    "notes": "[auto-extracted]"
+  },
+  "localization": {
+    "i18n_present": false,
+    "languages": [
+      "en"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "risks_and_quirks": [
+    "[AUTO-DRAFT manifest — mechanical extraction; prose/semantic fields (purpose, offerings, flow shapes) must be reviewed before treating as verified.]"
+  ],
+  "extraction_meta": {
+    "complete": false,
+    "unparseable_sections": [
+      "auto-draft: semantic fields pending review"
+    ],
+    "source_lines_approx": 577
+  }
+}

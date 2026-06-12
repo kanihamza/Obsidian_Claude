@@ -1,0 +1,181 @@
+{
+  "schema_version": "1.1",
+  "spa_id": "spa-18",
+  "source_filename": "Executive_Operations_Hub_Build_v2.0.html",
+  "title": "Executive Operations Hub",
+  "purpose": "[AUTO-DRAFT — needs review] Executive Operations Hub. Inventoried from Executive_Operations_Hub_Build_v2.0.html.",
+  "offerings": [
+    {
+      "name": "Executive Hub",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Cancel",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Confirm",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    }
+  ],
+  "views": [
+    {
+      "name": "Executive Hub",
+      "type": "section",
+      "trigger": "[auto]"
+    }
+  ],
+  "js_utilities": [
+    {
+      "name": "updateCounter",
+      "signature": "updateCounter(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "showToast",
+      "signature": "showToast(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "quickAction",
+      "signature": "quickAction(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "openModal",
+      "signature": "openModal(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "closeModal",
+      "signature": "closeModal(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "submitModalAction",
+      "signature": "submitModalAction(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "executeAction",
+      "signature": "executeAction(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    }
+  ],
+  "dom_contract": {
+    "element_ids": [
+      "task-counter",
+      "feed",
+      "action-modal",
+      "modal-title",
+      "modal-body",
+      "modal-confirm",
+      "toast-container",
+      "modal-input",
+      "modal-comments"
+    ],
+    "css_classes": [
+      "header",
+      "badge",
+      "modal-overlay",
+      "modal-content",
+      "modal-title",
+      "modal-actions",
+      "btn-cancel",
+      "btn-confirm"
+    ],
+    "inline_styles_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "event_handling": {
+    "inline_handlers": [
+      "onclick"
+    ],
+    "listener_bound": [],
+    "global_listeners": [],
+    "notes": "[auto-extracted]"
+  },
+  "global_scope": {
+    "global_functions": [
+      "updateCounter",
+      "showToast",
+      "quickAction",
+      "openModal",
+      "closeModal",
+      "submitModalAction",
+      "executeAction"
+    ],
+    "global_variables": [],
+    "notes": "[auto: globals not fully resolved]"
+  },
+  "state_management": "[AUTO-DRAFT — review] module-scope variables.",
+  "design_tokens": {
+    "framework": null,
+    "colors": [
+      "#f3f4f6",
+      "#ffffff",
+      "#111827",
+      "#6b7280",
+      "#e5e7eb",
+      "#2563eb",
+      "#1d4ed8",
+      "#10b981",
+      "#ef4444",
+      "#f59e0b",
+      "#1f2937",
+      "#f9fafb",
+      "#9ca3af",
+      "#374151",
+      "#3b82f6",
+      "#60a5fa"
+    ],
+    "fonts": [
+      "-apple-system",
+      "BlinkMacSystemFont",
+      "inherit"
+    ],
+    "spacing_or_layout_notes": "inline styles present"
+  },
+  "assets": [],
+  "external_libraries": [],
+  "power_automate_flows": [],
+  "behaviors": {
+    "loading_states": true,
+    "error_states": true,
+    "polling_present": false,
+    "timers_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "accessibility": {
+    "aria_present": false,
+    "keyboard_nav": false,
+    "notes": "[auto-extracted]"
+  },
+  "localization": {
+    "i18n_present": false,
+    "languages": [
+      "en"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "risks_and_quirks": [
+    "[AUTO-DRAFT manifest — mechanical extraction; prose/semantic fields (purpose, offerings, flow shapes) must be reviewed before treating as verified.]"
+  ],
+  "extraction_meta": {
+    "complete": false,
+    "unparseable_sections": [
+      "auto-draft: semantic fields pending review"
+    ],
+    "source_lines_approx": 210
+  }
+}

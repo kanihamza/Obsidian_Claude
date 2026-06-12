@@ -1,0 +1,658 @@
+{
+  "schema_version": "1.1",
+  "spa_id": "spa-05",
+  "source_filename": "DGO_FastTrack_Monitoring_SPA.html",
+  "title": "DGO Digital Ops — Fast Track Web Ops",
+  "purpose": "[AUTO-DRAFT — needs review] DGO Digital Ops — Fast Track Web Ops. Inventoried from DGO_FastTrack_Monitoring_SPA.html.",
+  "offerings": [
+    {
+      "name": "Welcome to DGO Digital Ops",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Continue",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "📊 Response Matrix",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "📧 Matching Emails",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "✅ Related Tasks",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    }
+  ],
+  "views": [
+    {
+      "name": "Welcome to DGO Digital Ops",
+      "type": "section",
+      "trigger": "[auto]"
+    }
+  ],
+  "js_utilities": [
+    {
+      "name": "safeDateParse",
+      "signature": "safeDateParse(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "formatDateTime",
+      "signature": "formatDateTime(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "formatDateShort",
+      "signature": "formatDateShort(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "formatNow",
+      "signature": "formatNow(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "msDiff",
+      "signature": "msDiff(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "escapeHtml",
+      "signature": "escapeHtml(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "parseDocs",
+      "signature": "parseDocs(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "parseTasks",
+      "signature": "parseTasks(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "parseEmails",
+      "signature": "parseEmails(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "computeDashboard",
+      "signature": "computeDashboard(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildDocTaskEmailMatrix",
+      "signature": "buildDocTaskEmailMatrix(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "globalSearchFilter",
+      "signature": "globalSearchFilter(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "filterByCategory",
+      "signature": "filterByCategory(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "filterByPriority",
+      "signature": "filterByPriority(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "searchEmails",
+      "signature": "searchEmails(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "sortEmailsDesc",
+      "signature": "sortEmailsDesc(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "getStatusColor",
+      "signature": "getStatusColor(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "getPriorityColor",
+      "signature": "getPriorityColor(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "isOverdue",
+      "signature": "isOverdue(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "emailHighIndicator",
+      "signature": "emailHighIndicator(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "logTelemetry",
+      "signature": "logTelemetry(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "executeAction",
+      "signature": "executeAction(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "getNavItemsForUser",
+      "signature": "getNavItemsForUser(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "render",
+      "signature": "render(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderHeader",
+      "signature": "renderHeader(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderFilterBar",
+      "signature": "renderFilterBar(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateOverlays",
+      "signature": "updateOverlays(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateLoadingStatus",
+      "signature": "updateLoadingStatus(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "showSuccessToast",
+      "signature": "showSuccessToast(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "clearError",
+      "signature": "clearError(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderActionRibbon",
+      "signature": "renderActionRibbon(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderColA",
+      "signature": "renderColA(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderColB",
+      "signature": "renderColB(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderEmailCards",
+      "signature": "renderEmailCards(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderTelemetry",
+      "signature": "renderTelemetry(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderSideNav",
+      "signature": "renderSideNav(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderMobileLayout",
+      "signature": "renderMobileLayout(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "switchTab",
+      "signature": "switchTab(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "switchMatrixTab",
+      "signature": "switchMatrixTab(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "selectDoc",
+      "signature": "selectDoc(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "clearSelection",
+      "signature": "clearSelection(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "openEmailDetail",
+      "signature": "openEmailDetail(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "closeEmailDetail",
+      "signature": "closeEmailDetail(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toggleMenu",
+      "signature": "toggleMenu(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toggleTelemetry",
+      "signature": "toggleTelemetry(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toggleFilters",
+      "signature": "toggleFilters(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "saveUserEmail",
+      "signature": "saveUserEmail(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "debounce",
+      "signature": "debounce(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "populateCategoryDropdown",
+      "signature": "populateCategoryDropdown(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "attachEventListeners",
+      "signature": "attachEventListeners(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "bind",
+      "signature": "bind(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    }
+  ],
+  "dom_contract": {
+    "element_ids": [
+      "email-prompt-modal",
+      "init-email-input",
+      "loading-overlay",
+      "loading-text",
+      "error-banner",
+      "error-message",
+      "success-toast",
+      "side-nav",
+      "close-nav-btn",
+      "nav-user-email",
+      "nav-items-container",
+      "side-nav-overlay",
+      "app-header",
+      "hamburger-btn",
+      "hamburger-filter-btn",
+      "header-user-info",
+      "docs-count-btn",
+      "docs-count",
+      "header-datetime",
+      "action-ribbon",
+      "filter-bar",
+      "global-search",
+      "category-filter",
+      "priority-filter",
+      "main-body",
+      "col-a",
+      "count-matched",
+      "count-pairs",
+      "col-a-content",
+      "col-b",
+      "doc-header",
+      "back-to-list-btn",
+      "doc-title",
+      "doc-meta",
+      "doc-status-badge",
+      "email-search-bar",
+      "email-search",
+      "matrix-sub-tabs",
+      "tab-matrix-emails",
+      "tab-matrix-tasks",
+      "detail-content-area",
+      "matching-emails-gallery",
+      "related-tasks-gallery",
+      "detail-empty-state",
+      "email-detail-panel",
+      "close-email-btn",
+      "email-detail-subject",
+      "email-detail-meta",
+      "email-detail-body",
+      "telemetry-panel",
+      "telemetry-no-data",
+      "telemetry-content",
+      "telemetry-tbody",
+      "telemetry-chart"
+    ],
+    "css_classes": [
+      "app-bg",
+      "modal-box",
+      "spinner",
+      "tab-bar",
+      "tab-btn",
+      "active",
+      "gallery-container",
+      "status-badge",
+      "empty-state",
+      "telemetry-table",
+      "ribbon-btn",
+      "btn-label",
+      "btn-count",
+      "gallery-item",
+      "${state.locSelectedDoc?.ID",
+      "===",
+      "doc.ID",
+      "?",
+      "item-title",
+      "item-meta-line",
+      "item-meta",
+      "matrix-item",
+      "${state.varSelectedItem?.ID",
+      "item.ID",
+      "matrix-title",
+      "matrix-meta",
+      "task-card",
+      "${t.Status?.toLowerCase().startsWith(",
+      "task-priority-bar",
+      "task-content",
+      "task-title",
+      "task-desc",
+      "task-sender",
+      "email-card",
+      "email-body-preview",
+      "telemetry-status-${(t.Status||",
+      "chart-row",
+      "chart-label",
+      "chart-bar",
+      "chart-val",
+      "chart-bar-container",
+      "nav-btn"
+    ],
+    "inline_styles_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "event_handling": {
+    "inline_handlers": [
+      "onclick"
+    ],
+    "listener_bound": [
+      "input",
+      "change",
+      "click",
+      "DOMContentLoaded",
+      "resize"
+    ],
+    "global_listeners": [
+      "resize"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "global_scope": {
+    "global_functions": [
+      "safeDateParse",
+      "formatDateTime",
+      "formatDateShort",
+      "formatNow",
+      "msDiff",
+      "escapeHtml",
+      "parseDocs",
+      "parseTasks",
+      "parseEmails",
+      "computeDashboard",
+      "buildDocTaskEmailMatrix",
+      "globalSearchFilter",
+      "filterByCategory",
+      "filterByPriority",
+      "searchEmails",
+      "sortEmailsDesc",
+      "getStatusColor",
+      "getPriorityColor",
+      "isOverdue",
+      "emailHighIndicator",
+      "logTelemetry",
+      "executeAction",
+      "getNavItemsForUser",
+      "render",
+      "renderHeader",
+      "renderFilterBar",
+      "updateOverlays",
+      "updateLoadingStatus",
+      "showSuccessToast",
+      "clearError",
+      "renderActionRibbon",
+      "renderColA",
+      "renderColB",
+      "renderEmailCards",
+      "renderTelemetry",
+      "renderSideNav",
+      "renderMobileLayout",
+      "switchTab",
+      "switchMatrixTab",
+      "selectDoc",
+      "clearSelection",
+      "openEmailDetail",
+      "closeEmailDetail",
+      "toggleMenu",
+      "toggleTelemetry",
+      "toggleFilters",
+      "saveUserEmail",
+      "debounce",
+      "populateCategoryDropdown",
+      "attachEventListeners"
+    ],
+    "global_variables": [],
+    "notes": "[auto: globals not fully resolved]"
+  },
+  "state_management": "[AUTO-DRAFT — review] uses localStorage; module-scope variables.",
+  "design_tokens": {
+    "framework": null,
+    "colors": [
+      "#05583B",
+      "#00A69D",
+      "#FFB400",
+      "#DC2626",
+      "#16A34A",
+      "#D97706",
+      "#1F2937",
+      "#6B7280",
+      "#E5E7EB",
+      "#FFFFFF",
+      "#F9FAFB",
+      "#F3F4F6",
+      "#000000",
+      "#00814D",
+      "#F0FDF4",
+      "#E6F7F9",
+      "#555",
+      "#ddd",
+      "#333",
+      "#FAFAFA",
+      "#F5F5F5",
+      "#e5e7eb",
+      "#2563EB",
+      "#ccc",
+      "#f0f0f0",
+      "#2D3748",
+      "#039",
+      "#7C3AED",
+      "#373435",
+      "#e0e0e0"
+    ],
+    "fonts": [
+      "var(--font-main)"
+    ],
+    "spacing_or_layout_notes": "inline styles present"
+  },
+  "assets": [],
+  "external_libraries": [],
+  "power_automate_flows": [
+    {
+      "name": "flow_1",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/818ec4053f1e4f0b87845114241d8b74/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_2",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/37642ba3597f4cf58288cc71b5e6b519/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_3",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3931e2ff995242b6b2c920c8b2209797/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_4",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ff455c68e9ac493e858fb984bcfd01fb/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    }
+  ],
+  "behaviors": {
+    "loading_states": true,
+    "error_states": true,
+    "polling_present": true,
+    "timers_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "accessibility": {
+    "aria_present": false,
+    "keyboard_nav": false,
+    "notes": "[auto-extracted]"
+  },
+  "localization": {
+    "i18n_present": false,
+    "languages": [
+      "en"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "risks_and_quirks": [
+    "[AUTO-DRAFT manifest — mechanical extraction; prose/semantic fields (purpose, offerings, flow shapes) must be reviewed before treating as verified.]"
+  ],
+  "extraction_meta": {
+    "complete": false,
+    "unparseable_sections": [
+      "auto-draft: semantic fields pending review"
+    ],
+    "source_lines_approx": 1417
+  }
+}

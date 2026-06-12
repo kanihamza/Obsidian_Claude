@@ -1,0 +1,435 @@
+{
+  "schema_version": "1.1",
+  "spa_id": "spa-10",
+  "source_filename": "Correspondence_Tracker.html",
+  "title": "NITDA DG/CEO Correspondence Tracker",
+  "purpose": "[AUTO-DRAFT — needs review] NITDA DG/CEO Correspondence Tracker. Inventoried from Correspondence_Tracker.html.",
+  "offerings": [
+    {
+      "name": "NITDA DG/CEO",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Dashboard Overview",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Recent Correspondences",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Correspondence Details",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "View All",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Clear Form",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Previous",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Next",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    }
+  ],
+  "views": [
+    {
+      "name": "NITDA DG/CEO",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Dashboard Overview",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Recent Correspondences",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Correspondence Details",
+      "type": "section",
+      "trigger": "[auto]"
+    }
+  ],
+  "js_utilities": [
+    {
+      "name": "setupEventListeners",
+      "signature": "setupEventListeners(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "switchTab",
+      "signature": "switchTab(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "handleFormSubmit",
+      "signature": "handleFormSubmit(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "transmitToPowerAutomate",
+      "signature": "transmitToPowerAutomate(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateUI",
+      "signature": "updateUI(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateDashboard",
+      "signature": "updateDashboard(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderRecordsTable",
+      "signature": "renderRecordsTable(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "applyFilters",
+      "signature": "applyFilters(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "filterRecords",
+      "signature": "filterRecords(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateBadges",
+      "signature": "updateBadges(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "editRecord",
+      "signature": "editRecord(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "quickAction",
+      "signature": "quickAction(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "deleteRecord",
+      "signature": "deleteRecord(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "resetForm",
+      "signature": "resetForm(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "triggerManualSync",
+      "signature": "triggerManualSync(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "exportToCSV",
+      "signature": "exportToCSV(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "getStatusBadge",
+      "signature": "getStatusBadge(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "getPriorityBadge",
+      "signature": "getPriorityBadge(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "formatDate",
+      "signature": "formatDate(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "showToast",
+      "signature": "showToast(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "seedInitialData",
+      "signature": "seedInitialData(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    }
+  ],
+  "dom_contract": {
+    "element_ids": [
+      "nav-dashboard",
+      "nav-new-entry",
+      "nav-records",
+      "badge-pending",
+      "badge-events",
+      "page-title",
+      "global-search",
+      "view-dashboard",
+      "stat-total",
+      "stat-pending",
+      "stat-accepted",
+      "stat-high",
+      "dashboard-recent-tbody",
+      "view-new-entry",
+      "entry-form",
+      "entry-id",
+      "form-category",
+      "form-priority",
+      "form-sender",
+      "form-contact",
+      "form-received-date",
+      "form-event-date",
+      "form-subject",
+      "form-remarks",
+      "form-status",
+      "view-records",
+      "filter-status",
+      "filter-category",
+      "records-tbody",
+      "records-empty-state",
+      "page-start",
+      "page-end",
+      "page-total",
+      "toast-container"
+    ],
+    "css_classes": [
+      "bg-slate-50",
+      "text-slate-800",
+      "h-screen",
+      "overflow-hidden",
+      "flex",
+      "font-sans",
+      "w-72",
+      "bg-dark",
+      "text-white",
+      "flex-col",
+      "h-full",
+      "shadow-xl",
+      "z-20",
+      "transition-all",
+      "duration-300",
+      "p-6",
+      "border-b",
+      "border-[#0a4727]",
+      "items-center",
+      "gap-4",
+      "bg-white",
+      "text-primary",
+      "p-2.5",
+      "rounded-lg",
+      "shadow-inner",
+      "fa-solid",
+      "fa-shield-halved",
+      "text-2xl",
+      "text-xl",
+      "font-extrabold",
+      "leading-tight",
+      "tracking-wide",
+      "text-[11px]",
+      "text-green-300",
+      "uppercase",
+      "tracking-widest",
+      "font-semibold",
+      "mt-0.5",
+      "flex-1",
+      "py-6",
+      "px-4",
+      "space-y-2",
+      "overflow-y-auto",
+      "nav-btn",
+      "w-full",
+      "gap-3",
+      "py-3",
+      "bg-primary",
+      "transition-colors",
+      "text-left",
+      "font-medium",
+      "shadow-md",
+      "border",
+      "border-green-700",
+      "fa-chart-pie",
+      "w-5",
+      "text-green-100",
+      "hover:bg-[#0a4727]",
+      "hover:text-white",
+      "fa-plus-circle",
+      "fa-folder-open",
+      "mt-8",
+      "mb-2",
+      "text-xs",
+      "font-bold",
+      "text-[#108c4f]",
+      "tracking-wider",
+      "justify-between",
+      "py-2.5",
+      "text-green-200",
+      "text-sm",
+      "gap-2",
+      "fa-clock",
+      "w-4",
+      "bg-accent",
+      "text-dark",
+      "px-2",
+      "py-0.5",
+      "rounded-full",
+      "shadow-sm"
+    ],
+    "inline_styles_present": false,
+    "notes": "[auto-extracted]"
+  },
+  "event_handling": {
+    "inline_handlers": [
+      "onclick",
+      "onchange"
+    ],
+    "listener_bound": [
+      "DOMContentLoaded",
+      "submit",
+      "input"
+    ],
+    "global_listeners": [],
+    "notes": "[auto-extracted]"
+  },
+  "global_scope": {
+    "global_functions": [
+      "setupEventListeners",
+      "switchTab",
+      "handleFormSubmit",
+      "transmitToPowerAutomate",
+      "updateUI",
+      "updateDashboard",
+      "renderRecordsTable",
+      "applyFilters",
+      "filterRecords",
+      "updateBadges",
+      "editRecord",
+      "quickAction",
+      "deleteRecord",
+      "resetForm",
+      "triggerManualSync",
+      "exportToCSV",
+      "getStatusBadge",
+      "getPriorityBadge",
+      "formatDate",
+      "showToast",
+      "seedInitialData"
+    ],
+    "global_variables": [],
+    "notes": "[auto: globals not fully resolved]"
+  },
+  "state_management": "[AUTO-DRAFT — review] module-scope variables.",
+  "design_tokens": {
+    "framework": "Tailwind",
+    "colors": [
+      "#005b31",
+      "#108c4f",
+      "#eab308",
+      "#042f18",
+      "#f0fdf4",
+      "#f1f1f1",
+      "#cbd5e1",
+      "#10b981",
+      "#ef4444",
+      "#0a4727",
+      "#022210",
+      "#22c55e"
+    ],
+    "fonts": [],
+    "spacing_or_layout_notes": null
+  },
+  "assets": [],
+  "external_libraries": [
+    {
+      "name": "cdn.tailwindcss.com",
+      "version": null,
+      "source": "https://cdn.tailwindcss.com"
+    }
+  ],
+  "power_automate_flows": [
+    {
+      "name": "flow_1",
+      "method": "POST",
+      "endpoint_base": "https://prod.powerautomate.com/workflows/...",
+      "has_sas_token": false,
+      "auth_scheme": null,
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    }
+  ],
+  "behaviors": {
+    "loading_states": false,
+    "error_states": true,
+    "polling_present": false,
+    "timers_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "accessibility": {
+    "aria_present": false,
+    "keyboard_nav": false,
+    "notes": "[auto-extracted]"
+  },
+  "localization": {
+    "i18n_present": false,
+    "languages": [
+      "en"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "risks_and_quirks": [
+    "[AUTO-DRAFT manifest — mechanical extraction; prose/semantic fields (purpose, offerings, flow shapes) must be reviewed before treating as verified.]"
+  ],
+  "extraction_meta": {
+    "complete": false,
+    "unparseable_sections": [
+      "auto-draft: semantic fields pending review"
+    ],
+    "source_lines_approx": 792
+  }
+}

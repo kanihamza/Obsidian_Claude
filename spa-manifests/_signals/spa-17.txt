@@ -1,0 +1,10 @@
+SPA spa-17 — approvals.html (247 lines)
+TITLE: DGO Digital Ops - Approvals
+HEADINGS (5): Pending Actions (4) | Approval for Q1 Cybersecurity Training Budget | Executive Summary | Supporting Documents | DG's Minute / Comment
+BUTTONS (1): Filter
+TABS: 
+FLOW URLS (1):
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/f71397ff3ca145059dc8f78c04923e9f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+LIBS: cdn.tailwindcss.com, htmx.org@1.9.10
+KEY FNS (4): selectItem, toggleMobilePane, approve, reject
+EVENTS: inline=onclick | listeners=

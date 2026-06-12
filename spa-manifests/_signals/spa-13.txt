@@ -1,0 +1,12 @@
+SPA spa-13 — Unified Smart Orchestrator.html (577 lines)
+TITLE: NITDA DGO – Unified Smart Orchestrator
+HEADINGS (10): NITDA DGO – Smart Orchestrator | System Diagnostics & Telemetry | Correspondence & Decision Hub | Response Tracking & Matrix | Active Tracking Nodes | DGO Enterprise Intelligence | ${escapeHtml(metrics.total)} | ${escapeHtml(metrics.critical)} | ${escapeHtml(metrics.resolved)} | ${escapeHtml(metrics.efficiency)}
+BUTTONS (3): Execute Flow: Reload All | Clear Telemetry | Sync Hub
+TABS: 
+FLOW URLS (3):
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ff455c68e9ac493e858fb984bcfd01fb/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/818ec4053f1e4f0b87845114241d8b74/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/37642ba3597f4cf58288cc71b5e6b519/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+LIBS: 
+KEY FNS (9): escapeHtml, showNotification, formatDate, telemetryLog, executeUnifiedFlow, syncRouteFromHash, triggerViewRenderer, renderDecisionHub, renderModernDashboard
+EVENTS: inline= | listeners=hashchange,DOMContentLoaded

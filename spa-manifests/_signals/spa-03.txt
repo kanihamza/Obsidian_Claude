@@ -1,0 +1,12 @@
+SPA spa-03 — Optimized_NITDA DGO Smart Orchestrator Merged Launcher.html (2738 lines)
+TITLE: NITDA DGO – Smart Orchestrator (Merged Launcher)
+HEADINGS (11): NITDA SMART ORCHESTRATOR | Merged Launcher | Runtime Details | Source Documents | Relational Matrix Explorer | Relationship Matrix | Tracking & Tracing Timeline | Reporting | Trends | Dashboard | Diagnostics
+BUTTONS (31): Explorer | Matrix | Timeline | Reports | Trends | Dashboard | 🏠 HOME | ▶ RUN SYNC | ⚙ SETTINGS | 🧾 LOG | 🚀 Launch Live | ⚡ Launch + Sync | 🧪 Launch Demo | 🧹 Reset Local Data | ⬇ Export Edges | ⬆ Import Edges | ⬇ Export State | ✅ Run Self-Check | ↻ Recompute | ⬇ CSV | ⬇ JSON | 🖨 Print | ▶ Run | 🔎 Drilldown | ↻ Recompute KPIs | Copy | Clear | Delete | Cancel | Save | Reset Local Data
+TABS: Explorer | Matrix | Timeline | Reports | Trends | Dashboard
+FLOW URLS (3):
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/818ec4053f1e4f0b87845114241d8b74/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/37642ba3597f4cf58288cc71b5e6b519/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3931e2ff995242b6b2c920c8b2209797/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+LIBS: 
+KEY FNS (74): esc, safeStr, safeLower, parseDateToMs, fmtDateTime, debounce, uid, clamp, downloadBlob, toast, loadJson, saveJson, withTTLSet, withTTLGet, keyOf, updateRuntimePanel, setSystemStatus, setLoading, callFlow, normalizeDoc, normalizeTask, normalizeEmail, registerEntities, addOrUpdateEdge, removeEdge, loadPersistedEdges, persistEdges, logEvent, getEvents, tokenize, indexData, buildHeuristicEdges, processChunk, edgesForEntity, relatedEntitiesForDoc, showLauncher, showApp, setView, populateCategoryFilter, getVisibleDocs, renderExplorer, renderDocDetail, sectionLinkedTasks, sectionLinkedEmails, sectionMetadata, getConfidenceBetween, renderMatrix, renderTimeline, datasetRows, groupRows
+EVENTS: inline= | listeners=click,keydown,input,change,load

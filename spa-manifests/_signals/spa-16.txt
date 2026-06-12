@@ -1,0 +1,10 @@
+SPA spa-16 — registry_movement.html (270 lines)
+TITLE: DGO Digital Ops - File Movement
+HEADINGS (3): Incoming Correspondence | RE: BUDGET APPROVAL REQUEST FOR Q1 | Movement Log
+BUTTONS (6): ↻ Sync | Incoming | Outgoing | Pending | View Attachment (PDF) | Send File ➔
+TABS: 
+FLOW URLS (0):
+  
+LIBS: cdn.tailwindcss.com, htmx.org@1.9.10
+KEY FNS (2): openFile, addMinute
+EVENTS: inline=onclick | listeners=

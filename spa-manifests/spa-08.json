@@ -1,0 +1,954 @@
+{
+  "schema_version": "1.1",
+  "spa_id": "spa-08",
+  "source_filename": "stats_screen_spa-2.html",
+  "title": "NITDA Stats Screen",
+  "purpose": "[AUTO-DRAFT — needs review] NITDA Stats Screen. Inventoried from stats_screen_spa-2.html.",
+  "offerings": [
+    {
+      "name": "${escHtml(title)}",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Activity Status",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "NITDA Digital Activity Report",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Tasks by Category",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Tasks by Priority",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Tasks by Assignee",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Task Details",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "NITDA Management Report",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Total Activities",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Unique Categories",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Avg Assignment Time",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Summary Breakdown",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Priority",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Categories",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Assigned To",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Activity Details",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Office of the Director General",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Total Records",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Assigned",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Avg Assignment Interval",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    }
+  ],
+  "views": [
+    {
+      "name": "${escHtml(title)}",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Activity Status",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "NITDA Digital Activity Report",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Tasks by Category",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Tasks by Priority",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Tasks by Assignee",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Task Details",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "NITDA Management Report",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Total Activities",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Unique Categories",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Avg Assignment Time",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Summary Breakdown",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Priority",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Categories",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Assigned To",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Activity Details",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Office of the Director General",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Total Records",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Assigned",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Avg Assignment Interval",
+      "type": "section",
+      "trigger": "[auto]"
+    }
+  ],
+  "js_utilities": [
+    {
+      "name": "lower",
+      "signature": "lower(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "trim",
+      "signature": "trim(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "proper",
+      "signature": "proper(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "upper",
+      "signature": "upper(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "isBlank",
+      "signature": "isBlank(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "dateValue",
+      "signature": "dateValue(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "dateDiffMinutes",
+      "signature": "dateDiffMinutes(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "dateDiffDays",
+      "signature": "dateDiffDays(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "roundDown",
+      "signature": "roundDown(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "maxBy",
+      "signature": "maxBy(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "sumBy",
+      "signature": "sumBy(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "textFmt",
+      "signature": "textFmt(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "formatAvgMinutes",
+      "signature": "formatAvgMinutes(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "generateReportID",
+      "signature": "generateReportID(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "getStatusColor",
+      "signature": "getStatusColor(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "getPriorityColor",
+      "signature": "getPriorityColor(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "getActivityStatusColor",
+      "signature": "getActivityStatusColor(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "normalizeRecord",
+      "signature": "normalizeRecord(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "normalizeUser",
+      "signature": "normalizeUser(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "callFlow",
+      "signature": "callFlow(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "unwrap",
+      "signature": "unwrap(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "extractArray",
+      "signature": "extractArray(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toast",
+      "signature": "toast(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "notify",
+      "signature": "notify(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "showLoading",
+      "signature": "showLoading(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "hideLoading",
+      "signature": "hideLoading(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "setBtnBusy",
+      "signature": "setBtnBusy(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "groupCount",
+      "signature": "groupCount(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "computeAggregates",
+      "signature": "computeAggregates(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildHTMLDonutCanvas",
+      "signature": "buildHTMLDonutCanvas(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildBarBlock",
+      "signature": "buildBarBlock(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildSVGDonut",
+      "signature": "buildSVGDonut(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildHTMLTableRowsBasic",
+      "signature": "buildHTMLTableRowsBasic(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildAllHTMLReports",
+      "signature": "buildAllHTMLReports(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderHtmlIframe",
+      "signature": "renderHtmlIframe(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderCardGallery",
+      "signature": "renderCardGallery(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toggleCardDetail",
+      "signature": "toggleCardDetail(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderListGallery",
+      "signature": "renderListGallery(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderAllGalleries",
+      "signature": "renderAllGalleries(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderChartsView",
+      "signature": "renderChartsView(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "applyViewVisibility",
+      "signature": "applyViewVisibility(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderNavBar",
+      "signature": "renderNavBar(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "navigateTo",
+      "signature": "navigateTo(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderMonthBar",
+      "signature": "renderMonthBar(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "handleMonthSelect",
+      "signature": "handleMonthSelect(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "applyShowReportButton",
+      "signature": "applyShowReportButton(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "initDatePickers",
+      "signature": "initDatePickers(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderRecipientChips",
+      "signature": "renderRecipientChips(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "showRecipSuggestions",
+      "signature": "showRecipSuggestions(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "addRecipient",
+      "signature": "addRecipient(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateAttachmentBtnState",
+      "signature": "updateAttachmentBtnState(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "flowGenerateReport",
+      "signature": "flowGenerateReport(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "flowLookupTasksReport",
+      "signature": "flowLookupTasksReport(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "flowFetchAllUsers",
+      "signature": "flowFetchAllUsers(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "flowSendEmailV2",
+      "signature": "flowSendEmailV2(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "flowHTMLReportsRun",
+      "signature": "flowHTMLReportsRun(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "handleToggleGenerate",
+      "signature": "handleToggleGenerate(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "handleRunReport",
+      "signature": "handleRunReport(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "handleGetSharepointReport",
+      "signature": "handleGetSharepointReport(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "handleReport3",
+      "signature": "handleReport3(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    }
+  ],
+  "dom_contract": {
+    "element_ids": [
+      "loading",
+      "loadingLabel",
+      "toasts",
+      "app",
+      "navBar",
+      "monthBar",
+      "hdr1",
+      "btnGenerate",
+      "reportInfoBadge",
+      "btnReport",
+      "btnGetSP",
+      "datePickers",
+      "dpStart",
+      "dpEnd",
+      "btnReport3",
+      "btnReport4",
+      "btnSend38",
+      "btnSendV1",
+      "btnSend24_2",
+      "btnSend37",
+      "hdr2",
+      "recipChips",
+      "recipInput",
+      "recipSuggest",
+      "btnSendAtt24_2",
+      "btnSendAttPerf",
+      "bottom",
+      "view1",
+      "galleryCards",
+      "view2",
+      "view3",
+      "view4",
+      "view5",
+      "view6",
+      "view7",
+      "lg7Body",
+      "view8",
+      "lg8Body",
+      "view9",
+      "chartsBody",
+      "view10",
+      "lg10Body",
+      "${escHtml(item.Activity_ID)}"
+    ],
+    "css_classes": [
+      "spinner",
+      "spinner-label",
+      "hdr-btn",
+      "btn-generate",
+      "btn-orange",
+      "btn-blue",
+      "dp-wrap",
+      "btn-teal",
+      "report-only",
+      "btn-white-cyan",
+      "recip-wrap",
+      "recip-input-row",
+      "recip-suggest",
+      "view",
+      "html-view",
+      "list-gallery",
+      "lg-header",
+      "hide-sm",
+      "charts-wrap",
+      "x",
+      "empty",
+      "rc-detail",
+      "rc-doc-link",
+      "report-card",
+      "rc-head",
+      "rc-title",
+      "rc-refid",
+      "rc-status-wrap",
+      "rc-status-emoji",
+      "rc-status-badge",
+      "rc-divider",
+      "rc-grid",
+      "rc-actions",
+      "rc-toggle",
+      "lg-row",
+      "c-title",
+      "c-date",
+      "c-status",
+      "placeholder",
+      "nav-dot",
+      "month-chevron",
+      "recip-suggest-item${i===0?",
+      "name",
+      "mail"
+    ],
+    "inline_styles_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "event_handling": {
+    "inline_handlers": [],
+    "listener_bound": [
+      "click",
+      "mousedown",
+      "input",
+      "focus",
+      "blur",
+      "keydown",
+      "DOMContentLoaded"
+    ],
+    "global_listeners": [
+      "keydown"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "global_scope": {
+    "global_functions": [
+      "lower",
+      "trim",
+      "proper",
+      "upper",
+      "isBlank",
+      "dateValue",
+      "dateDiffMinutes",
+      "dateDiffDays",
+      "roundDown",
+      "maxBy",
+      "sumBy",
+      "textFmt",
+      "formatAvgMinutes",
+      "generateReportID",
+      "getStatusColor",
+      "getPriorityColor",
+      "getActivityStatusColor",
+      "normalizeRecord",
+      "normalizeUser",
+      "callFlow",
+      "unwrap",
+      "extractArray",
+      "toast",
+      "notify",
+      "showLoading",
+      "hideLoading",
+      "setBtnBusy",
+      "groupCount",
+      "computeAggregates",
+      "buildHTMLDonutCanvas",
+      "buildBarBlock",
+      "buildSVGDonut",
+      "buildHTMLTableRowsBasic",
+      "buildAllHTMLReports",
+      "renderHtmlIframe",
+      "renderCardGallery",
+      "toggleCardDetail",
+      "renderListGallery",
+      "renderAllGalleries",
+      "renderChartsView",
+      "applyViewVisibility",
+      "renderNavBar",
+      "navigateTo",
+      "renderMonthBar",
+      "handleMonthSelect",
+      "applyShowReportButton",
+      "initDatePickers",
+      "renderRecipientChips",
+      "showRecipSuggestions",
+      "addRecipient",
+      "updateAttachmentBtnState",
+      "flowGenerateReport",
+      "flowLookupTasksReport",
+      "flowFetchAllUsers",
+      "flowSendEmailV2",
+      "flowHTMLReportsRun",
+      "handleToggleGenerate",
+      "handleRunReport",
+      "handleGetSharepointReport",
+      "handleReport3",
+      "handleReport4",
+      "handleSendReport",
+      "handleSendWithAttachment",
+      "wireEvents",
+      "onVisible"
+    ],
+    "global_variables": [],
+    "notes": "[auto: globals not fully resolved]"
+  },
+  "state_management": "[AUTO-DRAFT — review] module-scope variables.",
+  "design_tokens": {
+    "framework": null,
+    "colors": [
+      "#f5f5f5",
+      "#333",
+      "#d6dde0",
+      "#008B8B",
+      "#fff",
+      "#ccd",
+      "#e8f3f3",
+      "#00746e",
+      "#05583B",
+      "#2d8028",
+      "#3e8095",
+      "#e05606",
+      "#b4d6fa",
+      "#05583b",
+      "#0078D4",
+      "#eee",
+      "#055",
+      "#e6f7f9",
+      "#b0d8d8",
+      "#f4f6f9",
+      "#dcdcdc",
+      "#023F2D",
+      "#6c757d",
+      "#666",
+      "#e8e8e8",
+      "#106ebe",
+      "#17A2B8",
+      "#138496",
+      "#a6a6a6",
+      "#E8F5F1",
+      "#f0f7f4",
+      "#005e92",
+      "#f9f9f9",
+      "#999",
+      "#aaa",
+      "#dce8f5",
+      "#107C10",
+      "#e07000",
+      "#a92323",
+      "#28A745"
+    ],
+    "fonts": [
+      "inherit",
+      "Verdana",
+      "sans-serif",
+      "Segoe UI",
+      "Arial"
+    ],
+    "spacing_or_layout_notes": "inline styles present"
+  },
+  "assets": [
+    {
+      "type": "image/svg",
+      "delivery": "inline-svg",
+      "ref": "inline <svg> icon(s)",
+      "approx_size": "small"
+    }
+  ],
+  "external_libraries": [],
+  "power_automate_flows": [
+    {
+      "name": "flow_1",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ff455c68e9ac493e858fb984bcfd01fb/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_2",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/818ec4053f1e4f0b87845114241d8b74/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_3",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/37642ba3597f4cf58288cc71b5e6b519/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_4",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3931e2ff995242b6b2c920c8b2209797/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_5",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6b3bad3005b44bf6bced0f8074d3f2ed/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_6",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/7e71fffe770a45ccb93bf216bb53786e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_7",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/1154b50e1d17420dadb3b012e7e2a02c/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    }
+  ],
+  "behaviors": {
+    "loading_states": true,
+    "error_states": true,
+    "polling_present": false,
+    "timers_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "accessibility": {
+    "aria_present": true,
+    "keyboard_nav": true,
+    "notes": "[auto-extracted]"
+  },
+  "localization": {
+    "i18n_present": false,
+    "languages": [
+      "en"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "risks_and_quirks": [
+    "[AUTO-DRAFT manifest — mechanical extraction; prose/semantic fields (purpose, offerings, flow shapes) must be reviewed before treating as verified.]"
+  ],
+  "extraction_meta": {
+    "complete": false,
+    "unparseable_sections": [
+      "auto-draft: semantic fields pending review"
+    ],
+    "source_lines_approx": 999
+  }
+}

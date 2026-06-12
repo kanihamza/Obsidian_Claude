@@ -1,0 +1,13 @@
+SPA spa-15 — DGCEO Correspondence & Decision Hub.html (571 lines)
+TITLE: NITDA DGCEO Correspondence & Decision Hub
+HEADINGS (10): Executive Dashboard | Incoming Correspondences | Correspondence Details | 🧠 AI Classification Preview | Route / Assign Task | Matrix Audit Trail | DGCEO Decision | Quick Minute | Orchestrating Live Data | ${escapeHtml(doc.Title)}
+BUTTONS (7): ⟳ Sync Live Data | Apply Suggestions to Metadata | Create & Route Task | Approve / Accept | Decline / Reject | Delegate via EA | Append to Document
+TABS: 
+FLOW URLS (4):
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ff455c68e9ac493e858fb984bcfd01fb/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/818ec4053f1e4f0b87845114241d8b74/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/37642ba3597f4cf58288cc71b5e6b519/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3931e2ff995242b6b2c920c8b2209797/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+LIBS: 
+KEY FNS (13): safeText, escapeHtml, formatDate, computeRole, promptUserEmail, apiCall, syncData, buildPolymorphicMatrix, populateLookups, renderDashboard, getStatusClass, renderDocList, selectDoc
+EVENTS: inline=onclick | listeners=click

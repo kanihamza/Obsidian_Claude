@@ -1,0 +1,931 @@
+{
+  "schema_version": "1.1",
+  "spa_id": "spa-02",
+  "source_filename": "NITDA_Digital_Ops_Hub_patched.html",
+  "title": "NITDA Digital Operations Hub",
+  "purpose": "[AUTO-DRAFT — needs review] NITDA Digital Operations Hub. Inventoried from NITDA_Digital_Ops_Hub_patched.html.",
+  "offerings": [
+    {
+      "name": "🔐 Select User Identity",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "🚀 Launch Digital Ops Hub",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "↪ Sign out / Switch user",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "📄 View Documents",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "✅ View Tasks",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "📧 View Emails",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "View all →",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "🔽 Filters",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "☑ All",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "☐ None",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "✕ Reset",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "➕ Assign",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "⚑ DG Attention",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "📌 Follow-Up",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "INT",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "UNC",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "⬇️ Load More Docs",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "New Assignment",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Re-Assignment",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "📂 Click to choose a Category",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    }
+  ],
+  "views": [
+    {
+      "name": "🔐 Select User Identity",
+      "type": "section",
+      "trigger": "[auto]"
+    }
+  ],
+  "js_utilities": [
+    {
+      "name": "_send",
+      "signature": "_send(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "_req",
+      "signature": "_req(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "bootApp",
+      "signature": "bootApp(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "attemptSessionRestore",
+      "signature": "attemptSessionRestore(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "setIdentity",
+      "signature": "setIdentity(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "startApp",
+      "signature": "startApp(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "launchApp",
+      "signature": "launchApp(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "applyTheme",
+      "signature": "applyTheme(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "restoreTheme",
+      "signature": "restoreTheme(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "initSidebar",
+      "signature": "initSidebar(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toggleSidebar",
+      "signature": "toggleSidebar(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "openMobileSidebar",
+      "signature": "openMobileSidebar(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "closeMobileSidebar",
+      "signature": "closeMobileSidebar(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "navigateTo",
+      "signature": "navigateTo(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "refreshCurrentScreen",
+      "signature": "refreshCurrentScreen(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "initTopBar",
+      "signature": "initTopBar(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateUserInfo",
+      "signature": "updateUserInfo(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateWelcomeBanner",
+      "signature": "updateWelcomeBanner(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "populateEndpointTable",
+      "signature": "populateEndpointTable(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "showLoader",
+      "signature": "showLoader(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "hideLoader",
+      "signature": "hideLoader(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "setLastUpdated",
+      "signature": "setLastUpdated(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "logTelemetry",
+      "signature": "logTelemetry(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderTelemetryLog",
+      "signature": "renderTelemetryLog(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "clearTelemetry",
+      "signature": "clearTelemetry(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "callAPI",
+      "signature": "callAPI(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "executeSubsidiaryAction",
+      "signature": "executeSubsidiaryAction(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "parseResponse",
+      "signature": "parseResponse(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "fetchLookups",
+      "signature": "fetchLookups(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateRefDataStats",
+      "signature": "updateRefDataStats(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "populateLookupDropdowns",
+      "signature": "populateLookupDropdowns(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "fetchDocs",
+      "signature": "fetchDocs(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateDocsCount",
+      "signature": "updateDocsCount(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateKPIs",
+      "signature": "updateKPIs(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderDocsGallery",
+      "signature": "renderDocsGallery(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "initDocsGalleryDelegation",
+      "signature": "initDocsGalleryDelegation(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "selectDoc",
+      "signature": "selectDoc(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderDocDetail",
+      "signature": "renderDocDetail(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "closeDocDetail",
+      "signature": "closeDocDetail(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toggleDocSelect",
+      "signature": "toggleDocSelect(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateBulkSelectUI",
+      "signature": "updateBulkSelectUI(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "openBulkAssign",
+      "signature": "openBulkAssign(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toggleDocsFilters",
+      "signature": "toggleDocsFilters(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "resetDocsFilters",
+      "signature": "resetDocsFilters(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "flagDocAction",
+      "signature": "flagDocAction(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "closeFlagModal",
+      "signature": "closeFlagModal(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "submitFlagAction",
+      "signature": "submitFlagAction(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "fetchTasks",
+      "signature": "fetchTasks(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateTasksCount",
+      "signature": "updateTasksCount(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "populateTaskClassifications",
+      "signature": "populateTaskClassifications(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderTasksGallery",
+      "signature": "renderTasksGallery(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "selectTask",
+      "signature": "selectTask(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderTaskDetail",
+      "signature": "renderTaskDetail(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "closeTaskDetail",
+      "signature": "closeTaskDetail(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "openTaskUpdateModal",
+      "signature": "openTaskUpdateModal(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "closeTaskUpdateModal",
+      "signature": "closeTaskUpdateModal(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "submitTaskUpdate",
+      "signature": "submitTaskUpdate(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toggleTaskFilters",
+      "signature": "toggleTaskFilters(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "resetTaskFilters",
+      "signature": "resetTaskFilters(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "fetchEmails",
+      "signature": "fetchEmails(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    }
+  ],
+  "dom_contract": {
+    "element_ids": [
+      "nitda-embed-overrides",
+      "screen-landing",
+      "email-input",
+      "name-input",
+      "loading-bar-outer",
+      "loading-bar-fill",
+      "loading-msg",
+      "app",
+      "global-loader",
+      "global-loader-msg",
+      "mobile-overlay",
+      "sidebar",
+      "theme-selector",
+      "sidebar-nav",
+      "user-info-btn",
+      "user-avatar",
+      "sidebar-username",
+      "sidebar-role",
+      "user-menu",
+      "mobile-menu-btn",
+      "screen-title",
+      "top-bar-actions",
+      "last-updated-label",
+      "screen-home",
+      "home-kpi-grid",
+      "kpi-docs",
+      "kpi-unassigned",
+      "kpi-tasks",
+      "kpi-emails",
+      "recent-docs-card",
+      "home-recent-docs",
+      "recent-tasks-card",
+      "home-recent-tasks",
+      "screen-docs",
+      "btn-show-filters",
+      "btn-select-all",
+      "btn-deselect-all",
+      "btn-bulk-assign",
+      "selected-count",
+      "docs-count-badge",
+      "docs-filter-row",
+      "docs-search",
+      "filter-assigned-to",
+      "filter-category",
+      "filter-status",
+      "filter-assignment-status",
+      "filter-date-from",
+      "filter-date-to",
+      "docs-gallery",
+      "docs-detail",
+      "detail-doc-title",
+      "docs-detail-body",
+      "docs-load-more-bar",
+      "docs-load-more-label",
+      "docs-load-more-btn",
+      "screen-assign",
+      "assign-action-bar",
+      "assign-notify",
+      "assign-body",
+      "assign-entry"
+    ],
+    "css_classes": [
+      "landing-inner",
+      "landing-logo-ring",
+      "landing-title",
+      "landing-subtitle",
+      "identity-form",
+      "identity-preset-btns",
+      "preset-btn",
+      "identity-input",
+      "loading-bar-outer",
+      "loading-bar-inner",
+      "loading-text",
+      "launch-btn",
+      "loading-overlay",
+      "spinner",
+      "mobile-overlay",
+      "sidebar",
+      "sidebar-header",
+      "sidebar-logo",
+      "sidebar-title",
+      "sidebar-toggle",
+      "theme-selector",
+      "sidebar-nav",
+      "sidebar-footer",
+      "user-info",
+      "user-avatar",
+      "user-name",
+      "user-role",
+      "user-menu",
+      "danger",
+      "main-content",
+      "top-bar",
+      "btn",
+      "btn-icon",
+      "btn-ghost",
+      "top-bar-title",
+      "top-bar-actions",
+      "btn-secondary",
+      "btn-sm",
+      "screen-area",
+      "screen",
+      "active",
+      "home-content",
+      "kpi-grid",
+      "kpi-card",
+      "kpi-label",
+      "kpi-value",
+      "kpi-sub",
+      "warning",
+      "teal",
+      "success",
+      "card",
+      "card-header",
+      "card-title",
+      "btn-primary",
+      "btn-teal",
+      "btn-info",
+      "empty-state",
+      "action-bar",
+      "btn-warning",
+      "section-count",
+      "filter-bar",
+      "search-input",
+      "filter-select",
+      "split-layout",
+      "split-left",
+      "gallery",
+      "detail-panel",
+      "detail-header",
+      "detail-body",
+      "load-more-bar",
+      "notify-banner",
+      "form-group",
+      "form-label",
+      "chip-group",
+      "chip",
+      "selected",
+      "toggle-label",
+      "placeholder",
+      "collapsible-content",
+      "form-control"
+    ],
+    "inline_styles_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "event_handling": {
+    "inline_handlers": [
+      "onclick",
+      "onchange",
+      "onkeydown",
+      "oninput"
+    ],
+    "listener_bound": [
+      "message",
+      "DOMContentLoaded",
+      "click",
+      "keydown",
+      "resize"
+    ],
+    "global_listeners": [
+      "message",
+      "keydown",
+      "resize"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "global_scope": {
+    "global_functions": [
+      "_send",
+      "_req",
+      "bootApp",
+      "attemptSessionRestore",
+      "setIdentity",
+      "startApp",
+      "launchApp",
+      "applyTheme",
+      "restoreTheme",
+      "initSidebar",
+      "toggleSidebar",
+      "openMobileSidebar",
+      "closeMobileSidebar",
+      "navigateTo",
+      "refreshCurrentScreen",
+      "initTopBar",
+      "updateUserInfo",
+      "updateWelcomeBanner",
+      "populateEndpointTable",
+      "showLoader",
+      "hideLoader",
+      "setLastUpdated",
+      "logTelemetry",
+      "renderTelemetryLog",
+      "clearTelemetry",
+      "callAPI",
+      "executeSubsidiaryAction",
+      "parseResponse",
+      "fetchLookups",
+      "updateRefDataStats",
+      "populateLookupDropdowns",
+      "fetchDocs",
+      "updateDocsCount",
+      "updateKPIs",
+      "renderDocsGallery",
+      "initDocsGalleryDelegation",
+      "selectDoc",
+      "renderDocDetail",
+      "closeDocDetail",
+      "toggleDocSelect",
+      "updateBulkSelectUI",
+      "openBulkAssign",
+      "toggleDocsFilters",
+      "resetDocsFilters",
+      "flagDocAction",
+      "closeFlagModal",
+      "submitFlagAction",
+      "fetchTasks",
+      "updateTasksCount",
+      "populateTaskClassifications",
+      "renderTasksGallery",
+      "selectTask",
+      "renderTaskDetail",
+      "closeTaskDetail",
+      "openTaskUpdateModal",
+      "closeTaskUpdateModal",
+      "submitTaskUpdate",
+      "toggleTaskFilters",
+      "resetTaskFilters",
+      "fetchEmails",
+      "loadMoreEmails",
+      "updateEmailPaginationUI",
+      "updateEmailsCount",
+      "renderEmailsList",
+      "selectEmail",
+      "renderEmailDetail",
+      "sanitizeEmailHtml",
+      "cleanNode",
+      "openEmailToTask",
+      "closeEmailToTask",
+      "onETaskCategoryChange",
+      "applyETaskCategoryCascade",
+      "filterEmailTaskUsers",
+      "selectEmailTaskUser",
+      "filterEmailTaskCoAssignee",
+      "selectEmailTaskCoAssignee",
+      "filterEmailTaskCC",
+      "addETaskCCTag",
+      "removeETaskCCTag",
+      "renderETaskCCTags"
+    ],
+    "global_variables": [],
+    "notes": "[auto: globals not fully resolved]"
+  },
+  "state_management": "[AUTO-DRAFT — review] module-scope variables.",
+  "design_tokens": {
+    "framework": "Bootstrap",
+    "colors": [
+      "#F0F4F2",
+      "#008751",
+      "#00A69D",
+      "#373435",
+      "#2D3748",
+      "#6B7280",
+      "#D1D5DB",
+      "#E5E7EB",
+      "#F3F4F6",
+      "#FFFFFF",
+      "#05583B",
+      "#A92323",
+      "#E05606",
+      "#107C10",
+      "#E6F7F9",
+      "#E0E0E0",
+      "#0557D8",
+      "#FFCC00",
+      "#9CA3AF",
+      "#4B5563",
+      "#374151",
+      "#1F2937",
+      "#121212",
+      "#1E1E1E",
+      "#FF6B6B",
+      "#E0A500",
+      "#4ADE80",
+      "#2C2C2C",
+      "#3399FF",
+      "#FFDD33",
+      "#1E293B",
+      "#64748B",
+      "#CBD5E1",
+      "#E2E8F0",
+      "#F8FAFC",
+      "#F1F5F9",
+      "#0F172A",
+      "#B91C1C",
+      "#EFF6FF",
+      "#FFFF00"
+    ],
+    "fonts": [
+      "inherit",
+      "monospace",
+      "Verdana",
+      "sans-serif"
+    ],
+    "spacing_or_layout_notes": "inline styles present"
+  },
+  "assets": [
+    {
+      "type": "image/svg",
+      "delivery": "inline-svg",
+      "ref": "inline <svg> icon(s)",
+      "approx_size": "small"
+    }
+  ],
+  "external_libraries": [],
+  "power_automate_flows": [
+    {
+      "name": "flow_1",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ff455c68e9ac493e858fb984bcfd01fb/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_2",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/818ec4053f1e4f0b87845114241d8b74/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_3",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/37642ba3597f4cf58288cc71b5e6b519/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_4",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3931e2ff995242b6b2c920c8b2209797/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_5",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6b3bad3005b44bf6bced0f8074d3f2ed/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_6",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/7e71fffe770a45ccb93bf216bb53786e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_7",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/1154b50e1d17420dadb3b012e7e2a02c/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    }
+  ],
+  "behaviors": {
+    "loading_states": true,
+    "error_states": true,
+    "polling_present": false,
+    "timers_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "accessibility": {
+    "aria_present": true,
+    "keyboard_nav": true,
+    "notes": "[auto-extracted]"
+  },
+  "localization": {
+    "i18n_present": false,
+    "languages": [
+      "en"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "risks_and_quirks": [
+    "[AUTO-DRAFT manifest — mechanical extraction; prose/semantic fields (purpose, offerings, flow shapes) must be reviewed before treating as verified.]"
+  ],
+  "extraction_meta": {
+    "complete": false,
+    "unparseable_sections": [
+      "auto-draft: semantic fields pending review"
+    ],
+    "source_lines_approx": 5716
+  }
+}

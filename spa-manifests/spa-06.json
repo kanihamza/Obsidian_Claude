@@ -1,0 +1,515 @@
+{
+  "schema_version": "1.1",
+  "spa_id": "spa-06",
+  "source_filename": "Assignment_Intelligence_Dashboard.html",
+  "title": "Assignment Intelligence Dashboard",
+  "purpose": "[AUTO-DRAFT — needs review] Assignment Intelligence Dashboard. Inventoried from Assignment_Intelligence_Dashboard.html.",
+  "offerings": [
+    {
+      "name": "Assignment Intelligence Dashboard",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Assignment Details",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Cancel",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Confirm",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    }
+  ],
+  "views": [
+    {
+      "name": "Assignment Intelligence Dashboard",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Assignment Details",
+      "type": "section",
+      "trigger": "[auto]"
+    }
+  ],
+  "js_utilities": [
+    {
+      "name": "_send",
+      "signature": "_send(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "_req",
+      "signature": "_req(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "unsub",
+      "signature": "unsub(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "esc",
+      "signature": "esc(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "audit",
+      "signature": "audit(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toast",
+      "signature": "toast(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "notify",
+      "signature": "notify(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "confirmAction",
+      "signature": "confirmAction(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "done",
+      "signature": "done(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "kd",
+      "signature": "kd(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "normaliseRow",
+      "signature": "normaliseRow(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "extractSubject",
+      "signature": "extractSubject(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "classifyStatus",
+      "signature": "classifyStatus(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "isOverdue",
+      "signature": "isOverdue(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "isUrgent",
+      "signature": "isUrgent(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "statusBadge",
+      "signature": "statusBadge(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "priorityBadge",
+      "signature": "priorityBadge(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "officerCell",
+      "signature": "officerCell(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "dueCell",
+      "signature": "dueCell(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "dsuCell",
+      "signature": "dsuCell(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "applyFilter",
+      "signature": "applyFilter(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "applySort",
+      "signature": "applySort(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "render",
+      "signature": "render(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateKpis",
+      "signature": "updateKpis(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateTabCounts",
+      "signature": "updateTabCounts(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateSyncIndicator",
+      "signature": "updateSyncIndicator(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "relTime",
+      "signature": "relTime(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildFetchPayload",
+      "signature": "buildFetchPayload(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "extractTasks",
+      "signature": "extractTasks(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "loadShellReferences",
+      "signature": "loadShellReferences(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "syncRegistry",
+      "signature": "syncRegistry(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "generateReport",
+      "signature": "generateReport(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "setFilter",
+      "signature": "setFilter(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "setSort",
+      "signature": "setSort(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "bindUI",
+      "signature": "bindUI(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "bindShellEvents",
+      "signature": "bindShellEvents(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "registerCommands",
+      "signature": "registerCommands(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "loadPersistedPrefs",
+      "signature": "loadPersistedPrefs(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "loadUserContext",
+      "signature": "loadUserContext(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "init",
+      "signature": "init(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    }
+  ],
+  "dom_contract": {
+    "element_ids": [
+      "btn-sync",
+      "btn-sync-lbl",
+      "btn-report",
+      "kpi-total",
+      "kpi-active",
+      "kpi-overdue",
+      "kpi-closed",
+      "sync-dot",
+      "sync-label",
+      "sync-rec",
+      "aid-tbody",
+      "aid-fb-modal",
+      "aid-fb-h",
+      "aid-fb-b",
+      "aid-fb-cancel",
+      "aid-fb-ok"
+    ],
+    "css_classes": [
+      "aid-app",
+      "aid-hdr",
+      "aid-bc",
+      "aid-bc-org",
+      "aid-bc-sep",
+      "aid-bc-cat",
+      "aid-hdr-row",
+      "aid-title",
+      "aid-actions",
+      "aid-btn",
+      "aid-btn-p",
+      "aid-btn-s",
+      "aid-tabs",
+      "aid-tab",
+      "active",
+      "aid-tab-cnt",
+      "aid-kpis",
+      "aid-kpi",
+      "aid-kpi-lbl",
+      "aid-kpi-val",
+      "aid-kpi-sub",
+      "aid-panel",
+      "aid-panel-hdr",
+      "aid-panel-hdr-l",
+      "aid-sync-status",
+      "aid-sync-dot",
+      "aid-sync-rec",
+      "aid-tbl-wrap",
+      "aid-tbl",
+      "sortable",
+      "sort-ind",
+      "aid-empty",
+      "aid-empty-ico",
+      "aid-empty-ttl",
+      "aid-empty-msg",
+      "aid-foot",
+      "aid-fb-box",
+      "aid-fb-h",
+      "aid-fb-b",
+      "aid-fb-f",
+      "aid-btn-g",
+      "aid-status",
+      "aid-ref-pri",
+      "aid-pri-high",
+      "aid-pri-med",
+      "aid-pri-low",
+      "aid-pri-na",
+      "aid-officer-unassigned",
+      "aid-officer",
+      "aid-officer-av",
+      "aid-officer-em",
+      "aid-due",
+      "aid-due-rel",
+      "aid-dsu",
+      "aid-cat-sub",
+      "aid-ref",
+      "aid-ref-id",
+      "aid-subj"
+    ],
+    "inline_styles_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "event_handling": {
+    "inline_handlers": [],
+    "listener_bound": [
+      "message",
+      "DOMContentLoaded",
+      "keydown",
+      "click",
+      "nitda:focus",
+      "nitda:broadcast",
+      "nitda:data_ready"
+    ],
+    "global_listeners": [
+      "message",
+      "keydown"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "global_scope": {
+    "global_functions": [
+      "_send",
+      "_req",
+      "unsub",
+      "esc",
+      "audit",
+      "toast",
+      "notify",
+      "confirmAction",
+      "done",
+      "kd",
+      "normaliseRow",
+      "extractSubject",
+      "classifyStatus",
+      "isOverdue",
+      "isUrgent",
+      "statusBadge",
+      "priorityBadge",
+      "officerCell",
+      "dueCell",
+      "dsuCell",
+      "applyFilter",
+      "applySort",
+      "render",
+      "updateKpis",
+      "updateTabCounts",
+      "updateSyncIndicator",
+      "relTime",
+      "buildFetchPayload",
+      "extractTasks",
+      "loadShellReferences",
+      "syncRegistry",
+      "generateReport",
+      "setFilter",
+      "setSort",
+      "bindUI",
+      "bindShellEvents",
+      "registerCommands",
+      "loadPersistedPrefs",
+      "loadUserContext",
+      "init"
+    ],
+    "global_variables": [],
+    "notes": "[auto: globals not fully resolved]"
+  },
+  "state_management": "[AUTO-DRAFT — review] module-scope variables.",
+  "design_tokens": {
+    "framework": null,
+    "colors": [
+      "#023F2D",
+      "#035C42",
+      "#011F16",
+      "#E8F5F0",
+      "#008B8B",
+      "#00A9A9",
+      "#006B6B",
+      "#0056B3",
+      "#1a73e8",
+      "#1A9E3C",
+      "#d4edda",
+      "#D97706",
+      "#fff3cd",
+      "#DC3545",
+      "#f8d7da",
+      "#0891b2",
+      "#CCEEFF",
+      "#F0F4F2",
+      "#FFFFFF",
+      "#EEF3F0",
+      "#E2EDE8",
+      "#C8D8D2",
+      "#DDE9E4",
+      "#0A1812",
+      "#2E4A3C",
+      "#6B8E7F",
+      "#09130F",
+      "#101C15",
+      "#162218",
+      "#1C2C21",
+      "#1E3328",
+      "#162018",
+      "#CCE5D7",
+      "#6FA38D",
+      "#3D6B57",
+      "#fff"
+    ],
+    "fonts": [
+      "var(--font)",
+      "inherit",
+      "var(--mono)"
+    ],
+    "spacing_or_layout_notes": "inline styles present"
+  },
+  "assets": [
+    {
+      "type": "image/svg",
+      "delivery": "inline-svg",
+      "ref": "inline <svg> icon(s)",
+      "approx_size": "small"
+    }
+  ],
+  "external_libraries": [],
+  "power_automate_flows": [],
+  "behaviors": {
+    "loading_states": true,
+    "error_states": true,
+    "polling_present": true,
+    "timers_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "accessibility": {
+    "aria_present": true,
+    "keyboard_nav": true,
+    "notes": "[auto-extracted]"
+  },
+  "localization": {
+    "i18n_present": false,
+    "languages": [
+      "en"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "risks_and_quirks": [
+    "[AUTO-DRAFT manifest — mechanical extraction; prose/semantic fields (purpose, offerings, flow shapes) must be reviewed before treating as verified.]"
+  ],
+  "extraction_meta": {
+    "complete": false,
+    "unparseable_sections": [
+      "auto-draft: semantic fields pending review"
+    ],
+    "source_lines_approx": 1319
+  }
+}

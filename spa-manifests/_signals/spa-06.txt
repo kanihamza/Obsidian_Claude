@@ -1,0 +1,10 @@
+SPA spa-06 — Assignment_Intelligence_Dashboard.html (1319 lines)
+TITLE: Assignment Intelligence Dashboard
+HEADINGS (2): Assignment Intelligence Dashboard | Assignment Details
+BUTTONS (2): Cancel | Confirm
+TABS: All Assignments  | Pending Ack     | Overdue         | Urgent Priority | Completed       | On Track        | My Assignments 
+FLOW URLS (0):
+  
+LIBS: 
+KEY FNS (40): _send, _req, unsub, esc, audit, toast, notify, confirmAction, done, kd, normaliseRow, extractSubject, classifyStatus, isOverdue, isUrgent, statusBadge, priorityBadge, officerCell, dueCell, dsuCell, applyFilter, applySort, render, updateKpis, updateTabCounts, updateSyncIndicator, relTime, buildFetchPayload, extractTasks, loadShellReferences, syncRegistry, generateReport, setFilter, setSort, bindUI, bindShellEvents, registerCommands, loadPersistedPrefs, loadUserContext, init
+EVENTS: inline= | listeners=message,DOMContentLoaded,keydown,click,nitda:focus,nitda:broadcast,nitda:data_ready

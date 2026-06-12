@@ -1,0 +1,13 @@
+SPA spa-09 —  Response Tracking & Matrix.html (850 lines)
+TITLE: Response Tracking - NITDA
+HEADINGS (3): 📈 Response Tracking & Matrix | Acknowledge Task Receipt | Matrix View: Task Lineage
+BUTTONS (8): ⟳ Sync Live Data | ← Back to Dashboard | Filter Data | &times; | Acknowledge | Cancel | Treated | Matrix View
+TABS: 
+FLOW URLS (4):
+  POST https://prod-xxx.logic.azure.com:443/workflows/xxx
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/818ec4053f1e4f0b87845114241d8b74/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/37642ba3597f4cf58288cc71b5e6b519/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3931e2ff995242b6b2c920c8b2209797/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+LIBS: 
+KEY FNS (20): safeText, safeDate, escapeHtml, formatDate, getStatusClass, promptUserEmail, updateAvatar, apiCall, syncData, buildPolymorphicMatrix, populateCategoryFilter, applyFilters, renderTable, openAckModal, closeAckModal, handleAckSubmit, viewDetails, closeDetailsModal, showNotification, goBack
+EVENTS: inline=onclick,onsubmit | listeners=DOMContentLoaded,change,keyup

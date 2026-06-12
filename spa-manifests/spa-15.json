@@ -1,0 +1,433 @@
+{
+  "schema_version": "1.1",
+  "spa_id": "spa-15",
+  "source_filename": "DGCEO Correspondence & Decision Hub.html",
+  "title": "NITDA DGCEO Correspondence & Decision Hub",
+  "purpose": "[AUTO-DRAFT — needs review] NITDA DGCEO Correspondence & Decision Hub. Inventoried from DGCEO Correspondence & Decision Hub.html.",
+  "offerings": [
+    {
+      "name": "Executive Dashboard",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Incoming Correspondences",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Correspondence Details",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "🧠 AI Classification Preview",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Route / Assign Task",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Matrix Audit Trail",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "DGCEO Decision",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Quick Minute",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Orchestrating Live Data",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "${escapeHtml(doc.Title)}",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "⟳ Sync Live Data",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Apply Suggestions to Metadata",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Create & Route Task",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Approve / Accept",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Decline / Reject",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Delegate via EA",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Append to Document",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    }
+  ],
+  "views": [
+    {
+      "name": "Executive Dashboard",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Incoming Correspondences",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Correspondence Details",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "🧠 AI Classification Preview",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Route / Assign Task",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Matrix Audit Trail",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "DGCEO Decision",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Quick Minute",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Orchestrating Live Data",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "${escapeHtml(doc.Title)}",
+      "type": "section",
+      "trigger": "[auto]"
+    }
+  ],
+  "js_utilities": [
+    {
+      "name": "safeText",
+      "signature": "safeText(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "escapeHtml",
+      "signature": "escapeHtml(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "formatDate",
+      "signature": "formatDate(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "computeRole",
+      "signature": "computeRole(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "promptUserEmail",
+      "signature": "promptUserEmail(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "apiCall",
+      "signature": "apiCall(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "syncData",
+      "signature": "syncData(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildPolymorphicMatrix",
+      "signature": "buildPolymorphicMatrix(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "populateLookups",
+      "signature": "populateLookups(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderDashboard",
+      "signature": "renderDashboard(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "getStatusClass",
+      "signature": "getStatusClass(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderDocList",
+      "signature": "renderDocList(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "selectDoc",
+      "signature": "selectDoc(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    }
+  ],
+  "dom_contract": {
+    "element_ids": [
+      "appBody",
+      "btnSync",
+      "userRole",
+      "statOverdue",
+      "statAwaiting",
+      "statOk",
+      "docList",
+      "panel-details",
+      "docDetails",
+      "aiPreviewPanel",
+      "aiCategory",
+      "aiPriority",
+      "routeDept",
+      "routeAssignee",
+      "routePriority",
+      "auditList",
+      "loading-overlay"
+    ],
+    "css_classes": [
+      "role-DGCEO",
+      "header-controls",
+      "btn-sync",
+      "layout",
+      "panel-inbox",
+      "dashboard-metrics",
+      "tag",
+      "overdue",
+      "awaiting",
+      "ok",
+      "doc-list",
+      "hidden",
+      "muted",
+      "ea-only",
+      "primary",
+      "panel-actions",
+      "dg-only",
+      "danger",
+      "spinner",
+      "${m.ID",
+      "===",
+      "state.selectedId",
+      "?",
+      "doc-list-title",
+      "doc-list-meta",
+      "${getStatusClass(m.Status",
+      "||",
+      "m.AssignmentStatus)}",
+      "neutral",
+      "matrix-card",
+      "matrix-meta"
+    ],
+    "inline_styles_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "event_handling": {
+    "inline_handlers": [
+      "onclick"
+    ],
+    "listener_bound": [
+      "click"
+    ],
+    "global_listeners": [],
+    "notes": "[auto-extracted]"
+  },
+  "global_scope": {
+    "global_functions": [
+      "safeText",
+      "escapeHtml",
+      "formatDate",
+      "computeRole",
+      "promptUserEmail",
+      "apiCall",
+      "syncData",
+      "buildPolymorphicMatrix",
+      "populateLookups",
+      "renderDashboard",
+      "getStatusClass",
+      "renderDocList",
+      "selectDoc"
+    ],
+    "global_variables": [],
+    "notes": "[auto: globals not fully resolved]"
+  },
+  "state_management": "[AUTO-DRAFT — review] module-scope variables.",
+  "design_tokens": {
+    "framework": null,
+    "colors": [
+      "#0b5f3c",
+      "#e6f2ed",
+      "#c9a227",
+      "#b42318",
+      "#f79009",
+      "#027a48",
+      "#f7f9fb",
+      "#ffffff",
+      "#101828",
+      "#667085",
+      "#eaecf0",
+      "#f2f4f7",
+      "#d0d5dd",
+      "#fcfcfd",
+      "#fee4e2",
+      "#fff7e0",
+      "#e6f4ea",
+      "#f9fafb",
+      "#fff"
+    ],
+    "fonts": [
+      "inherit"
+    ],
+    "spacing_or_layout_notes": "inline styles present"
+  },
+  "assets": [],
+  "external_libraries": [],
+  "power_automate_flows": [
+    {
+      "name": "flow_1",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ff455c68e9ac493e858fb984bcfd01fb/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_2",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/818ec4053f1e4f0b87845114241d8b74/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_3",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/37642ba3597f4cf58288cc71b5e6b519/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_4",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3931e2ff995242b6b2c920c8b2209797/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    }
+  ],
+  "behaviors": {
+    "loading_states": true,
+    "error_states": true,
+    "polling_present": false,
+    "timers_present": false,
+    "notes": "[auto-extracted]"
+  },
+  "accessibility": {
+    "aria_present": false,
+    "keyboard_nav": false,
+    "notes": "[auto-extracted]"
+  },
+  "localization": {
+    "i18n_present": false,
+    "languages": [
+      "en"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "risks_and_quirks": [
+    "[AUTO-DRAFT manifest — mechanical extraction; prose/semantic fields (purpose, offerings, flow shapes) must be reviewed before treating as verified.]"
+  ],
+  "extraction_meta": {
+    "complete": false,
+    "unparseable_sections": [
+      "auto-draft: semantic fields pending review"
+    ],
+    "source_lines_approx": 571
+  }
+}

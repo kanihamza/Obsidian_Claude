@@ -1,0 +1,10 @@
+SPA spa-10 — Correspondence_Tracker.html (792 lines)
+TITLE: NITDA DG/CEO Correspondence Tracker
+HEADINGS (4): NITDA DG/CEO | Dashboard Overview | Recent Correspondences | Correspondence Details
+BUTTONS (4): View All | Clear Form | Previous | Next
+TABS: 
+FLOW URLS (1):
+  POST https://prod.powerautomate.com/workflows/...
+LIBS: cdn.tailwindcss.com
+KEY FNS (21): setupEventListeners, switchTab, handleFormSubmit, transmitToPowerAutomate, updateUI, updateDashboard, renderRecordsTable, applyFilters, filterRecords, updateBadges, editRecord, quickAction, deleteRecord, resetForm, triggerManualSync, exportToCSV, getStatusBadge, getPriorityBadge, formatDate, showToast, seedInitialData
+EVENTS: inline=onclick,onchange | listeners=DOMContentLoaded,submit,input

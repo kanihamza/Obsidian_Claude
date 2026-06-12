@@ -1,0 +1,528 @@
+{
+  "schema_version": "1.1",
+  "spa_id": "spa-14",
+  "source_filename": "Reports_Dashboard_Live.html",
+  "title": "NITDA Reports Screen Dashboard",
+  "purpose": "[AUTO-DRAFT — needs review] NITDA Reports Screen Dashboard. Inventoried from Reports_Dashboard_Live.html.",
+  "offerings": [
+    {
+      "name": "NITDA PORTAL",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "REPORTS DASHBOARD",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Document and Task Summary",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Sender Info",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "NITDA Management Report",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "1. Key Insights",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Total Activities",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Completed Tasks",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Pending Approvals",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "2. Activity Summary",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    },
+    {
+      "name": "Cancel",
+      "description": "[auto: heading/control — confirm]",
+      "entry_point": null
+    }
+  ],
+  "views": [
+    {
+      "name": "NITDA PORTAL",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "REPORTS DASHBOARD",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Document and Task Summary",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Sender Info",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "NITDA Management Report",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "1. Key Insights",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Total Activities",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Completed Tasks",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "Pending Approvals",
+      "type": "section",
+      "trigger": "[auto]"
+    },
+    {
+      "name": "2. Activity Summary",
+      "type": "section",
+      "trigger": "[auto]"
+    }
+  ],
+  "js_utilities": [
+    {
+      "name": "getDaysAgo",
+      "signature": "getDaysAgo(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "showToast",
+      "signature": "showToast(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "initializeData",
+      "signature": "initializeData(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "setLoading",
+      "signature": "setLoading(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "toggleSidebar",
+      "signature": "toggleSidebar(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "switchUserRole",
+      "signature": "switchUserRole(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateCounts",
+      "signature": "updateCounts(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderRBAC",
+      "signature": "renderRBAC(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderTags",
+      "signature": "renderTags(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "setTag",
+      "signature": "setTag(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "updateLabel",
+      "signature": "updateLabel(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "requestAction",
+      "signature": "requestAction(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "closeConfirmModal",
+      "signature": "closeConfirmModal(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "executeFlow",
+      "signature": "executeFlow(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "generateDGOReport",
+      "signature": "generateDGOReport(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "generateGTQReport",
+      "signature": "generateGTQReport(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "generateDualReport",
+      "signature": "generateDualReport(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "renderViewers",
+      "signature": "renderViewers(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "buildTemplate",
+      "signature": "buildTemplate(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "genH4",
+      "signature": "genH4(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "genH9",
+      "signature": "genH9(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "genH2",
+      "signature": "genH2(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "genH17",
+      "signature": "genH17(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "genH21",
+      "signature": "genH21(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    },
+    {
+      "name": "genH10",
+      "signature": "genH10(…)",
+      "purpose": "[auto: review]",
+      "approx_lines": 0
+    }
+  ],
+  "dom_contract": {
+    "element_ids": [
+      "loader",
+      "loaderText",
+      "confirmationModal",
+      "confirmMessage",
+      "confirmBtn",
+      "toastContainer",
+      "sidebar",
+      "navMenu",
+      "navRoleDisplay",
+      "headerDept",
+      "headerUser",
+      "userRoleSwitcher",
+      "statusLabel",
+      "tagsContainer",
+      "dpGTQStart",
+      "dpGTQEnd",
+      "dpDGOStart",
+      "dpDGOEnd",
+      "btnDgoCount",
+      "viewersContainer"
+    ],
+    "css_classes": [
+      "h-screen",
+      "w-screen",
+      "flex",
+      "flex-col",
+      "text-gray-800",
+      "relative",
+      "hidden",
+      "fixed",
+      "inset-0",
+      "bg-white/80",
+      "z-[60]",
+      "items-center",
+      "justify-center",
+      "spinner",
+      "mb-4",
+      "text-[#05583B]",
+      "font-bold",
+      "tracking-widest",
+      "text-sm",
+      "bg-black/60",
+      "z-50",
+      "fade-in",
+      "bg-white",
+      "rounded-lg",
+      "shadow-2xl",
+      "w-[400px]",
+      "border-t-4",
+      "border-[#E05606]",
+      "overflow-hidden",
+      "p-6",
+      "text-xl",
+      "mb-2",
+      "gap-2",
+      "text-[#E05606]",
+      "bg-orange-50",
+      "border",
+      "border-orange-100",
+      "p-3",
+      "rounded",
+      "text-gray-700",
+      "font-verdana",
+      "text-xs",
+      "text-gray-500",
+      "mb-6",
+      "italic",
+      "justify-end",
+      "gap-3",
+      "px-5",
+      "py-2",
+      "border-gray-300",
+      "shadow-sm",
+      "hover:bg-gray-50",
+      "transition-colors",
+      "bg-[#05583B]",
+      "text-white",
+      "shadow-md",
+      "hover:bg-[#034028]",
+      "w-4",
+      "h-4",
+      "bottom-4",
+      "right-4",
+      "z-[70]",
+      "h-full",
+      "w-full",
+      "w-72",
+      "bg-opacity-95",
+      "flex-shrink-0",
+      "transition-all",
+      "duration-300",
+      "md:flex",
+      "z-40",
+      "p-4",
+      "border-b",
+      "border-white/20",
+      "p-1",
+      "w-6",
+      "h-6",
+      "text-lg",
+      "text-[#FFC000]",
+      "tracking-wide"
+    ],
+    "inline_styles_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "event_handling": {
+    "inline_handlers": [
+      "onclick",
+      "onchange"
+    ],
+    "listener_bound": [
+      "click",
+      "DOMContentLoaded"
+    ],
+    "global_listeners": [],
+    "notes": "[auto-extracted]"
+  },
+  "global_scope": {
+    "global_functions": [
+      "getDaysAgo",
+      "showToast",
+      "initializeData",
+      "setLoading",
+      "toggleSidebar",
+      "switchUserRole",
+      "updateCounts",
+      "renderRBAC",
+      "renderTags",
+      "setTag",
+      "updateLabel",
+      "requestAction",
+      "closeConfirmModal",
+      "executeFlow",
+      "generateDGOReport",
+      "generateGTQReport",
+      "generateDualReport",
+      "renderViewers",
+      "buildTemplate",
+      "genH4",
+      "genH9",
+      "genH2",
+      "genH17",
+      "genH21",
+      "genH10"
+    ],
+    "global_variables": [],
+    "notes": "[auto: globals not fully resolved]"
+  },
+  "state_management": "[AUTO-DRAFT — review] module-scope variables.",
+  "design_tokens": {
+    "framework": "Tailwind",
+    "colors": [
+      "#f5f5f5",
+      "#f1f1f1",
+      "#05583B",
+      "#034028",
+      "#E05606",
+      "#FFC000",
+      "#00A69D",
+      "#F5F5F5",
+      "#FFB400",
+      "#4CAF50",
+      "#0F6CBD",
+      "#0c5696",
+      "#2D8028",
+      "#22631e",
+      "#b54404",
+      "#373435",
+      "#ddd",
+      "#fff",
+      "#E2EFDA",
+      "#002060",
+      "#f3f3f3",
+      "#f44336",
+      "#2196F3"
+    ],
+    "fonts": [
+      "Verdana",
+      "sans-serif",
+      "Arial"
+    ],
+    "spacing_or_layout_notes": "inline styles present"
+  },
+  "assets": [],
+  "external_libraries": [
+    {
+      "name": "cdn.tailwindcss.com",
+      "version": null,
+      "source": "https://cdn.tailwindcss.com"
+    },
+    {
+      "name": "lucide@latest",
+      "version": null,
+      "source": "https://unpkg.com/lucide@latest"
+    }
+  ],
+  "power_automate_flows": [
+    {
+      "name": "flow_1",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ff455c68e9ac493e858fb984bcfd01fb/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    },
+    {
+      "name": "flow_2",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6b3bad3005b44bf6bced0f8074d3f2ed/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-token",
+      "custom_headers": [],
+      "trigger": "[auto: review]",
+      "request_shape": "[auto: review JSON body]",
+      "response_shape": "[auto: review]",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": null
+    }
+  ],
+  "behaviors": {
+    "loading_states": true,
+    "error_states": true,
+    "polling_present": false,
+    "timers_present": true,
+    "notes": "[auto-extracted]"
+  },
+  "accessibility": {
+    "aria_present": false,
+    "keyboard_nav": false,
+    "notes": "[auto-extracted]"
+  },
+  "localization": {
+    "i18n_present": false,
+    "languages": [
+      "en"
+    ],
+    "notes": "[auto-extracted]"
+  },
+  "risks_and_quirks": [
+    "[AUTO-DRAFT manifest — mechanical extraction; prose/semantic fields (purpose, offerings, flow shapes) must be reviewed before treating as verified.]"
+  ],
+  "extraction_meta": {
+    "complete": false,
+    "unparseable_sections": [
+      "auto-draft: semantic fields pending review"
+    ],
+    "source_lines_approx": 577
+  }
+}

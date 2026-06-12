@@ -1,0 +1,15 @@
+SPA spa-12 — NITDA_DGO_HUB_ACK.html (659 lines)
+TITLE: NITDA | Unified Operations Hub
+HEADINGS (4): Portal Access | Task Acknowledgement | Email-to-Task Conversion | Update Operational Progress
+BUTTONS (13): Launch Operations Hub | Create Task | Fetch Item | Confirm Acknowledgement | Return to Dashboard | ✕ Close | Authorize & Send Directive | Create Compliance Task | Discard | Post Update | Assign Directive | Update Progress | Convert to Compliance Task
+TABS: 
+FLOW URLS (6):
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/02a3a70f3dec4dcd9a85a244a60c65b9/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6b3bad3005b44bf6bced0f8074d3f2ed/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ff455c68e9ac493e858fb984bcfd01fb/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/818ec4053f1e4f0b87845114241d8b74/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/37642ba3597f4cf58288cc71b5e6b519/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+  POST https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3931e2ff995242b6b2c920c8b2209797/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__
+LIBS: 
+KEY FNS (22): navigateTo, callAPI, showLoader, hideLoader, bootApp, hydrateUI, processDeepLink, executeAcknowledge, loadDashboardTasks, quickCreateTask, fetchLookups, runOmniSearch, renderOmniResults, openAssignForm, onAssignCatChange, submitFullAssignment, openEmailToTaskForm, submitEmailToTask, openTaskUpdate, closeModal, executeTaskUpdate, initShell
+EVENTS: inline=onclick,onkeydown,onchange | listeners=message
