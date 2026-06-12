@@ -917,7 +917,7 @@ export function buildDocEmailPairs() {
 }
 
 /** Master-detail: gallery of cards + detail pane. card(item)->html string; detail(item,container,mod). */
-export function mountMasterDetail(mod, root, { type, cardLabel, detail, enableBulkSelect = false, bulkActions = null }) {
+export function mountMasterDetail(mod, root, { type, cardLabel, detail, enableBulkSelect = false, bulkActions = null, prefilter = null }) {
   const region = root.querySelector('[data-region="content"]') || root;
   clear(region);
   const E = P().Entities;
@@ -928,10 +928,20 @@ export function mountMasterDetail(mod, root, { type, cardLabel, detail, enableBu
   const detailPane = el('div', { class: 'pf-card pf-md__detail' });
   split.append(gallery, detailPane);
   const bulkBar = el('div', { class: 'pf-md__bulkbar', hidden: true });
-  region.append(filter, bulkBar, el('div', { style: 'height:var(--space-3)' }), split);
   let q = '', st = '';
+  // D-1: when a prefilter is supplied (ops-hub routing scope), default to the scoped view but keep a
+  // reversible toggle so the operator can always reveal everything — the scope never silently hides data.
+  let scoped = !!prefilter;
+  const scopeToggle = prefilter ? el('button', { class: 'pf-btn pf-btn--ghost pf-md__scope', type: 'button' }) : null;
+  if (scopeToggle) {
+    const syncScope = () => { scopeToggle.textContent = t(scoped ? 'lens.scopeQueue' : 'lens.scopeAll'); scopeToggle.setAttribute('aria-pressed', scoped ? 'true' : 'false'); };
+    scopeToggle.addEventListener('click', () => { scoped = !scoped; syncScope(); render(); });
+    syncScope();
+    region.append(scopeToggle);
+  }
+  region.append(filter, bulkBar, el('div', { style: 'height:var(--space-3)' }), split);
   const selected = new Set();   // refs/ids of currently bulk-selected items
-  function items() { return E.all(type).filter((r) => { const s = String(r.status || r.Status || '').toLowerCase(); if (st && s !== st) return false; if (!q) return true; return Object.values(r).some((v) => String(v).toLowerCase().includes(q)); }); }
+  function items() { return E.all(type).filter((r) => { if (scoped && prefilter && !prefilter(r)) return false; const s = String(r.status || r.Status || '').toLowerCase(); if (st && s !== st) return false; if (!q) return true; return Object.values(r).some((v) => String(v).toLowerCase().includes(q)); }); }
   function renderBulkBar() {
     if (!enableBulkSelect) { bulkBar.hidden = true; return; }
     bulkBar.hidden = selected.size === 0;

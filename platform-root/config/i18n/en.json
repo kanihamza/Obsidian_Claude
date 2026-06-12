@@ -539,6 +539,8 @@
     "legendDueSoon": "Due soon",
     "legendAlert": "Needs attention",
     "legendPending": "Pending",
+    "scopeQueue": "Routing queue · show all",
+    "scopeAll": "Showing all · scope to routing queue",
     "heatmap": {
       "legend": "Less",
       "more": "More",

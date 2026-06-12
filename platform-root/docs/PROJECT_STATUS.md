@@ -1624,3 +1624,19 @@ Token-based swatches; i18n lens.legend* keys.
 
 Verified: ui-smoke asserts the legend renders on response-tracking (which has an alert row). describe()
 parser previously unit-tested. Integrated gate: 12 static + ui-smoke 145/145.
+
+---
+
+## 30. 2026-06-11 — D-1: ops-hub routing scope (reversible, never empties)
+
+D-1 (ops-hub showed ALL records, not just routable). Implemented robustly to avoid the empty-surface
+risk of hard-filtering to one status token against unknown live data:
+- mountMasterDetail gains an optional `prefilter` + a built-in "Routing queue / All" toggle (only when a
+  prefilter is supplied; other consumers unchanged). Default = scoped; toggle always reveals everything.
+- ops-hub passes a TOLERANT routable prefilter: hides clearly-routed/terminal statuses
+  (assigning…archived, routed, replied) but keeps fresh / registered / triaged / triage_complete /
+  unknown-status records visible — so the queue is never wrongly emptied.
+- i18n lens.scopeQueue / scopeAll.
+
+Verified: ui-smoke fixture gains an 'assigned' doc; assertions confirm the default scope shows 2 of 3
+(hides the routed one) and the toggle reveals all 3. Integrated gate: 12 static + ui-smoke 147/147.

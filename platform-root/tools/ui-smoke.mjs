@@ -36,7 +36,8 @@ const USERS = [
 ];
 const DOCUMENTS = [
   { ReferenceID: 'REF-1001', DocumentID: 'DOC-1', Title: 'Contract award memo', Category: 'Procurement', Subcategory: 'Contracts', PrimaryDSU: 'PROC-DSU' },
-  { ReferenceID: 'REF-1002', DocumentID: 'DOC-2', Title: 'Quarterly routine note', Category: 'Routine Memo', Subcategory: 'General', PrimaryDSU: 'CORP-DSU' }
+  { ReferenceID: 'REF-1002', DocumentID: 'DOC-2', Title: 'Quarterly routine note', Category: 'Routine Memo', Subcategory: 'General', PrimaryDSU: 'CORP-DSU' },
+  { ReferenceID: 'REF-1004', DocumentID: 'DOC-3', Title: 'Already routed memo', Category: 'Routine Memo', Subcategory: 'General', Status: 'assigned', PrimaryDSU: 'CORP-DSU' }
 ];
 const TASKS = [
   { ReferenceID: 'REF-1001', TaskID: 'T-1', Title: 'Review contract', Status: 'in-progress', AssignedTo: 'ada.obi@nitda.gov.ng', Priority: 'P2 (Medium)', TaskDue: '2026-06-15' },
@@ -213,6 +214,16 @@ try {
   await page.waitForTimeout(400);
   const cards = await page.locator('#module-ops-hub .pf-md__card, #module-ops-hub .pf-table tbody tr').count();
   check('ops-hub renders document cards from fabric', cards >= 1, 'cards=' + cards);
+
+  // D-1: routing scope hides already-routed records by default; the toggle reveals everything.
+  const scopedCount = await page.locator('#module-ops-hub .pf-md__card').count();
+  check('ops-hub: routing scope hides already-routed records', scopedCount === 2, 'scoped=' + scopedCount);
+  await page.locator('#module-ops-hub .pf-md__scope').first().click();
+  await page.waitForTimeout(200);
+  const allCount = await page.locator('#module-ops-hub .pf-md__card').count();
+  check('ops-hub: scope toggle reveals all records (never silently hidden)', allCount > scopedCount, 'all=' + allCount + ' scoped=' + scopedCount);
+  await page.locator('#module-ops-hub .pf-md__scope').first().click(); // back to routing-queue scope
+  await page.waitForTimeout(200);
 
   // Bulk-select a card → the bulk bar's "Assign" hands the selection to bulk-assignment via Context.
   await page.locator('#module-ops-hub .pf-md__check input[type="checkbox"]').first().check();

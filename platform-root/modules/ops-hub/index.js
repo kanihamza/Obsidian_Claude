@@ -18,12 +18,22 @@ class OpsHubModule extends BaseModule {
   static audience = 'general';
   static status = 'active';
   static base = new URL('.', import.meta.url);
+  // D-1: statuses that mean a record has already moved past routing (or is terminal). Anything NOT in
+  // this set — fresh / registered / triaged / triage_complete / unknown — stays in the routing queue.
+  static ROUTED = new Set(['assigning', 'assigned', 'assignment-failed', 'acknowledged', 'in-progress',
+    'action-complete', 'reassign-requested', 'pending-review', 'approved', 'approved-with-edit', 'returned',
+    'escalated', 'dispatch-pending', 'dispatch-in-flight', 'dispatched', 'dispatch-failed', 'no-dispatch',
+    'closed', 'partial-dispatch', 'archived', 'cold-archived', 'routed', 'replied']);
 
   async onVisible(root) {
     const E = globalThis.Platform.Entities; if (!E.isHydrated()) await E.bootstrap().catch(() => {});
     mountMasterDetail(this, root, {
       type: 'document', cardLabel: 'title',
       detail: (it, pane, mod) => mod.renderDocDetail(it, pane),
+      // ROUTING is for items still needing routing. Default scope hides clearly-routed/terminal records
+      // but keeps fresh / triage-complete / unknown visible, so the queue is never wrongly emptied. The
+      // built-in toggle reveals everything on demand.
+      prefilter: (r) => !OpsHubModule.ROUTED.has(String((r && (r.status || r.Status)) || '').toLowerCase().trim()),
       enableBulkSelect: true,
       bulkActions: ({ selected, clear }) => [
         el('button', {
