@@ -92,8 +92,8 @@ Errors: `kind ∈ DUEAT_REQUIRED | SCHEDULE_FAILED`.
 
 - **`dispatchEmail`** — wired: `reports` Management Report → *Send Report Email* (this release). Also the
   intended hook for correspondence/approval email sends and Phase-5 Dispatch.
-- **`prepareMeetingPack`** — intended home: `executive` / `ops-hub` multi-select → *Prepare meeting pack*
-  (selection → `refs`). [UI not yet placed — contract ready.]
+- **`prepareMeetingPack`** — wired: `ops-hub` multi-select bulk bar → *Prepare Meeting Pack*
+  (selection → `refs`, preview + confirm + parsed feedback; this release).
 - **`issueTripClearance`** — intended home: a document/correspondence detail action. [UI not yet placed.]
 - **`setReminder`** — intended home: any record/task detail (`ref`/`taskId` + due picker). [UI not yet placed.]
 

@@ -228,6 +228,24 @@ try {
   // Bulk-select a card → the bulk bar's "Assign" hands the selection to bulk-assignment via Context.
   await page.locator('#module-ops-hub .pf-md__check input[type="checkbox"]').first().check();
   await page.locator('#module-ops-hub .pf-md__bulkbar').first().waitFor({ state: 'visible', timeout: 5000 });
+
+  // Prepare Meeting Pack → routed through the Dynamic Global Actions flow via the prepareMeetingPack
+  // contract (selection → refs), with mandatory preview + confirmation before the flow fires.
+  paCalls.length = 0;
+  const packBtn = page.locator('#module-ops-hub .pf-md__bulkbar .pf-btn--ghost', { hasText: 'Meeting Pack' }).first();
+  check('ops-hub: bulk bar surfaces Prepare Meeting Pack', await packBtn.count() >= 1);
+  await packBtn.click();
+  await page.locator('pf-modal[open] .primary').first().waitFor({ timeout: 8000 });
+  check('ops-hub: meeting pack shows preview + confirmation before the flow', await page.locator('pf-modal[open] .primary').count() >= 1);
+  check('ops-hub: no flow fired before confirmation', paCalls.length === 0, 'premature=[' + paCalls.map((c) => c.action).join(',') + ']');
+  await page.locator('pf-modal[open] .primary').first().click();
+  await page.waitForTimeout(300);
+  const packCall = paCalls.find((c) => c.action === 'prepareMeetingPack' && c.operation === 'generate' && c.mode === 'batch' && c.payload && Array.isArray(c.payload.refs) && c.payload.refs.length >= 1);
+  check('ops-hub: Prepare Meeting Pack dispatches the prepareMeetingPack contract (dynamic flow)', !!packCall, 'actions=[' + paCalls.map((c) => c.action).join(',') + ']');
+
+  // Re-select (confirmation cleared the selection) and hand off to bulk-assignment via the primary action.
+  await page.locator('#module-ops-hub .pf-md__check input[type="checkbox"]').first().check();
+  await page.locator('#module-ops-hub .pf-md__bulkbar').first().waitFor({ state: 'visible', timeout: 5000 });
   await page.locator('#module-ops-hub .pf-md__bulkbar .pf-btn--primary').first().click();
   await page.locator('#module-bulk-assignment').first().waitFor({ timeout: 10000 });
   await page.waitForTimeout(300);

@@ -46,6 +46,25 @@ class OpsHubModule extends BaseModule {
             globalThis.Platform.State?.set('shared.bulkSelection', { refs: selected, source: this.id, ts: Date.now() });
             globalThis.Platform.Router.navigate('bulk-assignment');
           }
+        }),
+        // Consolidate the selected references into a meeting pack — routed through the Dynamic Global
+        // Actions flow (prepareMeetingPack contract; no dedicated endpoint). Selection → refs, with
+        // preview + confirm + parsed feedback via Platform.Actions.run.
+        el('button', {
+          class: 'pf-btn pf-btn--ghost', type: 'button',
+          html: `<pf-icon name="clipboard" size="14"></pf-icon> ${this.t('opshub.meetingPack', { n: selected.length })}`,
+          onClick: () => {
+            const A = globalThis.Platform.Actions;
+            if (A && A.run) A.run('prepareMeetingPack', {
+              preview: {
+                titleKey: 'opshub.meetingPackTitle',
+                summary: this.t('opshub.meetingPackSummary', { n: selected.length }),
+                confirmKey: 'opshub.meetingPackConfirm',
+                details: selected.slice(0, 12).map((r) => ({ label: this.t('field.referenceId.label'), value: r }))
+              },
+              payload: { refs: selected }
+            }).then((res) => { if (res && res.ok) clear(); });
+          }
         })
       ]
     });
