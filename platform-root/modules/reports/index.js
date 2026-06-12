@@ -34,7 +34,10 @@ class ReportsModule extends BaseModule {
         el('h2', { text: this.t('reports.mgmtTitle') }),
         el('div', { class: 'pf-toolbar' }, [
           el('button', { class: 'pf-btn pf-btn--ghost', type: 'button', id: 'rep-print', html: `<pf-icon name="printer" size="14"></pf-icon> ${this.t('reports.print')}`, onClick: () => { try { globalThis.print && globalThis.print(); } catch (_) { /* ignore */ } } }),
-          el('button', { class: 'pf-btn pf-btn--primary', type: 'button', id: 'rep-html', html: `<pf-icon name="download" size="14"></pf-icon> ${this.t('reports.downloadHtml')}`, onClick: () => { try { P.Format.downloadHtml('nitda-management-report.html', report.innerHTML); P.UI && P.UI.toast && P.UI.toast({ messageKey: 'reports.exported', variant: 'success' }); } catch (_) { /* ignore */ } } })
+          el('button', { class: 'pf-btn pf-btn--ghost', type: 'button', id: 'rep-html', html: `<pf-icon name="download" size="14"></pf-icon> ${this.t('reports.downloadHtml')}`, onClick: () => { try { P.Format.downloadHtml('nitda-management-report.html', report.innerHTML); P.UI && P.UI.toast && P.UI.toast({ messageKey: 'reports.exported', variant: 'success' }); } catch (_) { /* ignore */ } } }),
+          // Send the report by email — routed through the Dynamic Global Actions flow (dispatchEmail
+          // contract; no dedicated endpoint). Preview+confirm+parsed feedback via Platform.Actions.run.
+          el('button', { class: 'pf-btn pf-btn--primary', type: 'button', id: 'rep-email', html: `<pf-icon name="mail" size="14"></pf-icon> ${this.t('reports.sendEmail')}`, onClick: () => { if (P.Actions && P.Actions.run) P.Actions.run('dispatchEmail', { preview: { titleKey: 'reports.sendTitle', summaryKey: 'reports.sendSummary', confirmKey: 'reports.sendEmail', details: [{ label: this.t('reports.mgmtTitle'), value: this.t('reports.sendSummary') }] }, payload: { kind: 'report', email: { subject: this.t('reports.mgmtTitle'), bodyHtml: report.innerHTML } } }); } })
         ])
       ]),
       section('reports.keyInsights', el('div', { class: 'pf-grid' }, [stat('reports.totalActivities', total), stat('reports.completed', completed), stat('reports.pendingApprovals', pendingAppr), stat('reports.overdue', overdue)])),

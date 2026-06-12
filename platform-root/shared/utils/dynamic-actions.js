@@ -11,6 +11,7 @@
  *  Use DynamicActions.run() for discrete user actions (it owns the whole cycle); transitions persisted
  *  by the fabric use emit() (optimistic) and still surface the parsed flow response. */
 import { BaseService } from '../../core/base-service.js';
+import { dynamicActionContract } from '../../config/dynamic-actions.config.js';
 
 const APP_VERSION = '4.0';
 const _dispatch = BaseService.endpoint('DYNAMIC_GLOBAL_ACTIONS', { expectedKeys: ['ok', 'data'] });
@@ -29,11 +30,19 @@ export const DynamicActions = {
   /** Low-level dispatch through the Dynamic Global Actions flow; awaits the normalized result. */
   async dispatch(action, fields = {}) {
     const { operation, mode, payload, ...rest } = fields;
+    const contract = dynamicActionContract(action);
+    // Contract validation (non-blocking): warn if a required payload field is missing so server rejects
+    // are diagnosable, but still dispatch (the flow remains the authority).
+    if (contract && Array.isArray(contract.required)) {
+      const p = payload || {};
+      const missing = contract.required.filter((k) => !(k in p) && !(k in rest));
+      if (missing.length) { const L = globalThis.Platform && globalThis.Platform.Log; L && L.warn && L.warn('actions.contract-missing', { action, missing }); }
+    }
     const now = new Date().toISOString();
     const envelope = {
       action,
-      operation: operation || 'dispatch',
-      mode: mode || 'single',
+      operation: operation || (contract && contract.operation) || 'dispatch',
+      mode: mode || (contract && contract.mode) || 'single',
       userEmail: currentUserEmail(),
       requestId: requestId(),
       timestamp: now,
@@ -75,6 +84,8 @@ export const DynamicActions = {
    *                             successKey, vars, payload, ...topLevelContractFields } */
   async run(action, opts = {}) {
     const { preview, danger, successKey, vars, payload, ...fields } = opts;
+    const contract = dynamicActionContract(action);
+    const okKey = successKey || (contract && contract.successKey);
     const UI = globalThis.Platform && globalThis.Platform.UI;
     if (preview && UI && typeof UI.confirm === 'function') {
       const ok = await UI.confirm({
@@ -87,7 +98,7 @@ export const DynamicActions = {
       if (!ok) return { ok: false, cancelled: true };
     }
     const res = await DynamicActions.dispatch(action, { payload, ...fields });
-    DynamicActions.feedback(res, { successKey, vars });
+    DynamicActions.feedback(res, { successKey: okKey, vars });
     return res;
   },
 

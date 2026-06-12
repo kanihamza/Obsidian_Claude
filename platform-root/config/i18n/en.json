@@ -968,6 +968,10 @@
     "docTaskSummary": "Document & Task Summary",
     "docTaskBody": "{docs} documents, {tasks} tasks and {emails} emails currently under management.",
     "conclusion": "Conclusion",
-    "conclusionBody": "{overdue} item(s) overdue and {pending} approval(s) pending — prioritise these in the next cycle."
+    "conclusionBody": "{overdue} item(s) overdue and {pending} approval(s) pending — prioritise these in the next cycle.",
+    "sendEmail": "Send Report Email",
+    "sendTitle": "Send management report",
+    "sendSummary": "Email the current NITDA Management Report to the DG's Office.",
+    "emailSent": "Report email queued for sending."
   }
 }

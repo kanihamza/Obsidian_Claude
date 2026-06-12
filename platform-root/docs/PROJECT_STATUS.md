@@ -1652,3 +1652,24 @@ SPA parity audit A1–A5 complete. Built the one unblocked gap (report export):
 - i18n: top-level reports.* namespace. ui-smoke asserts #reports-mgmt + #rep-html + #rep-print render.
 Parity result: generateReport/htmlReportsRun now CAPTURED. Open: Dispatch (blocked Q-4/8) + 3 scope-pending
 bespoke workflows (meeting-pack, trip-clearance, reminders). Integrated gate: 12 static + ui-smoke 148/148.
+
+---
+
+## 32. 2026-06-11 — Dynamic-action contracts (the residual SPA actions, no new endpoints)
+
+Per directive: route every action without a dedicated flow through DYNAMIC_GLOBAL_ACTIONS, with the
+contracts fully built.
+- config/dynamic-actions.config.js — machine-readable contract registry (operation/mode/required/
+  optional/confirm/successKey) for transition, addComment, acknowledge, route + the 4 residual actions:
+  dispatchEmail, prepareMeetingPack, issueTripClearance, setReminder.
+- shared/utils/dynamic-actions.js — Platform.Actions now validates required payload fields against the
+  contract (non-blocking warn) and defaults operation/mode/successKey from it.
+- docs/contracts/dynamic-actions.contract.md — full spec: wire envelope + per-action request/response
+  shapes + error kinds + UI integration points.
+- modules/reports — wired "Send Report Email" → Actions.run('dispatchEmail', …) (captures the SPAs'
+  Send DGO/GTQ Report Email via the dynamic flow; hands off to Phase-5 Dispatch when it lands).
+- core/format.js downloadHtml() (prior); i18n reports.* email keys.
+
+Contracts are complete and callable now (Platform.Actions.run('<action>', {preview, payload})); the
+PA-side flow behaviour is [PA-flow-unverified] until implemented. No new endpoints introduced.
+Integrated gate: 12 static + ui-smoke 149/149 (incl. dispatchEmail dispatch assertion).

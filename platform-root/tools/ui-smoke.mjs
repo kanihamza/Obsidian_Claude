@@ -357,6 +357,14 @@ try {
   check('reports: reference table populates', await page.locator('#module-reports .pf-table tbody tr').count() >= 1,
     'rows=' + await page.locator('#module-reports .pf-table tbody tr').count());
   check('reports: Management Report renders with HTML/Print export', await page.locator('#module-reports #reports-mgmt').count() === 1 && await page.locator('#module-reports #rep-html').count() === 1 && await page.locator('#module-reports #rep-print').count() === 1);
+  // Send Report Email → routed through the Dynamic Global Actions flow via the dispatchEmail contract.
+  paCalls.length = 0;
+  await page.locator('#module-reports #rep-email').click();
+  await page.locator('pf-modal[open] .primary').first().waitFor({ timeout: 8000 });
+  await page.locator('pf-modal[open] .primary').first().click();
+  await page.waitForTimeout(400);
+  const emailCall = paCalls.find((c) => c.action === 'dispatchEmail' && c.operation === 'send' && c.client && c.client.app === 'obsidian' && c.payload && c.payload.email);
+  check('reports: Send Report Email dispatches the dispatchEmail contract (dynamic flow)', !!emailCall, 'actions=[' + paCalls.map((c) => c.action).join(',') + ']');
   check('reports: no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
 
   console.log('\n==================== EXECUTIVE DEEP CHECK ====================');
