@@ -1,0 +1,269 @@
+{
+  "schema_version": "1.1",
+  "spa_id": "spa-12",
+  "source_filename": "NITDA_DGO_HUB_ACK.html",
+  "title": "NITDA | Unified Operations Hub",
+  "purpose": "Single-file operations hub for NITDA's Digital Governance Office that handles compliance task acknowledgement (deep-link target), a task dashboard with quick-create, an omni-mode repository search across documents/tasks/emails, directive assignment with category-driven assignee suggestion, and email-to-task conversion. Calls multiple Power Automate flows directly and supports an embedded iframe shell signaling/theming protocol.",
+  "offerings": [
+    {
+      "name": "Task Acknowledgement",
+      "description": "Standalone acknowledgement screen reached via ?taskId deep link; records confirmation with device/user-agent for audit and posts to the (placeholder) acknowledge flow.",
+      "entry_point": "executeAcknowledge / screen-ack (deep link ?taskId=...)"
+    },
+    {
+      "name": "Compliance Task Dashboard",
+      "description": "Lists active tasks fetched from the GET flow and provides a fast-track quick-create input for new compliance tasks.",
+      "entry_point": "navigateTo('dashboard') / loadDashboardTasks / quickCreateTask"
+    },
+    {
+      "name": "Omni-Mode Repository Search",
+      "description": "Unified search across Documents, Tasks, and Emails selectable by a type dropdown, rendering type-specific result cards with action buttons.",
+      "entry_point": "navigateTo('omni') / runOmniSearch"
+    },
+    {
+      "name": "Directive Assignment",
+      "description": "Form to assign a selected document to a responsible person with category/sub-category lookups, suggested department/assignee, priority and comments; submits to the create flow.",
+      "entry_point": "openAssignForm / submitFullAssignment"
+    },
+    {
+      "name": "Email-to-Task Conversion",
+      "description": "Converts a searched email into a compliance task, prefilling a generated title and showing sanitized email body, then submits to the create flow.",
+      "entry_point": "openEmailToTaskForm / submitEmailToTask"
+    },
+    {
+      "name": "Task Progress Update",
+      "description": "Modal to update an existing task's status and post a progress note via the create flow.",
+      "entry_point": "openTaskUpdate / executeTaskUpdate"
+    }
+  ],
+  "views": [
+    { "name": "screen-landing", "type": "screen", "trigger": "navigateTo('landing') when no nitda_session in sessionStorage" },
+    { "name": "screen-dashboard", "type": "screen", "trigger": "navigateTo('dashboard') / brand click / default route" },
+    { "name": "screen-omni", "type": "screen", "trigger": "navigateTo('omni') nav-item" },
+    { "name": "screen-ack", "type": "screen", "trigger": "navigateTo('ack') via deep link ?taskId" },
+    { "name": "screen-assign", "type": "screen", "trigger": "openAssignForm -> navigateTo('assign')" },
+    { "name": "screen-email-to-task", "type": "screen", "trigger": "openEmailToTaskForm -> navigateTo('email-to-task')" },
+    { "name": "screen-tasks", "type": "nav-item (My Tasks)", "trigger": "navigateTo('tasks') nav-item; no matching screen-tasks element exists" },
+    { "name": "modal-task-update", "type": "modal", "trigger": "openTaskUpdate / closeModal" }
+  ],
+  "js_utilities": [
+    { "name": "navigateTo", "signature": "navigateTo(viewId)", "purpose": "Router: toggles .active on screen-{viewId} and nav items, sets currentView, lazy-loads dashboard tasks or lookups.", "approx_lines": 12 },
+    { "name": "callAPI", "signature": "async callAPI(endpoint, body, loaderMsg='Syncing...')", "purpose": "Core fetch engine: dedupes in-flight requests, shows/hides loader, POSTs JSON with userEmail+timestamp, returns parsed data or null on error.", "approx_lines": 27 },
+    { "name": "showLoader", "signature": "showLoader(msg)", "purpose": "Sets loader text and shows global loader overlay.", "approx_lines": 4 },
+    { "name": "hideLoader", "signature": "hideLoader()", "purpose": "Hides global loader overlay.", "approx_lines": 3 },
+    { "name": "bootApp", "signature": "bootApp()", "purpose": "Reads auth email/name, stores session, hydrates UI and processes deep link.", "approx_lines": 10 },
+    { "name": "hydrateUI", "signature": "hydrateUI()", "purpose": "Populates header user display, initials, and role from AppState.user.", "approx_lines": 5 },
+    { "name": "processDeepLink", "signature": "processDeepLink()", "purpose": "Parses URL params taskId/view to route to ack, an explicit view, or dashboard.", "approx_lines": 14 },
+    { "name": "executeAcknowledge", "signature": "async executeAcknowledge()", "purpose": "Posts taskId+device userAgent to API_ACK, then marks badge/button as acknowledged.", "approx_lines": 10 },
+    { "name": "loadDashboardTasks", "signature": "async loadDashboardTasks()", "purpose": "Fetches tasks via API_GET and renders task rows with status badges.", "approx_lines": 23 },
+    { "name": "quickCreateTask", "signature": "async quickCreateTask()", "purpose": "Creates a task from dashboard input via API_CREATE then reloads list.", "approx_lines": 7 },
+    { "name": "fetchLookups", "signature": "async fetchLookups()", "purpose": "Fetches reference lookups (categories/departments/users) and populates assign category dropdown.", "approx_lines": 9 },
+    { "name": "runOmniSearch", "signature": "async runOmniSearch()", "purpose": "Selects DOCS/TASKS/EMAILS endpoint by type, queries, and renders results.", "approx_lines": 12 },
+    { "name": "renderOmniResults", "signature": "renderOmniResults(res, type)", "purpose": "Renders type-specific result cards (doc/task/email) with inline onclick action buttons.", "approx_lines": 55 },
+    { "name": "openAssignForm", "signature": "openAssignForm(doc)", "purpose": "Sets selection.doc, fills assign banner/ref and navigates to assign screen.", "approx_lines": 6 },
+    { "name": "onAssignCatChange", "signature": "onAssignCatChange()", "purpose": "Populates subcategory list and suggests default responsible department/assignee email from lookups.", "approx_lines": 13 },
+    { "name": "submitFullAssignment", "signature": "async submitFullAssignment()", "purpose": "Validates and posts a singleassignment payload to API_CREATE; alerts and returns to dashboard.", "approx_lines": 21 },
+    { "name": "openEmailToTaskForm", "signature": "openEmailToTaskForm(email)", "purpose": "Prefills email-to-task form title and preview body, navigates to conversion screen.", "approx_lines": 6 },
+    { "name": "submitEmailToTask", "signature": "async submitEmailToTask()", "purpose": "Posts converted email-to-task payload to API_CREATE then returns to dashboard.", "approx_lines": 11 },
+    { "name": "openTaskUpdate", "signature": "openTaskUpdate(task)", "purpose": "Sets selection.task, presets modal status and shows task update modal.", "approx_lines": 5 },
+    { "name": "closeModal", "signature": "closeModal(id)", "purpose": "Removes .show from a modal overlay.", "approx_lines": 3 },
+    { "name": "executeTaskUpdate", "signature": "async executeTaskUpdate()", "purpose": "Posts updateTask payload to API_CREATE, closes modal and re-runs omni search.", "approx_lines": 11 },
+    { "name": "initShell", "signature": "(function initShell())() IIFE", "purpose": "If embedded in an iframe, listens for NITDA_SHELL postMessage (THEME_CHANGE) and announces MODULE_READY to parent.", "approx_lines": 8 }
+  ],
+  "dom_contract": {
+    "element_ids": [
+      "global-loader", "loader-text", "header-user-role", "user-display", "user-initials", "main-nav",
+      "screen-landing", "auth-email", "auth-name", "screen-dashboard", "dash-task-title", "dashboard-tasks-container",
+      "screen-omni", "omni-type", "omni-query", "omni-results-area", "screen-ack", "ack-status-badge", "ack-task-title",
+      "ack-main-btn", "screen-assign", "assign-target-ref", "assign-doc-banner", "assign-target-title", "assign-category",
+      "assign-subcategory", "assign-email", "assignee-suggestion", "suggested-dept", "assign-priority", "assign-comments",
+      "screen-email-to-task", "et-title", "et-assignee", "et-priority", "et-notes", "et-preview-content",
+      "modal-task-update", "modal-status", "modal-note"
+    ],
+    "css_classes": [
+      "container", "card", "stack", "header", "header-wrap", "brand", "brand-logo", "brand-title", "brand-sub",
+      "nav-strip", "nav-strip-wrap", "nav-item", "active", "btn", "btn-primary", "btn-secondary", "btn-ghost",
+      "btn-disabled", "btn-sm", "input", "form-control", "label", "form-group", "badge", "badge-pending", "badge-ok",
+      "badge-success", "badge-info", "screen", "detail-grid", "detail-item", "detail-label", "detail-value",
+      "action-row", "email-frame", "modal-overlay", "show", "modal-box", "loader-overlay", "spinner", "task-row",
+      "preview-table", "highlight"
+    ],
+    "inline_styles_present": true,
+    "notes": "Heavy use of inline style attributes throughout markup and template literals. Screens toggled via .screen/.active. A 'tasks' nav item exists with no corresponding screen-tasks element."
+  },
+  "event_handling": {
+    "inline_handlers": [
+      "onclick=navigateTo('dashboard') (brand & nav items)", "onclick=bootApp()", "onclick=quickCreateTask()",
+      "onkeydown=if(event.key==='Enter') runOmniSearch()", "onclick=runOmniSearch()", "onclick=executeAcknowledge()",
+      "onchange=onAssignCatChange()", "onclick=submitFullAssignment()", "onclick=submitEmailToTask()",
+      "onclick=closeModal('modal-task-update')", "onclick=executeTaskUpdate()",
+      "onclick=openAssignForm(...) (generated)", "onclick=openTaskUpdate(...) (generated)",
+      "onclick=openEmailToTaskForm(...) (generated)", "onclick=navigateTo('omni') close button"
+    ],
+    "listener_bound": [],
+    "global_listeners": ["window.onload", "window.addEventListener('message') (only when embedded in iframe)"],
+    "notes": "Almost all interactivity is via inline onclick/onkeydown/onchange attributes; postMessage listener bound only inside initShell IIFE when window !== window.parent. Generated result cards embed JSON.stringify(item) into inline onclick handlers."
+  },
+  "global_scope": {
+    "global_functions": [
+      "navigateTo", "callAPI", "showLoader", "hideLoader", "bootApp", "hydrateUI", "processDeepLink",
+      "executeAcknowledge", "loadDashboardTasks", "quickCreateTask", "fetchLookups", "runOmniSearch",
+      "renderOmniResults", "openAssignForm", "onAssignCatChange", "submitFullAssignment", "openEmailToTaskForm",
+      "submitEmailToTask", "openTaskUpdate", "closeModal", "executeTaskUpdate"
+    ],
+    "global_variables": ["NITDA_CONFIG", "AppState"],
+    "notes": "NITDA_CONFIG and AppState are module-scoped const at top of the single script. window.onload assigned. initShell is an IIFE not exposed globally."
+  },
+  "state_management": "Single mutable AppState const object holds user, currentView, tasks array, lookups (categories/departments/users), selection (doc/task/email), isDeepLink flag, and an _fetching map used to dedupe concurrent requests per endpoint. User identity persisted in sessionStorage under key 'nitda_session'. No reactive framework; DOM updated imperatively via innerHTML and direct element mutation.",
+  "design_tokens": {
+    "framework": null,
+    "colors": ["#0A8F4A", "#066A38", "#E8F5EE", "#1F2937", "#6B7280", "#E5E7EB", "#F7FAF9", "#FFFFFF", "#008751", "#00A69D", "#2D3748", "#D1D5DB", "#F3F4F6", "#05583B", "#A92323", "#E05606", "#107C10", "#E6F7F9", "#0557D8", "#FFCC00"],
+    "fonts": ["system-ui", "-apple-system", "sans-serif"],
+    "spacing_or_layout_notes": "CSS custom properties under :root with a [data-theme=dark] override block. --radius 12px, --shadow soft green-tinted, --transition 0.2s ease. Max content width 1100px; sticky header (64px) and nav strip; screens animate with fadeIn keyframe."
+  },
+  "assets": [
+    { "type": "svg-icon", "delivery": "inline-svg", "ref": "brand-logo star path in header", "approx_size": "~120 bytes" },
+    { "type": "svg-icon", "delivery": "inline-svg", "ref": "dashboard checklist icon (h3 heading)", "approx_size": "~200 bytes" },
+    { "type": "svg-icon", "delivery": "inline-svg", "ref": "omni-search magnifier empty-state icon", "approx_size": "~200 bytes" }
+  ],
+  "external_libraries": [],
+  "power_automate_flows": [
+    {
+      "name": "API_GET (getTasks)",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/02a3a70f3dec4dcd9a85a244a60c65b9/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": null,
+      "custom_headers": ["Content-Type: application/json"],
+      "trigger": "loadDashboardTasks() on dashboard navigation",
+      "request_shape": "{ action:'getTasks', userEmail, timestamp }",
+      "response_shape": "Array of tasks OR { data: [tasks] } with fields title/Title, ID, assignedTo/AssignedTo, status",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": "Try/catch in callAPI hides loader, console.error, returns null; empty render fallback message."
+    },
+    {
+      "name": "API_CREATE (create/assign/convert/update)",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6b3bad3005b44bf6bced0f8074d3f2ed/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": null,
+      "custom_headers": ["Content-Type: application/json"],
+      "trigger": "quickCreateTask, submitFullAssignment (action singleassignment), submitEmailToTask, executeTaskUpdate (action updateTask)",
+      "request_shape": "Varies by caller; e.g. { title, createdBy } | { action:'singleassignment', docId, title, category, subCategory, assignee, priority, comments, createdBy } | { title, assignee, priority, notes, emailId, createdBy } | { action:'updateTask', taskId, status, note, updatedBy }; plus userEmail+timestamp auto-merged.",
+      "response_shape": "Truthy response object on success (used only as boolean gate); alerts on success.",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": "callAPI try/catch returns null; submitFullAssignment only proceeds if res truthy."
+    },
+    {
+      "name": "API_ACK (acknowledge)",
+      "method": "POST",
+      "endpoint_base": "https://YOUR_FLOW_URL/acknowledge",
+      "has_sas_token": false,
+      "auth_scheme": null,
+      "custom_headers": ["Content-Type: application/json"],
+      "trigger": "executeAcknowledge() on confirm acknowledgement button",
+      "request_shape": "{ taskId, device: navigator.userAgent, userEmail, timestamp }",
+      "response_shape": "Unused; UI updates badge/button regardless of response value.",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": "Placeholder endpoint (YOUR_FLOW_URL); UI marks acknowledged even if call fails/returns null."
+    },
+    {
+      "name": "LOOKUPS",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ff455c68e9ac493e858fb984bcfd01fb/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": null,
+      "custom_headers": ["Content-Type: application/json"],
+      "trigger": "fetchLookups() on first navigation to omni view",
+      "request_shape": "{ action:'lookups', userEmail, timestamp }",
+      "response_shape": "{ data: { categories:[{Category,Subcategory,'Default Primary Responsible'}], departments:[{DSU_KEY,DSU_HeadEmail,DSU_HeadPersonalEmail}], users:[] } }",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": "callAPI try/catch; only populates if res.data present."
+    },
+    {
+      "name": "DOCS (search)",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/818ec4053f1e4f0b87845114241d8b74/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": null,
+      "custom_headers": ["Content-Type: application/json"],
+      "trigger": "runOmniSearch() when omni-type='doc'",
+      "request_shape": "{ query, action:'search', userEmail, timestamp }",
+      "response_shape": "Array or { data } of documents with Title, ID, Status, Category",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": "callAPI try/catch; empty result renders 'No matching records found.'"
+    },
+    {
+      "name": "TASKS (search)",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/37642ba3597f4cf58288cc71b5e6b519/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": null,
+      "custom_headers": ["Content-Type: application/json"],
+      "trigger": "runOmniSearch() default / when omni-type='task'",
+      "request_shape": "{ query, action:'search', userEmail, timestamp }",
+      "response_shape": "Array or { data } of tasks with Title, ID, Progress, AssignedTo",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": "callAPI try/catch; empty result renders fallback message."
+    },
+    {
+      "name": "EMAILS (search)",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3931e2ff995242b6b2c920c8b2209797/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": null,
+      "custom_headers": ["Content-Type: application/json"],
+      "trigger": "runOmniSearch() when omni-type='email'",
+      "request_shape": "{ query, action:'search', userEmail, timestamp }",
+      "response_shape": "Array or { data } of emails with subject, fromName/fromAddress, bodyContent/bodyPreview, id",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": "callAPI try/catch; empty result renders fallback message."
+    }
+  ],
+  "behaviors": {
+    "loading_states": true,
+    "error_states": true,
+    "polling_present": false,
+    "timers_present": false,
+    "notes": "Global loader overlay with spinner shown during every callAPI; per-endpoint in-flight dedupe via AppState._fetching. Dashboard shows static 'Polling for updates...' placeholder text but there is no actual polling/setInterval. Errors are swallowed (console.error + null return); minimal user-facing error UI beyond empty-state messages."
+  },
+  "accessibility": {
+    "aria_present": false,
+    "keyboard_nav": true,
+    "notes": "No ARIA roles/attributes. Keyboard support limited to Enter-to-search on the omni query input via onkeydown. Inputs have visible labels but no programmatic associations beyond proximity."
+  },
+  "localization": {
+    "i18n_present": false,
+    "languages": ["en"],
+    "notes": "html lang='en'; all copy hard-coded in English. Emoji used as visual category markers in option labels."
+  },
+  "risks_and_quirks": [
+    "Live Power Automate SAS tokens (sig=...) were hard-coded in NITDA_CONFIG for 6 of 7 endpoints; redacted here.",
+    "API_ACK endpoint is an unconfigured placeholder 'https://YOUR_FLOW_URL/acknowledge'; acknowledgement UI succeeds regardless of network outcome.",
+    "Generated result cards embed JSON.stringify(item) directly into inline onclick handlers (openAssignForm/openTaskUpdate/openEmailToTaskForm) - potential breakage/XSS if data contains quotes or script.",
+    "Email body injected via innerHTML in et-preview-content with no sanitization despite 'Sanitized' label.",
+    "'My Tasks' nav item routes to view 'tasks' but no screen-tasks element exists (dead navigation).",
+    "Errors are silently swallowed (returns null) so failed loads look like empty inventories.",
+    "Auth is purely client-side trust (email+name stored in sessionStorage); no real authentication.",
+    "No request timeout/abort; long flows could hang the loader indefinitely."
+  ],
+  "extraction_meta": {
+    "complete": true,
+    "unparseable_sections": [],
+    "source_lines_approx": 658
+  }
+}

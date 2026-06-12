@@ -1,0 +1,188 @@
+{
+  "schema_version": "1.1",
+  "spa_id": "spa-11",
+  "source_filename": "Response matrix v2.html",
+  "title": "NITDA Response Matrix | Enterprise Governance",
+  "purpose": "Single-file enterprise governance/registry SPA for NITDA's Director General's Office (DGO). Loads tasks, documents, emails and lookups from four Power Automate flows, builds a 'polymorphic matrix' that correlates tasks to ancestor documents and sibling emails via RefIDD, derives SLA health and statuses, and presents a filterable metrics dashboard, a matrix table, a 'Minute Sheet & Movement Record' trace modal, and an acknowledgment workflow. Includes CSS-based RBAC (DGCEO/EA/Registry) and a small canvas telemetry chart of sync durations.",
+  "offerings": [
+    {
+      "name": "Intelligence Matrix Dashboard",
+      "description": "Metrics cards (Total, Overdue, Awaiting Action, Completed) plus a filterable matrix table of task/movement records with SLA health bars and status badges.",
+      "entry_point": "syncData() via 'Full Matrix Sync' button or promptUserEmail(); rendered into #matrixTableBody and #stat-* cards"
+    },
+    {
+      "name": "File Matrix Trace (Minute Sheet)",
+      "description": "Modal showing governed lineage metadata, AI classification placeholder, role-gated executive decision / forwarding controls, and a constructed minute-sheet timeline of registry receipt, workflow minute, and related emails.",
+      "entry_point": "openMatrixModal(id) via row click; #matrixModal"
+    },
+    {
+      "name": "Task Acknowledgment",
+      "description": "Modal to capture execution notes and acknowledge a task (local optimistic update only, no flow call).",
+      "entry_point": "openAckModal(id) via Acknowledge button; #ackModal -> submitAck()"
+    },
+    {
+      "name": "Digital Forwarding / Minute Routing",
+      "description": "Registry-only control to select a target DSU department and add a routing instruction note, then forward the file (simulated save with timeout, then re-sync).",
+      "entry_point": "submitMinute() via FORWARD FILE button inside #matrixModal"
+    },
+    {
+      "name": "System Telemetry",
+      "description": "Canvas bar chart of recent sync durations plus granular email controls (unread checkbox, folder select, top-N input).",
+      "entry_point": "renderTelemetry() rendered to #telemetryCanvas"
+    }
+  ],
+  "views": [
+    { "name": "Metrics Dashboard", "type": "dashboard", "trigger": "always visible in <main>; populated by updateStats() after syncData()" },
+    { "name": "Telemetry & Controls Panel", "type": "panel", "trigger": "always visible; updated by renderTelemetry()" },
+    { "name": "Filters Bar", "type": "panel", "trigger": "always visible; oninput/onchange call applyFilters()" },
+    { "name": "Matrix Table", "type": "table", "trigger": "renderTable() called by applyFilters()" },
+    { "name": "Acknowledgment Modal", "type": "modal", "trigger": "openAckModal(id) / closeAckModal()" },
+    { "name": "Matrix Trace Modal (Minute Sheet)", "type": "modal", "trigger": "openMatrixModal(id) / closeModal()" },
+    { "name": "Notification Toast", "type": "toast", "trigger": "notify(msg, type)" }
+  ],
+  "js_utilities": [
+    { "name": "detectDeviceType", "signature": "detectDeviceType() -> 'mobile'|'tablet'|'desktop'", "purpose": "Classify device by window width for flow payload device.id.", "approx_lines": 5 },
+    { "name": "sanitizeHtml", "signature": "sanitizeHtml(html) -> string", "purpose": "Strip script tags, inline on* handlers and javascript: URLs from email previews before injection.", "approx_lines": 6 },
+    { "name": "renderTelemetry", "signature": "renderTelemetry() -> void", "purpose": "Draw a canvas bar chart of recent sync durations from state.telemetry.", "approx_lines": 14 },
+    { "name": "fetchResilient", "signature": "async fetchResilient(url, payload, retries=5, delay=1000) -> json", "purpose": "POST JSON with exponential-backoff retry on failure.", "approx_lines": 17 },
+    { "name": "syncData", "signature": "async syncData() -> void", "purpose": "Fetch docs/tasks/emails/lookups in parallel, build the correlated matrix with derived status and SLA percent, then update stats/filters/table/telemetry.", "approx_lines": 74 },
+    { "name": "updateStats", "signature": "updateStats() -> void", "purpose": "Compute and set total/overdue/pending/completed counts.", "approx_lines": 11 },
+    { "name": "populateFilters", "signature": "populateFilters() -> void", "purpose": "Populate category filter and forwarding DSU select from matrix/lookup data.", "approx_lines": 15 },
+    { "name": "applyFilters", "signature": "applyFilters() -> void", "purpose": "Filter matrix by search/category/status and render the table.", "approx_lines": 32 },
+    { "name": "renderTable", "signature": "renderTable(data) -> void", "purpose": "Render matrix rows with status badge, SLA bar and action buttons.", "approx_lines": 49 },
+    { "name": "openMatrixModal", "signature": "openMatrixModal(id) -> void", "purpose": "Open trace modal, build metadata and minute-sheet entries from parent doc and related emails.", "approx_lines": 60 },
+    { "name": "submitMinute", "signature": "async submitMinute() -> void", "purpose": "Validate routing fields, simulate forwarding with a timeout, then close and re-sync.", "approx_lines": 18 },
+    { "name": "openAckModal", "signature": "openAckModal(id) -> void", "purpose": "Open the acknowledgment modal for the selected task (uses global event).", "approx_lines": 8 },
+    { "name": "closeAckModal", "signature": "closeAckModal() -> void", "purpose": "Hide the acknowledgment modal.", "approx_lines": 3 },
+    { "name": "submitAck", "signature": "submitAck() -> void", "purpose": "Locally mark active item as Acknowledged after a short timeout and re-filter.", "approx_lines": 10 },
+    { "name": "closeModal", "signature": "closeModal() -> void", "purpose": "Hide the matrix trace modal.", "approx_lines": 4 },
+    { "name": "notify", "signature": "notify(msg, type) -> void", "purpose": "Show a transient colored toast notification.", "approx_lines": 9 },
+    { "name": "promptUserEmail", "signature": "promptUserEmail() -> void", "purpose": "Prompt for context email, update avatar and re-sync.", "approx_lines": 4 },
+    { "name": "updateUserAvatar", "signature": "updateUserAvatar() -> void", "purpose": "Set avatar initial and apply CSS RBAC body class based on email.", "approx_lines": 11 }
+  ],
+  "dom_contract": {
+    "element_ids": ["sync-icon", "user-avatar", "notification", "stat-total", "stat-overdue", "stat-pending", "stat-completed", "ctrlUnread", "ctrlFolder", "ctrlTop", "telemetryCanvas", "searchInput", "categoryFilter", "statusFilter", "matrixTableBody", "ackModal", "ackNotes", "matrixModal", "modalTitle", "modalRef", "metadataContainer", "forwardDSU", "internalNote", "minuteEntries"],
+    "css_classes": ["nitda-gradient", "minute-sheet", "minute-entry", "red-ink", "blue-ink", "status-badge", "status-completed", "status-pending", "status-overdue", "sla-bar", "sla-progress", "registry-stamp", "shimmer", "role-DGCEO", "role-EA", "role-Registry", "ea-only", "dg-only", "registry-only", "show", "animate-spin", "hidden"],
+    "inline_styles_present": true,
+    "notes": "Tailwind utility classes used heavily throughout markup. Custom <style> block defines NITDA palette, minute-sheet paper look, status badges, SLA bars, shimmer, and CSS-based RBAC visibility rules. Dynamic rows set inline style width for SLA progress."
+  },
+  "event_handling": {
+    "inline_handlers": ["onclick=\"syncData()\"", "onclick=\"promptUserEmail()\"", "oninput=\"applyFilters()\"", "onchange=\"applyFilters()\"", "onclick=\"closeAckModal()\"", "onclick=\"submitAck()\"", "onclick=\"closeModal()\"", "onclick=\"submitMinute()\"", "onclick=\"openMatrixModal(id)\" (dynamic rows)", "onclick=\"openAckModal(id)\" (dynamic rows)"],
+    "listener_bound": [],
+    "global_listeners": ["window.onload"],
+    "notes": "All handlers are inline HTML attributes; openAckModal relies on the implicit global 'event' object for stopPropagation. No addEventListener bindings."
+  },
+  "global_scope": {
+    "global_functions": ["detectDeviceType", "sanitizeHtml", "renderTelemetry", "fetchResilient", "syncData", "updateStats", "populateFilters", "applyFilters", "renderTable", "openMatrixModal", "submitMinute", "openAckModal", "closeAckModal", "submitAck", "closeModal", "notify", "promptUserEmail", "updateUserAvatar"],
+    "global_variables": ["CONFIG", "state"],
+    "notes": "Single inline script in global scope; CONFIG holds the four flow URLs, state holds userEmail, matrix, lookupData, activeItem and telemetry array."
+  },
+  "state_management": "Plain mutable module-level objects. CONFIG holds the four Power Automate flow URLs. state holds userEmail (default dgsregistry@nitda.gov.ng), matrix (enriched task array), lookupData {departments, users}, activeItem (selected task), and telemetry (rolling array of sync durations capped at 20). syncData rebuilds state.matrix on each sync by mapping tasks to parent docs and related emails and deriving status/SLA. Acknowledgment and forwarding mutate state locally/optimistically; no persistence beyond flow round-trips.",
+  "design_tokens": {
+    "framework": "Tailwind CSS (CDN)",
+    "colors": ["#05583B", "#00A69D", "#c9a227", "#fffdf0", "#b91c1c", "#1e3a8a", "#dcfce7", "#166534", "#fef9c3", "#854d0e", "#fee2e2", "#991b1b", "#f0f2f5"],
+    "fonts": ["sans (Tailwind default font-sans)", "Courier New / Courier monospace (minute-sheet)"],
+    "spacing_or_layout_notes": "Sticky gradient header; max-w-7xl centered main; responsive grid for metric cards; full-screen modals with blur backdrops; minute-sheet uses paper background with radial-gradient dot pattern and dashed entry separators."
+  },
+  "assets": [
+    { "type": "image", "delivery": "external-url", "ref": "https://nitda.gov.ng/wp-content/uploads/2021/01/NITDA-Logo.png", "approx_size": null },
+    { "type": "icon/emoji", "delivery": "inline-svg", "ref": "Unicode emoji glyphs (clipboard, sync arrow) used as inline text icons", "approx_size": null }
+  ],
+  "external_libraries": [
+    { "name": "Tailwind CSS", "version": null, "source": "https://cdn.tailwindcss.com" }
+  ],
+  "power_automate_flows": [
+    {
+      "name": "docs (getDocs)",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/818ec4053f1e4f0b87845114241d8b74/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-query-token",
+      "custom_headers": ["Content-Type: application/json"],
+      "trigger": "syncData() Promise.all on sync; fetchResilient",
+      "request_shape": "{ userEmail, operation:'read', device:{id}, source:'http', action:'getDocs' }",
+      "response_shape": "{ data:{docs:[]} } or { docs:[] }; docs have ID, title/Title, link/AttachmentLink, Created",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": "fetchResilient retries up to 5 times with exponential backoff; on final failure syncData catch shows 'Sync Engine Error' toast"
+    },
+    {
+      "name": "tasks (fetch_tasks)",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/37642ba3597f4cf58288cc71b5e6b519/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-query-token",
+      "custom_headers": ["Content-Type: application/json"],
+      "trigger": "syncData() Promise.all on sync; fetchResilient",
+      "request_shape": "{ userEmail, operation:'read', device:{id}, source:'http', action:'fetch_tasks' }",
+      "response_shape": "{ data:{tasks:[]} } or { tasks:[] }; tasks have ID, RefIDD/Reference_ID, Title, AssignedTo, Classification, Progress/Status, StartDate/DueDate/Created, Priority, GDSUROUT, Description",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": "fetchResilient backoff retries; syncData catch shows error toast"
+    },
+    {
+      "name": "emails (emailsfetch)",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3931e2ff995242b6b2c920c8b2209797/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-query-token",
+      "custom_headers": ["Content-Type: application/json"],
+      "trigger": "syncData() Promise.all on sync; fetchResilient",
+      "request_shape": "{ userEmail, operation:'read', device:{id}, source:'http', action:'emailsfetch', top, skip:0, folderPath, fetchOnlyUnread }",
+      "response_shape": "{ data:{emails:[]} } or { emails:[] }; emails have subject, bodyPreview, fromAddress/from, receivedDateTime/received",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": "fetchResilient backoff retries; syncData catch shows error toast"
+    },
+    {
+      "name": "lookups (fetchReferencesAndLookups)",
+      "method": "POST",
+      "endpoint_base": "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ff455c68e9ac493e858fb984bcfd01fb/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=__REDACTED__",
+      "has_sas_token": true,
+      "auth_scheme": "sas-query-token",
+      "custom_headers": ["Content-Type: application/json"],
+      "trigger": "syncData() Promise.all on sync; fetchResilient",
+      "request_shape": "{ userEmail, operation:'read', device:{id}, source:'http', action:'fetchReferencesAndLookups' }",
+      "response_shape": "{ data:{departments:[],users:[]} } or { departments:[], users:[] }; departments have DSU_KEY, Title",
+      "depends_on": null,
+      "polling_interval_ms": null,
+      "timeout_ms": null,
+      "error_handling": "fetchResilient backoff retries; syncData catch shows error toast"
+    }
+  ],
+  "behaviors": {
+    "loading_states": true,
+    "error_states": true,
+    "polling_present": false,
+    "timers_present": true,
+    "notes": "Loading shown via sync icon spin and shimmer CSS; errors surfaced as toasts and console. Timers used by fetchResilient backoff, notify auto-dismiss, submitMinute/submitAck simulated delays. No interval polling. submitMinute and submitAck are simulated (no real flow POST for save/acknowledge)."
+  },
+  "accessibility": {
+    "aria_present": false,
+    "keyboard_nav": false,
+    "notes": "No explicit ARIA roles/labels; modals are div-based with click handlers only. Relies on native form controls. No keyboard handlers for suggestions or modals."
+  },
+  "localization": {
+    "i18n_present": false,
+    "languages": ["en"],
+    "notes": "html lang='en'; all strings hardcoded in English. Dates rendered with toLocaleString using default locale."
+  },
+  "risks_and_quirks": [
+    "Hardcoded Power Automate SAS tokens embedded directly in client-side CONFIG.flows (redacted here) - exposed to anyone viewing source.",
+    "CSS-only RBAC (role-DGCEO/EA/Registry classes hide controls) is presentation-only and trivially bypassable; not real authorization.",
+    "submitMinute (forwarding) and submitAck (acknowledgment) are simulated with setTimeout and do not call any persistence flow, so movements/acknowledgments are not saved server-side.",
+    "openAckModal uses the implicit global 'event' object (event.stopPropagation()), which is non-standard and may break in strict environments.",
+    "Email/document correlation uses naive substring matching on subjects/body previews, prone to false positives.",
+    "userEmail defaults to dgsregistry@nitda.gov.ng and is changed via prompt(); no authentication.",
+    "renderTable injects task fields into innerHTML without escaping (only email previews are sanitized), creating XSS risk if flow data is untrusted.",
+    "syncData is not auto-invoked on load (window.onload only updates avatar); user must click Sync."
+  ],
+  "extraction_meta": {
+    "complete": true,
+    "unparseable_sections": [],
+    "source_lines_approx": 667
+  }
+}

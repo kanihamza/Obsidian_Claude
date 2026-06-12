@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.1",
+  "spa_id": "spa-19",
+  "source_filename": "Comments_Thread.html",
+  "title": "Comprehensive Comment Report",
+  "purpose": "Static HTML comment-report template that renders a list of comment cards (author + role, avatar, sentiment, priority, status, tag, reference id) with a NITDA watermark. A print/report export layout, not an interactive app.",
+  "offerings": [
+    { "name": "Comment report card", "description": "Per-comment card: author name + role, circular avatar with a sentiment-coloured ring, timestamp, status badge (Pending/Reviewed/Resolved), comment body, priority tag (Urgent/Medium/Low), sentiment chip with face icon (Negative/Positive/Neutral), and a comment reference id (e.g. #CMT-2045).", "entry_point": null },
+    { "name": "Report header & footer", "description": "Centered title 'Comprehensive Comment Report', generation date/time (WAT), and a footer with total-comments count and NITDA copyright.", "entry_point": null },
+    { "name": "Watermark branding", "description": "Low-opacity NITDA logo watermark layer behind each card.", "entry_point": null }
+  ],
+  "views": [
+    { "name": "Comment report", "type": "static-print-template", "trigger": "page load" }
+  ],
+  "js_utilities": [],
+  "dom_contract": {
+    "element_ids": [],
+    "css_classes": [],
+    "inline_styles_present": true,
+    "notes": "Entirely inline-styled; no ids or classes. Repeated card structure (watermark layer + content layer)."
+  },
+  "event_handling": {
+    "inline_handlers": [],
+    "listener_bound": [],
+    "global_listeners": [],
+    "notes": "No JavaScript and no event handlers — pure static markup."
+  },
+  "global_scope": {
+    "global_functions": [],
+    "global_variables": [],
+    "notes": "No <script> block."
+  },
+  "state_management": "None — static markup; comment data is hard-coded into the template.",
+  "design_tokens": {
+    "framework": null,
+    "colors": ["#0d7a3a", "#DC2626", "#059669", "#64748B", "#7f1d1d", "#065f46", "#1e293b", "#FFF7ED", "#ECFDF5", "#F3F4F6", "#6b7280", "#e6e9ee", "#13241a", "#b45309", "#047857", "#374151"],
+    "fonts": ["Segoe UI", "Roboto", "Arial"],
+    "spacing_or_layout_notes": "24px page padding; 32px gaps between cards; 10px rounded cards with 1px border and soft shadow; flex header rows (avatar + name + status), wrap tag row."
+  },
+  "assets": [
+    { "type": "image/png", "delivery": "inline-base64", "ref": "NITDA watermark (placeholder token [BASE64_LOGO])", "approx_size": null },
+    { "type": "image", "delivery": "external-url", "ref": "https://example.com/avatarN.jpg (placeholder avatars)", "approx_size": null },
+    { "type": "image/svg", "delivery": "inline-svg", "ref": "sentiment face icons (per card)", "approx_size": "small" }
+  ],
+  "external_libraries": [],
+  "power_automate_flows": [],
+  "behaviors": {
+    "loading_states": false,
+    "error_states": false,
+    "polling_present": false,
+    "timers_present": false,
+    "notes": "Static; no runtime behaviors."
+  },
+  "accessibility": {
+    "aria_present": true,
+    "keyboard_nav": false,
+    "notes": "Decorative SVG icons marked aria-hidden; images have alt text. No interactive/focusable elements."
+  },
+  "localization": {
+    "i18n_present": false,
+    "languages": ["en"],
+    "notes": "English copy; date shown in WAT."
+  },
+  "risks_and_quirks": [
+    "Placeholder assets: [BASE64_LOGO] token and example.com avatar URLs — not production assets.",
+    "Presentation/report template only; the interactive comment thread is implemented elsewhere (platform pf-comment-thread). This file is a print/report export, not an app surface.",
+    "Minor markup corruption around the third card's avatar style attribute."
+  ],
+  "extraction_meta": {
+    "complete": true,
+    "unparseable_sections": ["minor markup corruption in card 3 avatar style attribute"],
+    "source_lines_approx": 118
+  }
+}
