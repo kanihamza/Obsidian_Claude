@@ -26,6 +26,15 @@ export const Format = {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href = url; a.download = filename;
     document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  },
+  /** Download an HTML string as a standalone .html file (report export). */
+  downloadHtml(filename, html) {
+    if (typeof document === 'undefined') return;
+    const doc = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>' + filename + '</title></head><body>' + html + '</body></html>';
+    const blob = new Blob([doc], { type:'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
   }
 };
 export default Format;

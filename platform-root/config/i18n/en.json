@@ -952,5 +952,22 @@
     "done": "Action completed.",
     "failed": "Action failed ({kind}).",
     "syncFailed": "Saved locally, but the {action} flow did not confirm — it will be retried."
+  },
+  "reports": {
+    "mgmtTitle": "NITDA Management Report",
+    "print": "Print",
+    "downloadHtml": "Download HTML",
+    "exported": "Report exported.",
+    "keyInsights": "Key Insights",
+    "totalActivities": "Total Activities",
+    "completed": "Completed",
+    "pendingApprovals": "Pending Approvals",
+    "overdue": "Overdue",
+    "activitySummary": "Activity Summary",
+    "activityBody": "{total} records tracked across the fabric; {completed} reached a completed or closed state.",
+    "docTaskSummary": "Document & Task Summary",
+    "docTaskBody": "{docs} documents, {tasks} tasks and {emails} emails currently under management.",
+    "conclusion": "Conclusion",
+    "conclusionBody": "{overdue} item(s) overdue and {pending} approval(s) pending — prioritise these in the next cycle."
   }
 }

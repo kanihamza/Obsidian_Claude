@@ -356,6 +356,7 @@ try {
   check('reports: KPI tiles render', await page.locator('#module-reports .pf-stat__value').count() >= 1);
   check('reports: reference table populates', await page.locator('#module-reports .pf-table tbody tr').count() >= 1,
     'rows=' + await page.locator('#module-reports .pf-table tbody tr').count());
+  check('reports: Management Report renders with HTML/Print export', await page.locator('#module-reports #reports-mgmt').count() === 1 && await page.locator('#module-reports #rep-html').count() === 1 && await page.locator('#module-reports #rep-print').count() === 1);
   check('reports: no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
 
   console.log('\n==================== EXECUTIVE DEEP CHECK ====================');

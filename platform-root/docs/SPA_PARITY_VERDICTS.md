@@ -47,3 +47,16 @@
 
 > Verdict basis is verb-vs-capability search; treat PARTIAL/UNCAPTURED as candidate build items pending a
 > 1-line scope confirmation, not as finalized commitments.
+
+---
+## A5 status update (2026-06-11)
+- **`generateReport` / `htmlReportsRun` → CAPTURED.** The `reports` module now renders a formatted **NITDA
+  Management Report** (Key Insights / Activity / Document & Task / Conclusion from Entities.counts()) with
+  **Print** + **Download-HTML** export (Format.downloadHtml). Verified by ui-smoke (148/148).
+- Remaining residuals are tracked, not lost:
+  - `sendEmailV2` (outbound report/correspondence email) → **Phase-5 Dispatch**, blocked on PA contract (Q-4/Q-8).
+  - `prepare_meeting_pack`, `issue_trip_clearance`, `setReminder` → **scope-pending** bespoke workflows
+    (await user ruling: in-scope build vs legacy/out-of-scope). Logged here as the only open consolidation items.
+
+**Consolidation parity audit (A1–A5): complete.** 20/20 SPAs inventoried, flows + verbs reconciled, the one
+unblocked gap (report export) built and verified. Net open = 1 blocked (Dispatch) + 3 scope-pending.

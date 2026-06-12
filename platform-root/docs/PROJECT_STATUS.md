@@ -1640,3 +1640,15 @@ risk of hard-filtering to one status token against unknown live data:
 
 Verified: ui-smoke fixture gains an 'assigned' doc; assertions confirm the default scope shows 2 of 3
 (hides the routed one) and the toggle reveals all 3. Integrated gate: 12 static + ui-smoke 147/147.
+
+---
+
+## 31. 2026-06-11 — A5 close-out + reports Management Report (report-export gap built)
+
+SPA parity audit A1–A5 complete. Built the one unblocked gap (report export):
+- core/format.js: downloadHtml(filename, html) helper.
+- modules/reports: formatted NITDA Management Report (Key Insights/Activity/Doc&Task/Conclusion from
+  Entities.counts()) + Print + Download-HTML buttons. Outbound report email left to Phase-5 Dispatch.
+- i18n: top-level reports.* namespace. ui-smoke asserts #reports-mgmt + #rep-html + #rep-print render.
+Parity result: generateReport/htmlReportsRun now CAPTURED. Open: Dispatch (blocked Q-4/8) + 3 scope-pending
+bespoke workflows (meeting-pack, trip-clearance, reminders). Integrated gate: 12 static + ui-smoke 148/148.
