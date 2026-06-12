@@ -95,7 +95,9 @@ Errors: `kind ∈ DUEAT_REQUIRED | SCHEDULE_FAILED`.
 - **`prepareMeetingPack`** — wired: `ops-hub` multi-select bulk bar → *Prepare Meeting Pack*
   (selection → `refs`, preview + confirm + parsed feedback; this release).
 - **`issueTripClearance`** — intended home: a document/correspondence detail action. [UI not yet placed.]
-- **`setReminder`** — intended home: any record/task detail (`ref`/`taskId` + due picker). [UI not yet placed.]
+- **`setReminder`** — wired: shared rich-detail workspace (`appendRichSections`) on every record/task
+  detail (ops-hub / correspondence / fasttrack) → *Set a reminder* (due picker + note + channel →
+  `ref`/`taskId` + `dueAt`, preview + confirm + parsed feedback; this release).
 
 > Contracts are complete and callable now (`Platform.Actions.run('<action>', { preview, payload })`).
 > The PA-side flow must implement the matching server behaviour for each `action`; until then responses

@@ -64,7 +64,7 @@ function deriveFields(r, columnsHint) {
 /** Append rich, fabric-driven sections (comments thread, activity timeline, attachments) to a
  *  detail container for a selected record. Reusable by ANY module's detail renderer — used by
  *  mountListLens by default; callable from custom detail() callbacks (ops-hub, correspondence). */
-export function appendRichSections(detail, r, mod, { type, enableComments = true, enableActivity = true, enableAttachments = true } = {}) {
+export function appendRichSections(detail, r, mod, { type, enableComments = true, enableActivity = true, enableAttachments = true, enableReminder = true } = {}) {
   if (!r) return;
   const ref = r.__ref || '';
   const E = P().Entities;
@@ -128,6 +128,48 @@ export function appendRichSections(detail, r, mod, { type, enableComments = true
     const att = document.createElement('pf-attachment');
     att.emailId = r.emailId || r.__id;
     sec.append(att);
+    detail.append(sec);
+  }
+
+  // Set reminder — schedule a follow-up against this record/task. Routed through the Dynamic Global
+  // Actions flow (setReminder contract; no dedicated endpoint): due picker → preview + confirm →
+  // parsed feedback. Surfaces wherever a ref or taskId is present.
+  const taskId = (type === 'task' ? (r.taskId || r.__id) : r.taskId) || null;
+  if (enableReminder && (ref || taskId)) {
+    const sec = el('details', { class: 'pf-detail__section pf-detail__collapsible' });
+    sec.append(el('summary', {}, [el('span', { class: 'pf-overline', text: t('reminder.title') })]));
+    const due = el('input', { class: 'pf-input', type: 'datetime-local', id: 'rem-due-' + (ref || taskId) });
+    const note = el('input', { class: 'pf-input', type: 'text', placeholder: t('reminder.notePlaceholder'), id: 'rem-note-' + (ref || taskId) });
+    const channel = el('select', { class: 'pf-input' }, [
+      el('option', { value: 'inapp', text: t('reminder.channelInapp') }),
+      el('option', { value: 'email', text: t('reminder.channelEmail') })
+    ]);
+    const btn = el('button', { class: 'pf-btn pf-btn--primary', type: 'button', text: t('reminder.set'),
+      onClick: () => {
+        const raw = due.value;
+        if (!raw) { P().UI && P().UI.toast && P().UI.toast({ messageKey: 'reminder.dueRequired', variant: 'warning' }); return; }
+        let dueAt; try { dueAt = new Date(raw).toISOString(); } catch (_) { dueAt = raw; }
+        const A = P().Actions;
+        if (A && A.run) A.run('setReminder', {
+          preview: {
+            titleKey: 'reminder.confirmTitle',
+            summary: t('reminder.confirmSummary', { when: fmt(dueAt) }),
+            confirmKey: 'reminder.set',
+            details: [
+              ref ? { label: t('entity.reference'), value: ref } : { label: t('entity.task'), value: String(taskId) },
+              { label: t('reminder.due'), value: fmt(dueAt) },
+              note.value ? { label: t('reminder.note'), value: note.value } : null
+            ].filter(Boolean)
+          },
+          payload: { ref: ref || null, taskId: taskId || null, dueAt, note: note.value || null, channel: channel.value }
+        });
+      } });
+    sec.append(el('div', { class: 'pf-form' }, [
+      el('div', { class: 'pf-field' }, [el('label', { class: 'pf-label', text: t('reminder.due') }), due]),
+      el('div', { class: 'pf-field' }, [el('label', { class: 'pf-label', text: t('reminder.note') }), note]),
+      el('div', { class: 'pf-field' }, [el('label', { class: 'pf-label', text: t('reminder.channel') }), channel]),
+      el('div', { class: 'pf-field' }, [btn])
+    ]));
     detail.append(sec);
   }
 }

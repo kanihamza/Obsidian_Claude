@@ -225,6 +225,24 @@ try {
   await page.locator('#module-ops-hub .pf-md__scope').first().click(); // back to routing-queue scope
   await page.waitForTimeout(200);
 
+  // Set reminder → open a card detail, schedule a follow-up via the setReminder dynamic-action contract
+  // (due picker → preview + confirm → parsed feedback). Surfaces on every record/task detail pane.
+  paCalls.length = 0;
+  await page.locator('#module-ops-hub .pf-md__card').first().click();
+  await page.locator('#module-ops-hub .pf-md__detail').first().waitFor({ timeout: 8000 });
+  const remDue = page.locator('#module-ops-hub .pf-md__detail input[type="datetime-local"]').first();
+  check('ops-hub: record detail surfaces a Set-reminder control', await remDue.count() >= 1);
+  await page.locator('#module-ops-hub .pf-md__detail details', { has: page.locator('input[type="datetime-local"]') }).first().evaluate((d) => { d.open = true; });
+  await remDue.fill('2026-06-20T09:00');
+  await page.locator('#module-ops-hub .pf-md__detail .pf-btn--primary', { hasText: 'Set reminder' }).first().click();
+  await page.locator('pf-modal[open] .primary').first().waitFor({ timeout: 8000 });
+  check('ops-hub: reminder shows preview + confirmation before the flow', await page.locator('pf-modal[open] .primary').count() >= 1);
+  check('ops-hub: no reminder flow fired before confirmation', paCalls.length === 0, 'premature=[' + paCalls.map((c) => c.action).join(',') + ']');
+  await page.locator('pf-modal[open] .primary').first().click();
+  await page.waitForTimeout(300);
+  const remCall = paCalls.find((c) => c.action === 'setReminder' && c.operation === 'create' && c.payload && c.payload.dueAt);
+  check('ops-hub: Set reminder dispatches the setReminder contract (dynamic flow)', !!remCall, 'actions=[' + paCalls.map((c) => c.action).join(',') + ']');
+
   // Bulk-select a card → the bulk bar's "Assign" hands the selection to bulk-assignment via Context.
   await page.locator('#module-ops-hub .pf-md__check input[type="checkbox"]').first().check();
   await page.locator('#module-ops-hub .pf-md__bulkbar').first().waitFor({ state: 'visible', timeout: 5000 });

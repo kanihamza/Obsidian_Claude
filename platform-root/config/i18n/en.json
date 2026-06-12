@@ -687,6 +687,20 @@
     "flagReasonRequired": "A reason of at least 3 characters is required.",
     "flagSubmit": "Flag for DG"
   },
+  "reminder": {
+    "title": "Set a reminder",
+    "set": "Set reminder",
+    "due": "Remind me at",
+    "note": "Note",
+    "notePlaceholder": "What is this reminder for?",
+    "channel": "Notify via",
+    "channelInapp": "In-app",
+    "channelEmail": "Email",
+    "dueRequired": "Pick a date and time for the reminder.",
+    "confirmTitle": "Set reminder",
+    "confirmSummary": "Schedule a reminder for {when}. You'll be notified through the channel you chose.",
+    "scheduled": "Reminder scheduled."
+  },
   "registry": {
     "movements": "Movement register · {n} entries"
   },
