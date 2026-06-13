@@ -1,80 +1,53 @@
 {
-  "common": {
-    "actions": {
-      "save": "Ajiye",
-      "cancel": "Soke",
-      "clear": "Share",
-      "close": "Rufe",
-      "delete": "Goge",
-      "edit": "Gyara",
-      "refresh": "Sabunta",
-      "submit": "Mika",
-      "search": "Nema",
-      "open": "Buɗe",
-      "back": "Komawa",
-      "next": "Na gaba",
-      "prev": "Na baya",
-      "continue": "Ci gaba",
-      "confirm": "Tabbatar"
-    },
-    "state": {
-      "empty": "Babu sakamako",
-      "loading": "Ana lodi…",
-      "error": "Kuskure",
-      "success": "Nasara"
-    }
+  "app": {
+    "name": "OBSIDIAN",
+    "tagline": "Platform na Huluki"
   },
-  "nav": {
-    "operations": "Ayyuka",
-    "governance": "Mulki",
-    "intelligence": "Bayanai",
-    "assignments": "Aiyukan da aka bayar",
-    "system": "Tsarin"
+  "feedback": {
+    "loading": "Ana jiko...",
+    "slow-load": "Jiko na gida",
+    "slow-load-detail": "Wannan na ba dadi ba kaifi da zai tokaci. Da fatan za'a jira...",
+    "success": "Nasara",
+    "error": "Wani kuskure ya faru",
+    "error-generic": "Wani kuskure ya faru. Da fatan za'a sake gida.",
+    "retry": "Sake gida",
+    "empty": "Babu abubuwa",
+    "dismiss": "Toshe",
+    "offline": "Kun kasance offline. Wasu abubuwa na iya zama mai iyaka.",
+    "processing": "Sarrafa...",
+    "notifications": "Ilhamudu",
+    "close": "Rufe"
   },
-  "module": {
-    "home": {
-      "title": "Babbar shafa"
-    },
-    "ops-hub": {
-      "title": "Cibiyar ayyuka"
-    },
-    "fasttrack": {
-      "title": "Hanya mai sauri"
-    },
-    "registry": {
-      "title": "Yi rajista"
-    },
-    "correspondence": {
-      "title": "Wasika"
-    },
-    "response-tracking": {
-      "title": "Bin amsa"
-    },
-    "comments": {
-      "title": "Sharhi"
-    },
-    "approvals": {
-      "title": "Amincewa"
-    },
-    "assignment": {
-      "title": "Aikin"
-    },
-    "stats": {
-      "title": "Lambobi"
-    },
-    "reports": {
-      "title": "Rahotanni"
-    },
-    "settings": {
-      "title": "Saituna"
-    },
-    "lookup": {
-      "title": "Bincike na tsarin"
-    }
+  "form": {
+    "required": "Wannan fali ya dace",
+    "invalid-email": "Da fatan za'a shigar da ainihi email",
+    "submit": "Sake",
+    "cancel": "Toshe",
+    "save": "Ajiye",
+    "delete": "Soke",
+    "edit": "Gyada",
+    "validation-error": "Da fatan za'a gyada kuskure a ƙasa"
   },
-  "connectivity": {
-    "loading": "Ana loda bayanai…",
-    "offline": "Babu hanyar sadarwa",
-    "retry": "Sake gwadawa"
+  "navigation": {
+    "skip-to-content": "Kargi zuwa ainihi abun",
+    "menu": "Wejen",
+    "close-menu": "Rufe wejen",
+    "language": "Harshe",
+    "settings": "Saita",
+    "account": "Asussu",
+    "logout": "Fita"
+  },
+  "accessibility": {
+    "loading": "Ana jiko",
+    "error": "Kuskure",
+    "success": "Nasara",
+    "modal": "Magana",
+    "close": "Rufe"
+  },
+  "errors": {
+    "404": "Shafin ba a samu",
+    "500": "Kuskure na saburewa",
+    "offline": "Babu aiki na yanar gizo",
+    "permission": "Babu izini na zuwa wannan"
   }
 }

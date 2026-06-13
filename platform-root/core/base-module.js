@@ -1,80 +1,190 @@
-/** OBSIDIAN v4.0 — base-module.js · mandatory base class for every module (§3.2).
- *  Subclass declares: static id,label,icon,nav,audience,status [,subbrand,sunsetDate,replacedBy]
- *  and `static base = new URL('.', import.meta.url)` so default onMount can fetch its view/styles.
- *  Provides scoped state, shared state, auto-cleaned timers/listeners, this.call(), this.t(). */
-import { State } from './state.js';
-import { Bus } from './bus.js';
+/**
+ * OBSIDIAN v4 Base Module
+ * Extend this class for all feature modules
+ * 
+ * Includes UI feedback integration for loading/error states
+ */
+
+import { EventBus } from './bus.js';
+import { UIFeedbackInstance } from './ui-feedback.js';
+import { i18n } from './i18n.js';
 
 export class BaseModule {
-  static id = ''; static label = ''; static icon = ''; static nav = null;
-  static audience = 'all'; static status = 'active';
-  static base = null; // set by subclass: new URL('.', import.meta.url)
+  constructor(config = {}) {
+    this.config = config;
+    this.bus = EventBus.instance;
+    this.feedback = UIFeedbackInstance;
+    this.state = {
+      initialized: false,
+      loading: false,
+      error: null,
+    };
+  }
 
-  constructor() { this._disposers = []; this._stylesInjected = false; this.id = this.constructor.id; }
+  /**
+   * Initialize module (override in subclass)
+   */
+  async init() {
+    this.state.initialized = true;
+  }
 
-  /* ---- default lifecycle: fetch view.html + inject styles.css once ---- */
-  async onMount(root, _params) {
-    const base = this.constructor.base; if (!base || !root) return;
-    if (!this._stylesInjected) {
-      const href = new URL('./styles.css', base).href;
-      if (!document.querySelector(`link[data-module="${this.id}"]`)) {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet'; link.href = href; link.dataset.module = this.id;
-        document.head.appendChild(link);
+  /**
+   * Set module loading state with UI feedback
+   * @param {boolean} isLoading - Loading state
+   * @param {Element} container - Optional feedback container
+   */
+  setLoading(isLoading, container = null) {
+    this.state.loading = isLoading;
+    
+    if (container) {
+      if (isLoading) {
+        this.feedback.setState(container, 'loading', {
+          message: i18n.t('feedback.loading'),
+        });
+      } else {
+        this.feedback.setState(container, 'idle');
       }
-      this._stylesInjected = true;
     }
+
+    this.bus.emit('module:loading', {
+      module: this.constructor.name,
+      loading: isLoading,
+    });
+  }
+
+  /**
+   * Set module error state with UI feedback
+   * @param {Error|string} error - Error object or message
+   * @param {Element} container - Optional feedback container
+   * @param {Function} onRetry - Retry callback
+   */
+  setError(error, container = null, onRetry = null) {
+    const errorMessage = typeof error === 'string' 
+      ? error 
+      : error?.message || i18n.t('feedback.error-generic', 'An error occurred');
+
+    this.state.error = error;
+
+    if (container) {
+      this.feedback.setState(container, 'error', {
+        message: errorMessage,
+        retryable: !!onRetry,
+        onRetry,
+      });
+    }
+
+    this.bus.emit('module:error', {
+      module: this.constructor.name,
+      error: errorMessage,
+    });
+  }
+
+  /**
+   * Set module success state with UI feedback
+   * @param {Element} container - Optional feedback container
+   * @param {string} message - Success message
+   */
+  setSuccess(container = null, message = null) {
+    if (container) {
+      this.feedback.setState(container, 'success', {
+        message: message || i18n.t('feedback.success'),
+      });
+    }
+
+    this.bus.emit('module:success', {
+      module: this.constructor.name,
+      message: message || i18n.t('feedback.success'),
+    });
+  }
+
+  /**
+   * Set module empty state with UI feedback
+   * @param {Element} container - Feedback container
+   * @param {Object} options - Empty state options
+   */
+  setEmpty(container, options = {}) {
+    const {
+      icon = '📭',
+      message = i18n.t('feedback.empty', 'No items'),
+      actionLabel = null,
+      onAction = null,
+    } = options;
+
+    if (container) {
+      this.feedback.setState(container, 'empty', {
+        icon,
+        message,
+        actionLabel,
+        onAction,
+      });
+    }
+  }
+
+  /**
+   * Common pattern: load data with feedback
+   * @param {Promise} promise - Data loading promise
+   * @param {Element} container - Feedback container
+   * @param {Object} options - Success/error options
+   */
+  async loadWithFeedback(promise, container = null, options = {}) {
+    const {
+      onSuccess = null,
+      onError = null,
+      onEmpty = null,
+      showLoading = true,
+    } = options;
+
+    if (showLoading && container) {
+      this.setLoading(true, container);
+    }
+
     try {
-      const html = await (await fetch(new URL('./view.html', base))).text();
-      root.innerHTML = html;
-      root.querySelectorAll('[data-i18n]').forEach((n) => { n.textContent = this.t(n.getAttribute('data-i18n')); });
-    } catch (e) { (globalThis.Platform?.Log)?.error('module.view-fetch-failed', { id:this.id, message:String(e) }); }
-  }
-  onVisible(_root, _params) {}     // override: MUST call this.call(...) for real data
-  onHidden(_root) { this._cleanup(); }
-  onUnmount(_root) {}
-  onParamsChange(_params) {}
+      const result = await promise;
 
-  /* ---- service invocation with module-scoped error toast + log context ---- */
-  async call(serviceFn, args, opts = {}) {
-    const result = await serviceFn(args || {}, opts.query || {});
-    if (!result.ok) {
-      (globalThis.Platform?.Log)?.error('module.call-failed',
-        { module:this.id, endpoint: serviceFn.endpointKey, kind: result.kind, correlationId: result.correlationId });
-      if (!opts.silent && globalThis.Platform?.UI) globalThis.Platform.UI.toastError(result);
-    } else {
-      Bus.emit(`module:${this.id}:data-loaded`, { endpoint: serviceFn.endpointKey });
+      // Check for empty result
+      if (Array.isArray(result) && result.length === 0) {
+        if (container) {
+          this.setEmpty(container, onEmpty || {});
+        }
+        return result;
+      }
+
+      if (container) {
+        this.feedback.setState(container, 'idle');
+      }
+
+      if (onSuccess) {
+        onSuccess(result);
+      }
+
+      return result;
+    } catch (error) {
+      const retry = () => this.loadWithFeedback(promise, container, options);
+      this.setError(error, container, retry);
+
+      if (onError) {
+        onError(error);
+      }
+
+      throw error;
     }
-    return result;
   }
 
-  /* ---- scoped state: modules.<id>.* (auto-unsubscribed on hide) ---- */
-  get state() {
-    const ns = (p) => `modules.${this.id}.${p}`;
-    return {
-      get: (p, d) => State.get(ns(p), d),
-      set: (p, v) => State.set(ns(p), v),
-      subscribe: (p, fn) => { const off = State.subscribe(ns(p), fn); this._disposers.push(off); return off; }
-    };
-  }
-  /* ---- shared cross-module state: shared.<domain>.* ---- */
-  get shared() {
-    return {
-      get: (p, d) => State.get(`shared.${p}`, d),
-      set: (p, v) => State.set(`shared.${p}`, v),
-      subscribe: (p, fn) => { const off = State.subscribe(`shared.${p}`, fn); this._disposers.push(off); return off; }
-    };
+  /**
+   * Show toast notification
+   * @param {string} message - Toast message
+   * @param {Object} options - Toast options
+   */
+  showToast(message, options = {}) {
+    return this.feedback.showToast(message, options);
   }
 
-  /* ---- auto-cleaned timers + listeners ---- */
-  interval(fn, ms) { const h = setInterval(fn, ms); this._disposers.push(() => clearInterval(h)); return h; }
-  timeout(fn, ms) { const h = setTimeout(fn, ms); this._disposers.push(() => clearTimeout(h)); return h; }
-  on(target, event, handler, opts) { target.addEventListener(event, handler, opts);
-    this._disposers.push(() => target.removeEventListener(event, handler, opts)); }
-  bus(event, handler) { const off = Bus.on(event, handler); this._disposers.push(off); return off; }
-
-  t(key, vars) { return (globalThis.Platform?.I18n?.t) ? globalThis.Platform.I18n.t(key, vars) : key; }
-
-  _cleanup() { for (const d of this._disposers.splice(0)) { try { d(); } catch { /* ignore */ } } }
+  /**
+   * Cleanup module
+   */
+  destroy() {
+    this.state.initialized = false;
+  }
 }
+
 export default BaseModule;

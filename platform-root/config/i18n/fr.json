@@ -1,228 +1,53 @@
 {
-  "common": {
-    "actions": {
-      "save": "Enregistrer",
-      "cancel": "Annuler",
-      "clear": "Effacer",
-      "close": "Fermer",
-      "delete": "Supprimer",
-      "edit": "Modifier",
-      "refresh": "Actualiser",
-      "submit": "Soumettre",
-      "search": "Rechercher",
-      "open": "Ouvrir",
-      "back": "Retour",
-      "next": "Suivant",
-      "prev": "Précédent",
-      "continue": "Continuer",
-      "confirm": "Confirmer"
-    },
-    "state": {
-      "empty": "Aucun résultat",
-      "loading": "Chargement…",
-      "error": "Erreur",
-      "success": "Succès"
-    }
+  "app": {
+    "name": "OBSIDIAN",
+    "tagline": "Plateforme Collaborative"
   },
-  "nav": {
-    "operations": "Opérations",
-    "governance": "Gouvernance",
-    "intelligence": "Renseignement",
-    "assignments": "Affectations",
-    "system": "Système"
+  "feedback": {
+    "loading": "Chargement...",
+    "slow-load": "Toujours en cours de chargement",
+    "slow-load-detail": "Cela prend plus de temps que prévu. Veuillez patienter...",
+    "success": "Succès",
+    "error": "Une erreur s'est produite",
+    "error-generic": "Une erreur s'est produite. Veuillez réessayer.",
+    "retry": "Réessayer",
+    "empty": "Aucun élément",
+    "dismiss": "Ignorer",
+    "offline": "Vous êtes hors ligne. Certaines fonctionnalités peuvent être limitées.",
+    "processing": "Traitement en cours...",
+    "notifications": "Notifications",
+    "close": "Fermer"
   },
-  "shell": {
-    "menu": {
-      "toggle": "Basculer le menu"
-    },
-    "skipToContent": "Passer au contenu"
-  },
-  "module": {
-    "home": {
-      "title": "Tableau de bord",
-      "subtitle": "Vue d'ensemble en temps réel"
-    },
-    "ops-hub": {
-      "title": "Centre des opérations",
-      "subtitle": "Gérer les documents et tâches"
-    },
-    "fasttrack": {
-      "title": "Voie rapide",
-      "subtitle": "Traitement accéléré"
-    },
-    "orchestrator": {
-      "title": "Orchestrateur",
-      "subtitle": "Coordination des tâches"
-    },
-    "registry": {
-      "title": "Registre",
-      "subtitle": "Documents enregistrés"
-    },
-    "correspondence": {
-      "title": "Correspondance",
-      "subtitle": "Courriels et messages"
-    },
-    "response-tracking": {
-      "title": "Suivi des réponses",
-      "subtitle": "État des tâches en cours"
-    },
-    "comments": {
-      "title": "Commentaires"
-    },
-    "approvals": {
-      "title": "Approbations",
-      "subtitle": "Demandes en attente"
-    },
-    "executive": {
-      "title": "Exécutif",
-      "subtitle": "Vue de la direction"
-    },
-    "assignment": {
-      "title": "Affectation",
-      "subtitle": "Allocation des ressources"
-    },
-    "stats": {
-      "title": "Statistiques",
-      "subtitle": "Indicateurs clés"
-    },
-    "reports": {
-      "title": "Rapports",
-      "subtitle": "Rapports d'activité"
-    },
-    "single-item-ops": {
-      "title": "Affectation individuelle",
-      "subtitle": "Affecter un seul élément"
-    },
-    "bulk-assignment": {
-      "title": "Affectation en lot",
-      "subtitle": "Plusieurs éléments à la fois"
-    },
-    "assistant": {
-      "title": "Assistant IA",
-      "subtitle": "Assistant intelligent"
-    },
-    "diagnostics": {
-      "title": "Diagnostics",
-      "subtitle": "Santé du système"
-    },
-    "lookup": {
-      "title": "Recherche système",
-      "subtitle": "Rechercher dans toutes les sources"
-    },
-    "settings": {
-      "title": "Paramètres",
-      "subtitle": "Remplacements et configuration"
-    }
-  },
-  "settings": {
-    "endpoints": "Points de terminaison",
-    "endpointsExplainer": "Remplacez les URL des flux Power Automate à l'exécution. Utile pour basculer vers un flux de bac à sable sans reconstruction.",
-    "defaultUrl": "URL par défaut",
-    "override": "Remplacer l'URL",
+  "form": {
+    "required": "Ce champ est obligatoire",
+    "invalid-email": "Veuillez entrer une adresse email valide",
+    "submit": "Soumettre",
+    "cancel": "Annuler",
     "save": "Enregistrer",
-    "clear": "Effacer",
-    "saved": "Remplacement enregistré pour {key}.",
-    "cleared": "Remplacement effacé pour {key}.",
-    "invalidUrl": "Entrez une URL http(s):// valide ou laissez vide.",
-    "overrideActive": "Remplacement actif",
-    "totalEndpoints": "points de terminaison",
-    "activeOverrides": "remplacements actifs",
-    "resetAll": "Réinitialiser tous les remplacements",
-    "resetAllWarn": "Cela efface tous les remplacements d'URL. Chaque point de terminaison reviendra à son URL par défaut.",
-    "resetAllImpact": "Supprime chaque entrée localStorage sous obsidian.endpoint.*",
-    "resetAllDone": "{n} remplacement(s) effacé(s).",
-    "language": "Langue",
-    "languageBlurb": "Choisissez la langue d'affichage de l'interface. Toutes les écritures restent en anglais pour la cohérence des audits."
-  },
-  "lookup": {
-    "searchPlaceholder": "Rechercher par référence, titre, expéditeur, statut…",
-    "idleHint": "Commencez à taper pour rechercher dans le tissu de données.",
-    "noResults": "Aucun enregistrement ne correspond à \"{q}\".",
-    "resultsFor": "{n} enregistrement(s) correspondent à \"{q}\".",
-    "nMatches": "{n} correspondance(s)",
-    "scope": {
-      "label": "Portée",
-      "all": "Tous",
-      "ref": "Références",
-      "doc": "Documents",
-      "task": "Tâches",
-      "email": "Courriels",
-      "comment": "Commentaires"
-    },
-    "filters": {
-      "toggle": "Filtres avancés",
-      "dateFrom": "Date du",
-      "dateTo": "Date au",
-      "statuses": "Statuts",
-      "assignedTo": "Affecté à",
-      "assignedToPlaceholder": "Courriel ou sous-chaîne…",
-      "clearAll": "Effacer tous les filtres"
-    }
-  },
-  "email": {
-    "body": "Corps",
-    "headers": "En-têtes",
-    "sandboxed": "Aperçu en bac à sable",
-    "sandboxedHint": "Le HTML non fiable est rendu dans un iframe isolé — aucun script ne peut s'exécuter.",
-    "noBody": "Aucun contenu de corps.",
-    "createTaskBtn": "Créer une tâche depuis le courriel",
-    "taskTitle": "Créer une tâche depuis le courriel",
-    "taskSubmit": "Créer la tâche",
-    "taskCreated": "Tâche créée depuis le courriel."
-  },
-  "comments": {
-    "modalTitle": "Commentaires — {ref}",
-    "openBtn": "Ouvrir les commentaires",
-    "add": "Ajouter",
-    "edit": "Modifier",
     "delete": "Supprimer",
-    "reply": "Répondre",
-    "save": "Enregistrer",
-    "empty": "Aucun commentaire pour le moment.",
-    "placeholder": "Écrivez votre commentaire…",
-    "replyingTo": "En réponse à {who}",
-    "inReplyTo": "en réponse à {who}",
-    "edited": "Commentaire mis à jour.",
-    "deleted": "Commentaire supprimé.",
-    "deleteConfirm": "Supprimer ce commentaire ? Cette action est irréversible.",
-    "added": "Commentaire publié.",
-    "count": "Nombre",
-    "scopeLabel": "Portée",
-    "scopeAllShort": "Toutes les références"
+    "edit": "Modifier",
+    "validation-error": "Veuillez corriger les erreurs ci-dessous"
   },
-  "profile": {
-    "title": "Votre profil",
-    "save": "Enregistrer le profil",
-    "saved": "Profil enregistré.",
-    "blurb": "Définissez votre identité pour que les charges utiles d'affectation et les pistes d'audit portent votre véritable courriel.",
-    "fullName": "Nom complet",
-    "email": "Adresse courriel",
-    "department": "Département",
-    "pickDept": "Choisissez votre département",
-    "jobTitle": "Titre du poste"
+  "navigation": {
+    "skip-to-content": "Aller au contenu principal",
+    "menu": "Menu",
+    "close-menu": "Fermer le menu",
+    "language": "Langue",
+    "settings": "Paramètres",
+    "account": "Compte",
+    "logout": "Déconnexion"
   },
-  "notif": {
-    "title": "Aperçu du courriel de notification",
-    "subject": "Objet",
-    "preview": "Corps",
-    "previewBtn": "Aperçu de la notification"
+  "accessibility": {
+    "loading": "Chargement",
+    "error": "Erreur",
+    "success": "Succès",
+    "modal": "Dialogue",
+    "close": "Fermer"
   },
-  "shortcuts": {
-    "title": "Raccourcis clavier",
-    "navigation": "Navigation",
-    "actions": "Actions",
-    "forms": "Formulaires",
-    "help": "Ouvrir cette fiche",
-    "closeModal": "Fermer la fenêtre active",
-    "focusSearch": "Activer le champ de recherche",
-    "goHome": "Aller à l'accueil",
-    "goOpsHub": "Aller au centre des opérations",
-    "refresh": "Actualiser le tissu de données",
-    "newAssign": "Nouvelle affectation"
-  },
-  "connectivity": {
-    "loading": "Chargement des données…",
-    "offline": "Hors ligne",
-    "retry": "Réessayer"
+  "errors": {
+    "404": "Page non trouvée",
+    "500": "Erreur serveur",
+    "offline": "Pas de connexion Internet",
+    "permission": "Vous n'avez pas la permission d'accéder à ceci"
   }
 }
