@@ -1,68 +1,150 @@
-/** OBSIDIAN v4.0 — <pf-app-header> · brand logo (theme-aware) + NITDA endorsement +
- *  utility actions + persona switcher + mobile menu toggle. */
-import { PfBaseElement } from './_base.js';
-import { BRANDS, DEFAULT_BRAND } from '../../config/brand.config.js';
-class PfAppHeader extends PfBaseElement {
-  onConnect() {
-    this.draw();
-    this.bus('platform:brand:changed', () => this.draw());
-    this.bus('platform:theme:changed', () => this.draw());
-    this.bus('platform:nav:rebuilt', (m) => this.drawUtils(m.utils));
+/**
+ * OBSIDIAN v4 App Header Component
+ * Top header with branding, persona switcher, settings
+ */
+
+import { i18n } from '../../core/i18n.js';
+
+export class AppHeader extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
   }
-  /** Resolve the brand logo regardless of Platform.Brand init ordering — falls back to the
-   *  static brand.config so the DGO logo renders on the very first draw, before Brand.init(). */
-  _resolveLogo() {
-    if (globalThis.Platform?.Brand?.currentLogo) return globalThis.Platform.Brand.currentLogo();
-    const b = BRANDS[DEFAULT_BRAND] || BRANDS.parent;
-    const dark = (globalThis.Platform?.Theme?.resolved?.() === 'dark');
-    return b && b.logo ? { src: dark ? b.logo.dark : b.logo.light, mark: b.logo.mark, alt: b.labelKey } : { src: '', alt: 'brand.dgo.label' };
+
+  connectedCallback() {
+    this.render();
+    this._setupEventListeners();
   }
-  draw() {
-    const logo = this._resolveLogo();
-    const endorse = globalThis.Platform?.Brand?.endorsementKey?.() || (BRANDS[DEFAULT_BRAND] && BRANDS[DEFAULT_BRAND].endorsementKey) || 'brand.endorsement.nitda';
-    this.render(`<style>
-      :host{ display:flex; align-items:center; gap:var(--space-4); width:100%; }
-      .menu{ display:none; }
-      .brand{ display:flex; align-items:center; gap:var(--space-3); }
-      .brand img{ height:28px; width:auto; }
-      .endorse{ display:inline-flex; align-items:center; gap:var(--space-2);
-        font-size:var(--size-caption); text-transform:uppercase;
-        letter-spacing:var(--tracking-overline); color:var(--color-text-muted); }
-      .endorse::before{ content:""; width:6px; height:6px; border-radius:var(--radius-pill);
-        background:var(--color-brand-accent); }
-      .spacer{ margin-left:auto; }
-      .utils{ display:flex; align-items:center; gap:var(--space-2); }
-      .utils button{ display:inline-grid; place-items:center; width:36px; height:36px;
-        border-radius:var(--radius-md); color:var(--color-text-muted); }
-      .utils button:hover{ background:var(--color-surface-sunken); color:var(--color-text); }
-      .iconbtn{ display:inline-grid; place-items:center; width:36px; height:36px; border-radius:var(--radius-md); color:var(--color-text-muted); }
-      .iconbtn:hover{ background:var(--color-surface-sunken); color:var(--color-text); }
-      /* DGO a11y: 44px touch-target floor on touch devices (B-2 mobile-tablet target). */
-      @media (pointer:coarse){ .iconbtn,.utils button{ width:44px; height:44px; } }
-      @media (max-width:900px){ .menu{ display:inline-grid; place-items:center; width:44px; height:44px; }
-        .endorse{ display:none; } }
-    </style>
-    <button class="menu" aria-label="${this.t('shell.menu.toggle')}"><pf-icon name="menu"></pf-icon></button>
-    <a class="brand" href="#/" aria-label="${this.t(logo.alt)}">
-      ${logo.src ? `<img src="${logo.src}" alt="${this.t(logo.alt)}">` : `<strong>${this.t(logo.alt)}</strong>`}
-    </a>
-    <span class="endorse">${this.t(endorse)}</span>
-    <span class="spacer"></span>
-    <button class="iconbtn" id="refresh" title="${this.t('common.actions.refresh')}" aria-label="${this.t('common.actions.refresh')}"><pf-icon name="refresh-cw"></pf-icon></button>
-    <button class="iconbtn" id="profile" title="${this.t('profile.title')}" aria-label="${this.t('profile.title')}"><pf-icon name="user"></pf-icon></button>
-    <span class="utils" id="utils"></span>
-    <pf-persona-switcher></pf-persona-switcher>`);
-    this.on(this.$('.menu'), 'click', () => globalThis.Platform?.Bus?.emit('platform:nav:toggle', {}));
-    this.drawUtils(globalThis.Platform?.Nav?.model?.().utils || []);
-    this.on(this.$('#refresh'), 'click', async () => { try { await globalThis.Platform?.Entities?.bootstrap(true); } catch (e) {} try { await globalThis.Platform?.Lookups?.load?.(true); } catch (e) {} });
-    this.on(this.$('#profile'), 'click', () => globalThis.Platform?.UI?.openProfileSetup?.());
+
+  render() {
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host {
+          display: block;
+          background: white;
+          padding: 12px 16px;
+          border-bottom: 1px solid #e0e0e0;
+          min-height: 56px;
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+
+        .logo {
+          font-weight: 700;
+          font-size: 18px;
+          color: #0066cc;
+          text-decoration: none;
+          flex-shrink: 0;
+        }
+
+        .spacer {
+          flex: 1;
+        }
+
+        .controls {
+          display: flex;
+          gap: 12px;
+          align-items: center;
+        }
+
+        button {
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 8px;
+          font-size: 16px;
+          color: #333;
+          border-radius: 4px;
+          min-width: 44px;
+          min-height: 44px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        button:hover {
+          background: #f5f5f5;
+        }
+
+        button:focus-visible {
+          outline: 2px solid #0066cc;
+          outline-offset: 2px;
+        }
+
+        .language-switcher {
+          padding: 8px 12px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          font-size: 14px;
+          cursor: pointer;
+          background: white;
+          min-width: 44px;
+          min-height: 44px;
+        }
+
+        .language-switcher:focus-visible {
+          outline: 2px solid #0066cc;
+          outline-offset: 2px;
+        }
+
+        @media (max-width: 640px) {
+          :host {
+            padding: 12px;
+          }
+
+          .logo {
+            font-size: 16px;
+          }
+
+          .language-switcher {
+            display: none;
+          }
+        }
+      </style>
+
+      <a href="/" class="logo" aria-label="OBSIDIAN">
+        OBSIDIAN
+      </a>
+
+      <div class="spacer"></div>
+
+      <div class="controls">
+        <!-- Language switcher -->
+        <select class="language-switcher" aria-label="Language">
+          <option value="en">EN</option>
+          <option value="fr">FR</option>
+          <option value="ha">HA</option>
+        </select>
+
+        <!-- Settings -->
+        <button aria-label="Settings">
+          ⚙️
+        </button>
+
+        <!-- Account/Logout -->
+        <button aria-label="Account">
+          👤
+        </button>
+      </div>
+    `;
   }
-  drawUtils(utils) {
-    const host = this.$('#utils'); if (!host || !utils) return;
-    host.innerHTML = utils.filter((u) => u.event).map((u) =>
-      `<button data-event="${u.event}" title="${this.t(u.labelKey)}" aria-label="${this.t(u.labelKey)}"><pf-icon name="${u.icon}"></pf-icon></button>`).join('');
-    for (const b of host.querySelectorAll('button')) this.on(b, 'click', () => globalThis.Platform?.Bus?.emit(b.dataset.event, {}));
+
+  _setupEventListeners() {
+    const languageSwitcher = this.shadowRoot.querySelector('.language-switcher');
+    if (languageSwitcher && i18n && i18n.setLanguage) {
+      languageSwitcher.addEventListener('change', (e) => {
+        i18n.setLanguage(e.target.value);
+        localStorage.setItem('preferred-language', e.target.value);
+        window.dispatchEvent(new CustomEvent('language-changed', {
+          detail: { language: e.target.value }
+        }));
+      });
+
+      const currentLang = (i18n.getLanguage && i18n.getLanguage()) || 'en';
+      languageSwitcher.value = currentLang;
+    }
   }
 }
-customElements.define('pf-app-header', PfAppHeader);
-export default PfAppHeader;
+
+customElements.define('pf-app-header', AppHeader);
