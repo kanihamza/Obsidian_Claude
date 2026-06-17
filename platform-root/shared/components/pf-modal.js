@@ -1,207 +1,72 @@
-/**
- * OBSIDIAN v4 Modal Component
- * Accessible modal dialog with focus trap
- */
-
-export class Modal extends HTMLElement {
-  constructor() {
-    super();
-    this.attachShadow({ mode: 'open' });
-    this.previousActiveElement = null;
+/** OBSIDIAN v4.0 — <pf-modal> · focus-trapped dialog driven by platform:ui:modal. */
+import { PfBaseElement } from './_base.js';
+class PfModal extends PfBaseElement {
+  onConnect() {
+    this.render(`<style>
+      :host{ position:fixed; inset:0; z-index:var(--z-modal); display:none; }
+      :host([open]){ display:grid; place-items:center; }
+      .scrim{ position:absolute; inset:0; background:var(--color-surface-inverse); opacity:.45; }
+      .dialog{ position:relative; width:min(92vw,560px); max-height:86vh; overflow:auto;
+        background:var(--color-surface-raised); border-radius:var(--radius-frame);
+        box-shadow:var(--shadow-xl); padding:var(--space-6); }
+      header{ display:flex; align-items:center; gap:var(--space-3); margin-bottom:var(--space-4); }
+      header h2{ font-size:var(--size-h3); margin:0; }
+      header button{ margin-left:auto; color:var(--color-text-muted); }
+      .actions{ display:flex; justify-content:flex-end; gap:var(--space-2); margin-top:var(--space-5); }
+      .actions button{ padding:var(--space-2) var(--space-4); border-radius:var(--radius-md);
+        font-weight:var(--fw-semibold); font-size:var(--size-body-sm); }
+      .actions .primary{ background:var(--color-brand-primary); color:var(--color-text-inverse); }
+      .actions .ghost{ color:var(--color-text); border:1px solid var(--color-border-strong); }
+    
+      .pf-preview{ display:flex; flex-direction:column; gap:var(--space-1); margin-top:var(--space-2); }
+      .pf-preview .row{ display:flex; justify-content:space-between; gap:var(--space-4); padding:var(--space-2) var(--space-3); border:1px solid var(--color-border); border-radius:var(--radius-sm); background:var(--color-surface-sunken); }
+      .pf-preview .k{ color:var(--color-text-muted); font-size:var(--size-caption); }
+      .pf-preview .v{ font-weight:var(--fw-semibold); font-size:var(--size-body-sm); }
+      .pf-btn--danger{ background:var(--dgo-status-action-fg, var(--color-danger)); color:var(--color-text-inverse); }
+    </style>
+    <div class="scrim"></div>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="m-title">
+      <header><h2 id="m-title"></h2><button id="x" aria-label="${this.t('modal.close')}">&times;</button></header>
+      <div id="m-body"></div><div class="actions" id="m-actions"></div>
+    </div>`);
+    this.bus('platform:ui:modal', (d) => this.open(d));
+    this.bus('platform:ui:modal-close', () => this.close());
+    this.on(this.$('.scrim'), 'click', () => this.close());
+    this.on(this.$('#x'), 'click', () => this.close());
+    this.on(document, 'keydown', (e) => { if (e.key === 'Escape' && this.hasAttribute('open')) this.close(); });
   }
-
-  connectedCallback() {
-    const title = this.getAttribute('aria-label') || 'Dialog';
-    this.render(title);
-    this._manageFocus();
-    this._setupEventListeners();
-  }
-
-  render(title) {
-    this.shadowRoot.innerHTML = `
-      <style>
-        :host {
-          display: block;
-        }
-
-        .backdrop {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(0, 0, 0, 0.5);
-          z-index: 1040;
-          animation: backdropIn 200ms ease-out;
-        }
-
-        @keyframes backdropIn {
-          from { opacity: 0; }
-          to { opacity: 0.5; }
-        }
-
-        .modal {
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          background: white;
-          border-radius: 8px;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-          max-width: 500px;
-          max-height: 90vh;
-          overflow-y: auto;
-          z-index: 1050;
-          animation: modalIn 300ms cubic-bezier(0.4, 0, 0.2, 1);
-          padding: 24px;
-        }
-
-        @keyframes modalIn {
-          from {
-            opacity: 0;
-            transform: translate(-50%, -48%);
-          }
-          to {
-            opacity: 1;
-            transform: translate(-50%, -50%);
-          }
-        }
-
-        .header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 16px;
-          padding-bottom: 16px;
-          border-bottom: 1px solid #e0e0e0;
-        }
-
-        .title {
-          font-size: 20px;
-          font-weight: 600;
-          margin: 0;
-        }
-
-        .close {
-          background: none;
-          border: none;
-          font-size: 24px;
-          cursor: pointer;
-          padding: 0;
-          width: 32px;
-          height: 32px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #333;
-          border-radius: 4px;
-        }
-
-        .close:hover {
-          background: #f5f5f5;
-        }
-
-        .close:focus-visible {
-          outline: 2px solid #0066cc;
-          outline-offset: 2px;
-        }
-
-        .content {
-          margin-bottom: 24px;
-        }
-
-        .footer {
-          display: flex;
-          gap: 12px;
-          justify-content: flex-end;
-          border-top: 1px solid #e0e0e0;
-          padding-top: 16px;
-          margin-top: 16px;
-        }
-
-        @media (max-width: 640px) {
-          .modal {
-            max-width: 90vw;
-            padding: 16px;
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .modal, .backdrop {
-            animation: none;
-          }
-        }
-      </style>
-
-      <div class="backdrop"></div>
-      <div class="modal" role="dialog" aria-modal="true" aria-label="${title}">
-        <div class="header">
-          <h2 class="title">${title}</h2>
-          <button class="close" aria-label="Close dialog">×</button>
-        </div>
-        <div class="content">
-          <slot></slot>
-        </div>
-      </div>
-    `;
-  }
-
-  _setupEventListeners() {
-    const backdrop = this.shadowRoot.querySelector('.backdrop');
-    backdrop.addEventListener('click', () => this.close());
-
-    const closeBtn = this.shadowRoot.querySelector('.close');
-    closeBtn.addEventListener('click', () => this.close());
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        this.close();
+  open({ titleKey, title, bodyKey, bodyEl, component, props, preview, actions = [] }) {
+    this.$('#m-title').textContent = title || (titleKey ? this.t(titleKey) : '');
+    const body = this.$('#m-body');
+    body.innerHTML = '';
+    if (bodyEl instanceof Node) {
+      body.appendChild(bodyEl);
+    } else if (preview) {
+      if (preview.summaryKey || preview.summary) {
+        const pEl = document.createElement('p');
+        pEl.style.cssText = 'color:var(--color-text-muted);font-size:var(--size-body-sm);margin-bottom:var(--space-3)';
+        pEl.textContent = preview.summaryKey ? this.t(preview.summaryKey) : preview.summary;
+        body.appendChild(pEl);
       }
-    });
-  }
-
-  _manageFocus() {
-    this.previousActiveElement = document.activeElement;
-
-    const focusableElements = this.shadowRoot.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-    if (focusableElements.length > 0) {
-      setTimeout(() => focusableElements[0].focus(), 0);
-    }
-
-    this._implementFocusTrap(focusableElements);
-  }
-
-  _implementFocusTrap(focusableElements) {
-    if (focusableElements.length === 0) return;
-
-    const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
-
-    const handleKeyDown = (e) => {
-      if (e.key === 'Tab') {
-        if (e.shiftKey && document.activeElement === firstElement) {
-          e.preventDefault();
-          lastElement.focus();
-        } else if (!e.shiftKey && document.activeElement === lastElement) {
-          e.preventDefault();
-          firstElement.focus();
-        }
+      if (Array.isArray(preview.details) && preview.details.length) {
+        const dl = document.createElement('div'); dl.className = 'pf-preview';
+        dl.innerHTML = preview.details.map((d) => `<div class="row"><span class="k">${d.label}</span><span class="v">${d.value}</span></div>`).join('');
+        body.appendChild(dl);
       }
-    };
-
-    this.addEventListener('keydown', handleKeyDown);
-  }
-
-  close() {
-    if (this.previousActiveElement) {
-      this.previousActiveElement.focus();
+    } else if (component) { const el = document.createElement(component); if (props) Object.assign(el, { props }); body.appendChild(el); }
+    else if (bodyKey) body.textContent = this.t(bodyKey);
+    const acts = this.$('#m-actions'); acts.innerHTML = '';
+    for (const a of actions) {
+      const b = document.createElement('button');
+      b.className = a.variant === 'danger' ? 'danger' : a.variant === 'primary' ? 'primary' : 'ghost';
+      b.textContent = this.t(a.labelKey); this.on(b, 'click', () => { a.event && globalThis.Platform?.Bus?.emit(a.event, a.detail || {}); if (a.close !== false) this.close(); });
+      acts.appendChild(b);
     }
-
-    this.dispatchEvent(new CustomEvent('modal-closed'));
-    this.remove();
+    this.setAttribute('open', '');
+    this._release = globalThis.Platform?.A11y?.trapFocus?.(this.$('.dialog'));
+    globalThis.Platform?.A11y?.focusFirst?.(this.$('.dialog'));
   }
+  close() { this.removeAttribute('open'); this._release?.(); }
 }
-
-customElements.define('pf-modal', Modal);
+customElements.define('pf-modal', PfModal);
+export default PfModal;

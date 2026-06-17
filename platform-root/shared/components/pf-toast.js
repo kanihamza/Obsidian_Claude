@@ -1,103 +1,81 @@
-/**
- * OBSIDIAN v4 Toast Notification Component
- * Used by UIFeedback system for notifications
- */
-
-export class Toast extends HTMLElement {
-  constructor() {
-    super();
-    this.attachShadow({ mode: 'open' });
+/** OBSIDIAN v4.0 — <pf-toast> · live-region toast stack driven by platform:ui:toast.
+ *  Supports an optional clickable action (e.g. "View") that navigates to a deep-link hash route.
+ *  DOM-built (not innerHTML for user strings) — XSS-safe for action labels and deep-links. */
+import { PfBaseElement } from './_base.js';
+class PfToast extends PfBaseElement {
+  onConnect() {
+    this.render(`<style>
+      :host{ position:fixed; right:var(--space-5); bottom:var(--space-5); z-index:var(--z-toast);
+        display:flex; flex-direction:column; gap:var(--space-2); max-width:min(92vw,420px); pointer-events:none; }
+      .t{ pointer-events:auto; }
+      .t{ display:flex; align-items:center; gap:var(--space-3); padding:var(--space-3) var(--space-4);
+        border-radius:var(--radius-md); background:var(--color-surface-raised);
+        box-shadow:var(--shadow-lg); border-left:4px solid var(--color-info);
+        animation:slide var(--duration-base) var(--easing-standard); }
+      .t[data-variant="success"]{ border-left-color:var(--color-success); }
+      .t[data-variant="danger"]{ border-left-color:var(--color-danger); }
+      .t[data-variant="warning"]{ border-left-color:var(--color-warning); }
+      .t__text{ flex:1; font-size:var(--size-body-sm); color:var(--color-text); min-width:0; word-break:break-word; }
+      .t__action{ background:transparent; border:1px solid transparent; color:var(--color-brand-primary);
+        font:inherit; font-size:var(--size-body-sm); font-weight:var(--fw-semibold); cursor:pointer;
+        padding:var(--space-1) var(--space-3); border-radius:var(--radius-sm); white-space:nowrap;
+        transition:all var(--duration-fast) var(--easing-standard); }
+      .t__action:hover{ background:color-mix(in srgb, var(--color-brand-primary) 10%, transparent); }
+      .t__action:focus-visible{ outline:2px solid var(--color-brand-primary); outline-offset:2px; }
+      .t__dismiss{ background:none; border:none; cursor:pointer; color:var(--color-text-muted);
+        font-size:1.25rem; line-height:1; padding:0 var(--space-2); }
+      .t__dismiss:hover{ color:var(--color-text); }
+      .t__dismiss:focus-visible{ outline:2px solid var(--color-brand-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+      @keyframes slide{ from{ transform:translateY(8px); opacity:0; } to{ transform:none; opacity:1; } }
+      @media (prefers-reduced-motion:reduce){ .t{ animation:none; } }
+    </style>
+    <div id="stack" role="status" aria-live="polite" aria-atomic="false"></div>
+    <div id="stack-assertive" role="alert" aria-live="assertive" aria-atomic="true"></div>`);
+    this.bus('platform:ui:toast', (d) => this.add(d));
+    this.bus('platform:ui:toast-dismiss', (d) => this.remove(d.id));
   }
-
-  connectedCallback() {
-    const type = this.getAttribute('data-type') || 'info';
-    const message = this.textContent;
-    const dismissible = !this.hasAttribute('data-no-dismiss');
-
-    this.render(type, message, dismissible);
-  }
-
-  render(type, message, dismissible) {
-    this.shadowRoot.innerHTML = `
-      <style>
-        :host {
-          display: block;
-        }
-
-        .toast {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 16px;
-          border-radius: 4px;
-          background: white;
-          color: #333;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-          font-size: 14px;
-          min-height: 44px;
-          animation: slideIn 200ms ease-out;
-        }
-
-        @keyframes slideIn {
-          from {
-            transform: translateX(400px);
-            opacity: 0;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-
-        .toast-info { background: #e3f2fd; color: #0d47a1; border-left: 4px solid #2196f3; }
-        .toast-success { background: #e8f5e9; color: #1b5e20; border-left: 4px solid #4caf50; }
-        .toast-warning { background: #fff3cd; color: #856404; border-left: 4px solid #ffc107; }
-        .toast-error { background: #ffebee; color: #b71c1c; border-left: 4px solid #f44336; }
-
-        .content {
-          flex: 1;
-        }
-
-        .close {
-          background: none;
-          border: none;
-          font-size: 24px;
-          cursor: pointer;
-          color: inherit;
-          opacity: 0.5;
-          padding: 0;
-          width: 32px;
-          height: 32px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: opacity 200ms;
-        }
-
-        .close:hover {
-          opacity: 1;
-        }
-
-        .close:focus-visible {
-          outline: 2px solid currentColor;
-          outline-offset: 2px;
-        }
-      </style>
-
-      <div class="toast toast-${type}" role="${type === 'error' ? 'alert' : 'status'}" aria-live="${type === 'error' ? 'assertive' : 'polite'}" aria-atomic="true">
-        <div class="content">${message}</div>
-        ${dismissible ? '<button class="close" aria-label="Dismiss">×</button>' : ''}
-      </div>
-    `;
-
-    if (dismissible) {
-      const closeBtn = this.shadowRoot.querySelector('.close');
-      closeBtn.addEventListener('click', () => {
-        this.remove();
-        this.dispatchEvent(new CustomEvent('dismissed'));
+  add({ id, text, variant = 'info', timeout = 5000, action = null }) {
+    // A-23 — errors land in the assertive live region so screen-reader users are interrupted; the rest
+    // stay polite. Danger/critical ⇒ assertive; everything else ⇒ polite.
+    const assertive = variant === 'danger' || variant === 'critical';
+    const stack = this.$(assertive ? '#stack-assertive' : '#stack'); if (!stack) return;
+    // Cap stack: auto-dismiss the oldest when more than 3 are visible
+    const visible = stack.querySelectorAll('.t');
+    if (visible.length >= 3) this.remove(Number(visible[0].dataset.id));
+    const root = document.createElement('div');
+    root.className = 't'; root.dataset.variant = variant; root.dataset.id = id;
+    const span = document.createElement('span'); span.className = 't__text'; span.textContent = text;
+    root.appendChild(span);
+    if (action && action.label && action.deepLink) {
+      const a = document.createElement('button');
+      a.type = 'button'; a.className = 't__action'; a.textContent = action.label;
+      a.addEventListener('click', () => {
+        const dl = action.deepLink;
+        if (dl.startsWith('#')) window.location.hash = dl.slice(1);
+        else if (dl.startsWith('/')) window.location.hash = dl;
+        else window.location.hash = '/' + dl;
+        this.remove(id);
       });
+      root.appendChild(a);
+    }
+    const d = document.createElement('button');
+    d.type = 'button'; d.className = 't__dismiss';
+    d.setAttribute('aria-label', this.t('common.actions.dismiss'));
+    d.innerHTML = '&times;';
+    d.addEventListener('click', () => this.remove(id));
+    root.appendChild(d);
+    stack.appendChild(root);
+    // Pause-on-hover: clear pending dismiss; re-arm on mouse-leave / focus-out
+    let timer = null;
+    const arm = () => { if (timeout) timer = setTimeout(() => this.remove(id), timeout); };
+    const disarm = () => { if (timer) { clearTimeout(timer); timer = null; } };
+    if (timeout) {
+      arm();
+      root.addEventListener('mouseenter', disarm); root.addEventListener('mouseleave', arm);
+      root.addEventListener('focusin', disarm);    root.addEventListener('focusout', arm);
     }
   }
+  remove(id) { const el = this.$(`.t[data-id="${id}"]`); if (el) el.remove(); }
 }
-
-customElements.define('pf-toast', Toast);
+customElements.define('pf-toast', PfToast);
+export default PfToast;

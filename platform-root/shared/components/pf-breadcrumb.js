@@ -1,101 +1,24 @@
-/**
- * OBSIDIAN v4 Breadcrumb Component
- * Navigation breadcrumbs with aria-current support
- */
-
-export class Breadcrumb extends HTMLElement {
-  constructor() {
-    super();
-    this.attachShadow({ mode: 'open' });
+/** OBSIDIAN v4.0 — <pf-breadcrumb> · Home › current module, from route changes. */
+import { PfBaseElement } from './_base.js';
+class PfBreadcrumb extends PfBaseElement {
+  onConnect() {
+    this.render(`<style>
+      :host{ display:block; }
+      ol{ list-style:none; display:flex; align-items:center; gap:var(--space-2);
+        font-size:var(--size-body-sm); color:var(--color-text-muted); }
+      li::after{ content:"›"; margin-left:var(--space-2); color:var(--color-border-strong); }
+      li:last-child::after{ content:""; }
+      li[aria-current]{ color:var(--color-text); font-weight:var(--fw-semibold); }
+    </style><nav aria-label="breadcrumb"><ol id="crumbs"></ol></nav>`);
+    this.bus('platform:route:changed', (e) => this.paint(e.id));
+    const cur = globalThis.Platform?.Router?.current?.(); if (cur?.id) this.paint(cur.id);
   }
-
-  connectedCallback() {
-    this.render();
-  }
-
-  render() {
-    this.shadowRoot.innerHTML = `
-      <style>
-        :host {
-          display: block;
-          padding: 12px 16px;
-          font-size: 14px;
-          border-bottom: 1px solid #e0e0e0;
-        }
-
-        nav {
-          display: flex;
-        }
-
-        ul {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-          display: flex;
-          gap: 0;
-          flex-wrap: wrap;
-        }
-
-        li {
-          display: flex;
-          align-items: center;
-        }
-
-        li + li::before {
-          content: "/";
-          margin: 0 8px;
-          color: #999;
-        }
-
-        a {
-          color: #0066cc;
-          text-decoration: none;
-          padding: 4px 8px;
-          cursor: pointer;
-        }
-
-        a:hover {
-          text-decoration: underline;
-        }
-
-        a:focus-visible {
-          outline: 2px solid #0066cc;
-          outline-offset: 2px;
-        }
-
-        [aria-current="page"] {
-          color: #666;
-          font-weight: 600;
-          cursor: default;
-        }
-      </style>
-
-      <nav aria-label="breadcrumb">
-        <ul>
-          <slot></slot>
-        </ul>
-      </nav>
-    `;
+  paint(id) {
+    const M = globalThis.Platform?.Modules?.get?.(id);
+    const label = M ? this.t(M.label) : id;
+    this.$('#crumbs').innerHTML =
+      `<li><a href="#/">${this.t('breadcrumb.home')}</a></li><li aria-current="page">${label}</li>`;
   }
 }
-
-export class BreadcrumbItem extends HTMLElement {
-  constructor() {
-    super();
-  }
-
-  connectedCallback() {
-    const href = this.getAttribute('href');
-    const isCurrent = this.hasAttribute('aria-current');
-    const text = this.textContent;
-
-    if (isCurrent) {
-      this.innerHTML = `<li aria-current="page">${text}</li>`;
-    } else {
-      this.innerHTML = `<li><a href="${href}">${text}</a></li>`;
-    }
-  }
-}
-
-customElements.define('pf-breadcrumb', Breadcrumb);
-customElements.define('pf-breadcrumb-item', BreadcrumbItem);
+customElements.define('pf-breadcrumb', PfBreadcrumb);
+export default PfBreadcrumb;

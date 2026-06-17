@@ -1,63 +1,935 @@
 {
-  "app": {
-    "name": "OBSIDIAN",
-    "tagline": "Collaborative Platform"
+  "endpoint": {
+    "getDocs": {
+      "label": "Documents"
+    },
+    "aiEmailAnalysis": {
+      "label": "Email Analysis"
+    },
+    "dynamicGlobalActions": {
+      "label": "Global Actions"
+    },
+    "fetchEmailAttachments": {
+      "label": "Email Attachments"
+    },
+    "referenceData": {
+      "label": "References & Lookups"
+    },
+    "aiDocAnalysis": {
+      "label": "Document Analysis"
+    },
+    "otpGenerate": {
+      "label": "Send Verification Code"
+    },
+    "otpVerify": {
+      "label": "Verify Code"
+    },
+    "aiChat": {
+      "label": "Assistant"
+    },
+    "fetchAll": {
+      "label": "All Data & References"
+    },
+    "bulkAssignment": {
+      "label": "Document Bulk Task Assignment"
+    },
+    "singleAssignment": {
+      "label": "Document Single Task Assignment"
+    },
+    "subsidiaryActions": {
+      "label": "Subsidiary Actions"
+    },
+    "emailRelatedTask": {
+      "label": "Create Task From Email"
+    },
+    "reserved14": {
+      "label": "Reserved"
+    },
+    "reserved15": {
+      "label": "Reserved"
+    }
   },
-  "feedback": {
-    "loading": "Loading...",
-    "slow-load": "Still loading",
-    "slow-load-detail": "This is taking longer than expected. Please wait...",
-    "success": "Success",
-    "error": "An error occurred",
-    "error-generic": "An error occurred. Please try again.",
-    "retry": "Retry",
-    "empty": "No items",
-    "dismiss": "Dismiss",
-    "offline": "You are offline. Some features may be limited.",
-    "processing": "Processing...",
-    "notifications": "Notifications",
-    "close": "Close"
-  },
-  "form": {
-    "required": "This field is required",
-    "invalid-email": "Please enter a valid email address",
-    "submit": "Submit",
-    "cancel": "Cancel",
-    "save": "Save",
-    "delete": "Delete",
-    "edit": "Edit",
-    "validation-error": "Please correct the errors below"
-  },
-  "navigation": {
-    "skip-to-content": "Skip to main content",
-    "menu": "Menu",
-    "close-menu": "Close menu",
-    "language": "Language",
-    "settings": "Settings",
-    "account": "Account",
-    "logout": "Logout"
-  },
-  "accessibility": {
-    "loading": "Loading",
-    "error": "Error",
-    "success": "Success",
-    "modal": "Dialog",
-    "close": "Close"
+  "field": {
+    "referenceId.label": "Reference ID",
+    "assignedTo.label": "Assigned To",
+    "priority.label": "Priority",
+    "status.label": "Status",
+    "title.label": "Title",
+    "createdTaskId.label": "Task ID",
+    "id": {
+      "label": "ID"
+    },
+    "referenceId": {
+      "label": "Reference"
+    },
+    "title": {
+      "label": "Title"
+    },
+    "subject": {
+      "label": "Subject"
+    },
+    "status": {
+      "label": "Status"
+    },
+    "assignedTo": {
+      "label": "Assigned To",
+      "help": "User who will own this task."
+    },
+    "priority": {
+      "label": "Priority"
+    },
+    "ts": {
+      "label": "Date"
+    },
+    "count": {
+      "label": "Selected References"
+    },
+    "createdTaskId": {
+      "label": "Task ID"
+    },
+    "docs": {
+      "label": "Documents"
+    },
+    "tasks": {
+      "label": "Tasks"
+    },
+    "emails": {
+      "label": "Emails"
+    },
+    "references": {
+      "label": "References"
+    },
+    "activities": {
+      "label": "Activities"
+    },
+    "lookups": {
+      "label": "Lookups"
+    },
+    "total": {
+      "label": "Total"
+    },
+    "sum": {
+      "label": "Total"
+    },
+    "avg": {
+      "label": "Average"
+    },
+    "all": {
+      "label": "All Records"
+    },
+    "sender": {
+      "label": "Sender"
+    },
+    "dates": {
+      "label": "Dates"
+    },
+    "action": {
+      "label": "Action"
+    },
+    "assignmentType": {
+      "label": "Assignment type"
+    },
+    "category": {
+      "label": "Category"
+    },
+    "subCategory": {
+      "label": "Sub-category",
+      "help": "Optional refinement under the chosen category."
+    },
+    "ackDue": {
+      "label": "Acknowledgement due",
+      "help": "Deadline for the assignee to acknowledge receipt."
+    },
+    "taskDue": {
+      "label": "Task due",
+      "help": "Deadline for completion of the assigned work."
+    },
+    "copyTo": {
+      "label": "Copy to (comma-separated)",
+      "hint": "comma-separated emails",
+      "help": "Comma-separated email addresses to copy on the assignment."
+    },
+    "activityTask": {
+      "label": "New activity / task note",
+      "help": "Short description of the activity to be performed."
+    },
+    "required": "Required field",
+    "comments": {
+      "label": "Comments"
+    }
   },
   "errors": {
-    "404": "Page not found",
-    "500": "Server error",
-    "offline": "No internet connection",
-    "permission": "You do not have permission to access this"
+    "api": {
+      "timeout": "The request took too long and was cancelled. Try again.",
+      "network": "Could not reach the service. Check your connection and try again.",
+      "server": "The service reported an error. The team has been notified.",
+      "client": "The request could not be completed as submitted.",
+      "parse": "The service returned an unexpected response.",
+      "notImplemented": "This capability is reserved and not yet available.",
+      "unknownEndpoint": "This action is not configured.",
+      "rateLimit": "Too many requests right now. Please wait and try again.",
+      "unavailable": "The service is temporarily unavailable. Retrying shortly.",
+      "auth": "Your session isn't authorized to perform this action.",
+      "duplicate": "A previous request is still in flight. Please wait."
+    }
+  },
+  "common": {
+    "actions": {
+      "dismiss": "Dismiss",
+      "submit": "Submit",
+      "refresh": "Refresh",
+      "retry": "Retry",
+      "cancel": "Cancel",
+      "export": "Export CSV",
+      "confirm": "Confirm",
+      "processing": "Processing…",
+      "view": "View",
+      "clear": "Clear",
+      "remove": "Remove",
+      "close": "Close"
+    },
+    "state": {
+      "saved": "Saved successfully.",
+      "loading": "Loading…",
+      "empty": "Nothing to show yet."
+    }
+  },
+  "app": {
+    "title": "DGO Digital Ops"
+  },
+  "nav": {
+    "group": {
+      "operations": "Operations",
+      "governance": "Governance",
+      "executive": "Executive",
+      "administration": "Administration",
+      "system": "System",
+      "intelligence": "Intelligence",
+      "assignments": "Assignments",
+      "intake": "Intake",
+      "routing": "Routing",
+      "action": "Action",
+      "review": "Review",
+      "dispatch": "Dispatch",
+      "archive": "Archive",
+      "crossPhase": "Cross-Phase"
+    },
+    "util": {
+      "palette": "Command palette",
+      "notifications": "Notifications",
+      "theme": "Toggle theme",
+      "persona": "Persona"
+    },
+    "badge": {
+      "deprecated": "Deprecated"
+    }
+  },
+  "brand": {
+    "nitda": {
+      "label": "NITDA"
+    },
+    "dgo": {
+      "label": "DGO Digital Ops"
+    },
+    "endorsement": {
+      "nitda": "An initiative of NITDA"
+    }
+  },
+  "persona": {
+    "admin": {
+      "label": "Administrator"
+    },
+    "executive": {
+      "label": "Executive"
+    },
+    "general": {
+      "label": "General"
+    },
+    "switcher": {
+      "label": "View as",
+      "aria": "Switch persona"
+    }
+  },
+  "shell": {
+    "skipLink": "Skip to main content",
+    "nav": {
+      "aria": "Primary"
+    },
+    "menu": {
+      "toggle": "Toggle navigation"
+    },
+    "loading": "Loading",
+    "empty": {
+      "title": "Select a workspace",
+      "body": "Choose a module from the navigation to begin."
+    }
+  },
+  "footer": {
+    "copyright": "© {year} NITDA Digital Ops"
+  },
+  "breadcrumb": {
+    "home": "Home"
+  },
+  "modal": {
+    "close": "Close dialog"
+  },
+  "sidepanel": {
+    "close": "Close panel"
+  },
+  "deprecation": {
+    "icon": {
+      "aria": "Warning"
+    },
+    "banner": {
+      "message": "This module is deprecated. Use {replacedBy}. It will be removed on {date}."
+    }
   },
   "module": {
+    "home": {
+      "title": "Overview"
+    },
+    "ops-hub": {
+      "title": "Operations Hub",
+      "empty": "No documents in scope. Refresh, or capture correspondence to generate documents."
+    },
+    "fasttrack": {
+      "title": "Fast Track Monitoring",
+      "empty": "No items in the SLA board yet."
+    },
+    "orchestrator": {
+      "title": "Smart Orchestrator",
+      "empty": "No tasks match. Create or assign tasks from the documents lens."
+    },
+    "registry": {
+      "title": "File Movement",
+      "empty": "No file movements recorded. Activity appears here as actions occur."
+    },
+    "correspondence": {
+      "title": "Correspondence",
+      "empty": "No correspondence yet. Use 'New' to capture an email-to-task entry."
+    },
+    "response-tracking": {
+      "title": "Response Tracking",
+      "empty": "No references to track. Activity appears here as items move through the workflow."
+    },
+    "comments": {
+      "title": "Comments",
+      "empty": "No comments yet for the active reference."
+    },
+    "approvals": {
+      "title": "Approvals",
+      "empty": "No approvals waiting. Items routed for sign-off appear here."
+    },
+    "executive": {
+      "title": "Executive Office",
+      "subtitle": "Top-line oversight for the DG/CEO office.",
+      "empty": "No executive view yet — counts and trends populate from live data."
+    },
+    "stats": {
+      "title": "Statistics",
+      "empty": "No statistics yet — once the fabric hydrates, rollups appear here."
+    },
+    "reports": {
+      "title": "Reports",
+      "empty": "No data yet. Reports populate once the fabric has records."
+    },
+    "single-item-ops": {
+      "title": "Single-Item Assignment",
+      "subtitle": "Assign one document to an officer as a tracked task.",
+      "pickLabel": "Document (pick from fabric)",
+      "manualRef": "…or enter a Reference ID",
+      "submit": "Assign",
+      "resultSummary": "Assigned {ref} to {who}.",
+      "needRef": "Select a document or enter a Reference ID first.",
+      "needAssignee": "Choose an assignee first.",
+      "empty": "Search a reference or document to begin a single assignment.",
+      "pickHelp": "Choose a document from the fabric — or leave blank and enter a Reference manually below.",
+      "manualRefHelp": "Required only when no document is picked above.",
+      "summaryTitle": "Assignment Summary",
+      "categoryHelp": "Choose a category — assignee will auto-default from its Primary Responsible.",
+      "comments": "Comments",
+      "commentsHelp": "Optional notes attached to the assignment.",
+      "commentsHint": "Add any context, instructions, or notes for the assignee…",
+      "cascadeApplied": "Assignee defaulted from category → {dept}"
+    },
+    "bulk-assignment": {
+      "title": "Bulk Assignment",
+      "subtitle": "Assign many documents to an officer in one canonical, audited operation.",
+      "pickerTitle": "1 · Select documents",
+      "formTitle": "2 · Assignment details",
+      "selectAll": "Select all (filtered)",
+      "selected": "{n} selected",
+      "filterPlaceholder": "Filter by title, reference, status…",
+      "empty": "No documents in the fabric yet.",
+      "submit": "Assign selected",
+      "resultTitle": "Bulk assignment complete",
+      "resultSummary": "{created} created · {notified} notified · {failed} failed",
+      "stepperAria": "Bulk assignment progress",
+      "step1": "Select items",
+      "step2": "Assignment details",
+      "step3": "Confirm & submit",
+      "step1Sub": "{n} selected",
+      "step2Sub": "Fill in the form below",
+      "step3Sub": "Sign and send"
+    },
+    "diagnostics": {
+      "title": "Diagnostics",
+      "empty": "Run 'Ping all' to test live endpoint connectivity."
+    },
+    "assistant": {
+      "title": "Assistant",
+      "subtitle": "Ask the DGO assistant about references, tasks, and correspondence.",
+      "empty": "Ask the assistant about references, tasks, or correspondence."
+    },
+    "lookup": {
+      "title": "System Record Lookup",
+      "subtitle": "Search across References, Documents, Tasks, Emails, and Comments.",
+      "empty": "No records yet. Wait for the data fabric to hydrate, then try again."
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Endpoint overrides for sandbox testing.",
+      "empty": "No endpoints configured."
+    },
     "dispatch": {
       "title": "Dispatch & Closure",
       "subtitle": "Outbound queue for approved references.",
       "empty": "No references awaiting dispatch."
     }
   },
+  "priority": {
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low",
+    "urgent": "Urgent"
+  },
+  "approvals": {
+    "pending": "Pending actions ({n})",
+    "from": "From: {who}",
+    "typeMemo": "Memo",
+    "empty": "Select a request to review",
+    "statusPending": "Pending Review",
+    "submittedBy": "Submitted by {who} · {date}",
+    "summary": "Executive Summary",
+    "documents": "Supporting Documents",
+    "minute": "Minute / Comment",
+    "minutePlaceholder": "Add comments, directives, or conditions for approval…",
+    "sign": "Append digital signature",
+    "approve": "Approve",
+    "reject": "Reject",
+    "needReason": "Provide a reason in the minute before rejecting.",
+    "confirmApproveTitle": "Confirm approval",
+    "confirmApproveBody": "This decision is recorded and notifies the initiator.",
+    "confirmRejectTitle": "Confirm rejection",
+    "confirmRejectBody": "The initiator will be notified with your reason.",
+    "approved": "Request approved.",
+    "rejected": "Request rejected.",
+    "related": "Linked across the platform",
+    "reviewerLocked": "It is not your turn in the reviewer sequence yet.",
+    "reviewerComplete": "The reviewer sequence is already complete.",
+    "reviewerAdvanced": "Your approval is recorded; the next reviewer in sequence has been notified."
+  },
+  "entity": {
+    "reference": "Reference",
+    "document": "Documents",
+    "task": "Tasks",
+    "email": "Emails",
+    "approval": "Approvals",
+    "comment": "Comments",
+    "activity": "Activities"
+  },
+  "comments": {
+    "placeholder": "Write a comment, directive, or note…",
+    "add": "Add comment",
+    "you": "You",
+    "empty": "No comments yet for this reference.",
+    "added": "Comment added.",
+    "scopeAll": "All comments ({n})",
+    "scopeRef": "Reference {ref} · {n} comments",
+    "sentiment": {
+      "label": "Sentiment",
+      "positive": "Positive",
+      "negative": "Negative",
+      "neutral": "Neutral"
+    },
+    "priority": {
+      "label": "Priority",
+      "urgent": "Urgent",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "confirmTitle": "Confirm comment",
+    "modalTitle": "Comments — {ref}",
+    "openBtn": "Open Comments",
+    "scopeLabel": "Scope",
+    "scopeAllShort": "All references",
+    "count": "Count",
+    "reply": "Reply",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "replyingTo": "Replying to {who}",
+    "inReplyTo": "in reply to {who}",
+    "edited": "Comment updated.",
+    "deleted": "Comment removed.",
+    "deleteConfirm": "Delete this comment? This cannot be undone."
+  },
+  "filter": {
+    "searchPlaceholder": "Search records, IDs…",
+    "searchAria": "Search",
+    "statusAria": "Filter by status",
+    "all": "All statuses",
+    "results": "{n} results",
+    "clear": "Clear filters"
+  },
+  "status": {
+    "pending": "Pending",
+    "routed": "Routed",
+    "replied": "Replied",
+    "closed": "Closed"
+  },
+  "correspondence": {
+    "new": "New correspondence",
+    "aiClassify": "AI classify",
+    "track": "Track",
+    "classified": "Classification updated.",
+    "created": "Correspondence created.",
+    "selectHint": "Select a correspondence to view its decision detail.",
+    "fromMeta": "From {who} · {ref}",
+    "detailsLabel": "Details / executive summary"
+  },
+  "home": {
+    "byStatus": "By status",
+    "greet": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "summary": {
+      "calm": "You're tracking {n} items across the fabric. All clear.",
+      "attention": "Tracking {n} items. {overdue} need attention."
+    },
+    "persona": "Persona",
+    "today": "Today",
+    "attention": "Needs attention",
+    "pulse": "Activity — last 14 days",
+    "recent": "Recent activity",
+    "recentEmpty": "Nothing recent yet.",
+    "quickActions": "Quick actions",
+    "qa": {
+      "assignSingle": "New assignment",
+      "assignBulk": "Bulk assign",
+      "correspondence": "Correspondence",
+      "tasks": "Open tasks",
+      "assistant": "Ask assistant"
+    }
+  },
+  "lens": {
+    "relatedTo": "Linked to {ref}:",
+    "selectHint": "Select a row to view its details, related items, and actions.",
+    "emptyHint": "Nothing matches the current filters — adjust the search or status above.",
+    "related": "Related",
+    "detailLabel": "Selected record details",
+    "comments": "Comments",
+    "activity": "Activity",
+    "attachments": "Attachments",
+    "selectedN": "{n} selected",
+    "pagerInfo": "Showing {from}–{to} of {total}",
+    "pagerPrev": "Prev",
+    "pagerNext": "Next",
+    "legendTitle": "Row status key",
+    "legendOverdue": "Overdue",
+    "legendDueSoon": "Due soon",
+    "legendAlert": "Needs attention",
+    "legendPending": "Pending",
+    "scopeQueue": "Routing queue · show all",
+    "scopeAll": "Showing all · scope to routing queue",
+    "heatmap": {
+      "legend": "Less",
+      "more": "More",
+      "overdue": "overdue",
+      "upcoming": "upcoming",
+      "peak": "peak/day",
+      "title": "Due-Date Heatmap",
+      "subtitle": "Task load by day — past dates with items are highlighted in red.",
+      "clickHint": "Click a cell to see that day's items.",
+      "dayItems": "Items due {date}"
+    },
+    "timeline": {
+      "title": "Activity",
+      "empty": "No activity recorded for this record yet.",
+      "more": "Show {n} more"
+    }
+  },
+  "action": {
+    "confirmTitle": "Confirm action",
+    "confirmSummary": "Please review the details below. This will be submitted to the workflow.",
+    "done": "Submitted successfully.",
+    "failed": "Action failed. Please try again."
+  },
+  "bulk": {
+    "referencesLabel": "References (one per line)",
+    "confirmSummary": "This will create task assignments for every selected document and notify the assignee. This cannot be undone.",
+    "success": "Bulk assignment submitted.",
+    "otpReason": "Bulk assignment is a high-impact write. Verify to continue."
+  },
+  "diag": {
+    "endpoint": "Endpoint",
+    "method": "Method",
+    "status": "Status",
+    "latency": "Latency",
+    "time": "Timestamp",
+    "data": "Data",
+    "error": "Error",
+    "pinging": "pinging…",
+    "ok": "OK",
+    "fail": "FAIL",
+    "present": "present",
+    "none": "none",
+    "summary": "Summary",
+    "endpointsTotal": "Endpoints",
+    "online": "Online",
+    "offline": "Offline",
+    "avgLatency": "Avg latency",
+    "endpointHealth": "Endpoint health",
+    "fabric": "Entity fabric",
+    "hydrated": "Hydrated",
+    "source": "Source",
+    "yes": "Yes",
+    "no": "No",
+    "recentFailures": "Recent failures",
+    "noFailures": "No failures recorded this session.",
+    "system": "System",
+    "persona": "Persona",
+    "theme": "Theme",
+    "modules": "Modules registered",
+    "lastRun": "Last run",
+    "userAgent": "User agent",
+    "lastRunAt": "Last run: {when}",
+    "requestLog": "Request Log",
+    "requestLogEmpty": "No API calls recorded yet — interact with the platform to see entries.",
+    "clearLog": "Clear Log",
+    "col": {
+      "when": "When",
+      "endpoint": "Endpoint",
+      "action": "Action",
+      "status": "Status",
+      "ms": "Duration",
+      "detail": "Detail / Key",
+      "kind": "Kind"
+    },
+    "filter": {
+      "all": "All",
+      "writes": "Writes",
+      "errors": "Errors"
+    },
+    "storageHealth": "Storage Health",
+    "localStorage": "Local Storage",
+    "browserStorage": "Browser Storage",
+    "fabricRecords": "Entity Records (in memory)",
+    "fabricRecordsHint": "Total records currently held in the entity fabric.",
+    "clearStorage": "Clear Local Storage",
+    "clearStorageWarn": "This wipes saved preferences, persona, and theme overrides. Live data in the fabric is unaffected; the page will need a refresh to re-hydrate.",
+    "storageCleared": "Local storage cleared.",
+    "telemetryChart": "Response time — last 30 calls (ms)",
+    "telemetryChartHint": "Make a few API calls to see the trend.",
+    "auditLog": "Audit Log",
+    "auditLogEmpty": "No audit events recorded yet — interact with the platform to populate.",
+    "copyRow": "Copy",
+    "copyRowTitle": "Copy this entry as JSON",
+    "copiedRow": "Entry copied to clipboard.",
+    "copyFailed": "Could not access the clipboard.",
+    "exportLog": "Export All",
+    "exported": "Saved {file}.",
+    "exportFailed": "Could not export — check browser permissions.",
+    "lastResponse": "Last Fetch_All Response",
+    "lastResponseEmpty": "No response captured yet — refresh the data fabric to populate.",
+    "copyResponse": "Copy Response",
+    "copiedResponse": "Last response copied to clipboard.",
+    "exportResponse": "Download Response"
+  },
+  "confirm": {
+    "action": "Action",
+    "target": "Target entity",
+    "endpoint": "Endpoint",
+    "impact": "Impact",
+    "impactWrite": "Submits to the live workflow and updates the shared record across all modules."
+  },
+  "rt": {
+    "all": "All",
+    "docs": "Documents",
+    "emails": "Emails",
+    "tasks": "Tasks",
+    "pairs": "Doc ↔ Email Pairs",
+    "doc": "Document",
+    "email": "Email",
+    "exportCsv": "Export CSV",
+    "exportDone": "Exported {n} row(s) from {tab}",
+    "noRowsToExport": "Nothing to export yet"
+  },
+  "opshub": {
+    "assign": "Assign",
+    "flag": "⚑ Flag for DG Attention",
+    "assignedMeta": "Assigned to {who} · {status}",
+    "assigned": "Document assigned.",
+    "flagged": "Flagged for DG attention; review task created.",
+    "flagImpact": "Flags the document for DG attention and creates a high-priority review task.",
+    "dgReview": "DG Attention: {t}",
+    "bulkAssign": "Bulk Assign Selected ({n})",
+    "bulkHandoff": "Pre-filled {n} item(s) from ops-hub",
+    "meetingPack": "Prepare Meeting Pack ({n})",
+    "meetingPackTitle": "Prepare Meeting Pack",
+    "meetingPackSummary": "Consolidate {n} selected document(s) into a single meeting pack for the DG office. You will be able to review before it is generated.",
+    "meetingPackConfirm": "Generate Pack",
+    "flagTitle": "Flag Document for DG Attention",
+    "flagBlurb": "Flag this document so it surfaces in the DG Attention queue with a justification trail.",
+    "flagUrgency": "Urgency",
+    "flagClassification": "Classification",
+    "flagReason": "Reason",
+    "flagReasonHint": "Briefly state why this document needs the Director General's attention…",
+    "flagReasonRequired": "A reason of at least 3 characters is required.",
+    "flagSubmit": "Flag for DG"
+  },
+  "reminder": {
+    "title": "Set a reminder",
+    "set": "Set reminder",
+    "due": "Remind me at",
+    "note": "Note",
+    "notePlaceholder": "What is this reminder for?",
+    "channel": "Notify via",
+    "channelInapp": "In-app",
+    "channelEmail": "Email",
+    "dueRequired": "Pick a date and time for the reminder.",
+    "confirmTitle": "Set reminder",
+    "confirmSummary": "Schedule a reminder for {when}. You'll be notified through the channel you chose.",
+    "scheduled": "Reminder scheduled."
+  },
+  "registry": {
+    "movements": "Movement register · {n} entries"
+  },
+  "fasttrack": {
+    "overdue": "Overdue",
+    "dueSoon": "Due soon",
+    "onTrack": "On track",
+    "sla": "SLA",
+    "clear": "Clear filter"
+  },
+  "validation": {
+    "required": "This field is required",
+    "fix": "Please complete the highlighted fields."
+  },
+  "assignmentType": {
+    "action": "For action",
+    "info": "For information",
+    "primary": "Primary",
+    "copy": "Copy to"
+  },
+  "agg": {
+    "none": "No data yet.",
+    "clear": "Nothing overdue — all clear.",
+    "workload": "Workload by assignee",
+    "priorityMix": "Priority mix",
+    "overdue": "Needs attention (overdue)",
+    "recent": "Recent references",
+    "kpi": {
+      "references": "References",
+      "openTasks": "Open tasks",
+      "pendingApprovals": "Pending approvals",
+      "overdue": "Overdue",
+      "assignees": "Active assignees"
+    }
+  },
+  "single": {
+    "confirmSummary": "This creates a tracked task for the selected document and notifies the assignee.",
+    "success": "Assignment created."
+  },
+  "otp": {
+    "title": "Security verification",
+    "defaultReason": "Confirm your identity to proceed.",
+    "codeLabel": "One-time code",
+    "verify": "Verify",
+    "sent": "Code sent to {to} · expires in {ttl}s",
+    "genFailed": "Could not send a code. Try again.",
+    "needCode": "Enter the code.",
+    "invalid": "Invalid or expired code.",
+    "required": "A one-time code is required to continue.",
+    "expired": "The code expired. Request a new one.",
+    "resend": "Resend code",
+    "verifying": "Verifying…",
+    "expiresIn": "Expires in {s}s",
+    "attemptsLeft": "{n} attempt(s) left.",
+    "failed": "Verification failed. The assignment was rolled back.",
+    "sendingCode": "Sending a code…",
+    "rollback": "Too many incorrect attempts — assignment cancelled."
+  },
+  "ai": {
+    "toolsTitle": "Document tools",
+    "analyseDoc": "Analyse with AI",
+    "noResult": "No analysis returned.",
+    "failed": "AI analysis unavailable."
+  },
+  "attachment": {
+    "loading": "Loading attachments…",
+    "none": "No attachments.",
+    "noUrl": "No download URL available for this attachment.",
+    "openExternal": "Open in new tab →",
+    "fetchFailed": "Could not load preview"
+  },
+  "charts": {
+    "statusMix": "Status mix",
+    "activity14d": "Activity — last 14 days"
+  },
+  "assistant": {
+    "placeholder": "Ask a question…  (Ctrl/Cmd+Enter to send)",
+    "inputAria": "Message the assistant",
+    "send": "Send",
+    "empty": "Start a conversation with the assistant.",
+    "thinking": "Thinking…",
+    "you": "You",
+    "ai": "Assistant",
+    "noReply": "No response returned.",
+    "failed": "The assistant is unavailable right now.",
+    "routingDetected": "Detected routing"
+  },
+  "connectivity": {
+    "loading": "Loading live data…",
+    "offline": "Couldn't reach the service. Data may be incomplete.",
+    "retry": "Retry"
+  },
+  "form": {
+    "fixErrors": "Fix the highlighted fields and try again."
+  },
+  "task": {
+    "update": {
+      "title": "Update Task",
+      "submit": "Save Changes",
+      "openBtn": "Update Task"
+    },
+    "openOrchestrator": "Open in Orchestrator",
+    "updated": "Task updated."
+  },
+  "doc": {
+    "assignBtn": "Open in Single Assignment"
+  },
+  "email": {
+    "createTaskBtn": "Create Task from Email",
+    "taskTitle": "Create Task from Email",
+    "taskSubmit": "Create Task",
+    "taskCreated": "Task created from email.",
+    "sandboxed": "Sandboxed preview",
+    "sandboxedHint": "Untrusted HTML rendered in an isolated iframe — scripts cannot run.",
+    "noBody": "No body content.",
+    "body": "Body",
+    "headers": "Headers"
+  },
+  "lookup": {
+    "searchPlaceholder": "Search by reference, title, sender, status…",
+    "idleHint": "Start typing to search the data fabric.",
+    "noResults": "No records match \"{q}\".",
+    "resultsFor": "{n} record(s) match \"{q}\".",
+    "nMatches": "{n} match(es)",
+    "scope": {
+      "label": "Scope",
+      "all": "All",
+      "ref": "References",
+      "doc": "Documents",
+      "task": "Tasks",
+      "email": "Emails",
+      "comment": "Comments"
+    },
+    "filters": {
+      "toggle": "Advanced Filters",
+      "dateFrom": "Date From",
+      "dateTo": "Date To",
+      "statuses": "Statuses",
+      "assignedTo": "Assigned To",
+      "assignedToPlaceholder": "Email or substring…",
+      "clearAll": "Clear All Filters"
+    }
+  },
+  "notif": {
+    "title": "Notification Email Preview",
+    "subject": "Subject",
+    "preview": "Body",
+    "previewBtn": "Preview Notification"
+  },
+  "settings": {
+    "endpoints": "Endpoints",
+    "endpointsExplainer": "Override the Power Automate flow URLs at runtime. Useful for swapping to a sandbox flow without a rebuild. Overrides are stored in localStorage and apply to every subsequent API call.",
+    "defaultUrl": "Default URL",
+    "override": "Override URL",
+    "overridePlaceholder": "https://… (leave empty to use the default)",
+    "save": "Save",
+    "clear": "Clear",
+    "saved": "Override saved for {key}.",
+    "cleared": "Override cleared for {key}.",
+    "invalidUrl": "Enter a valid http(s):// URL or leave empty.",
+    "overrideActive": "Override active",
+    "totalEndpoints": "total endpoints",
+    "activeOverrides": "active overrides",
+    "resetAll": "Reset All Overrides",
+    "resetAllWarn": "This clears all endpoint URL overrides. Each endpoint will fall back to its default registry URL.",
+    "resetAllImpact": "Removes every localStorage entry under obsidian.endpoint.*",
+    "resetAllDone": "Cleared {n} override(s).",
+    "language": "Display Language",
+    "languageBlurb": "Choose the UI display language. All writes remain in English for audit consistency."
+  },
+  "profile": {
+    "title": "Your Profile",
+    "save": "Save Profile",
+    "saved": "Profile saved.",
+    "blurb": "Set your identity so assignment payloads and audit trails carry your real email instead of a generic persona stub.",
+    "fullName": "Full Name",
+    "fullNameHelp": "How you appear in audit logs and notification emails.",
+    "email": "Email Address",
+    "emailHelp": "Used as CreatedBy / userEmail in every API write. Must be a valid email.",
+    "department": "Department",
+    "departmentHelp": "Optional — used in audit and reporting context.",
+    "pickDept": "Pick your department",
+    "jobTitle": "Job Title",
+    "jobTitleHelp": "Optional — surfaces in detail views and email signatures.",
+    "nameRequired": "Please enter your full name.",
+    "emailRequired": "Please enter a valid email address."
+  },
+  "shortcuts": {
+    "title": "Keyboard Shortcuts",
+    "navigation": "Navigation",
+    "actions": "Actions",
+    "forms": "Forms & Inputs",
+    "help": "Open this cheatsheet",
+    "closeModal": "Close the active modal",
+    "focusSearch": "Focus the search field",
+    "goHome": "Go to Home",
+    "goOpsHub": "Go to Ops Hub",
+    "goLookup": "Go to Lookup",
+    "goRT": "Go to Response Tracking",
+    "goSettings": "Go to Settings",
+    "goDiagnostics": "Go to Diagnostics",
+    "refresh": "Refresh the data fabric",
+    "newAssign": "New single assignment",
+    "submit": "Submit the form",
+    "cancel": "Cancel / dismiss"
+  },
+  "sw": {
+    "updateAvailable": "A new version is ready. Reload to apply.",
+    "reload": "Reload"
+  },
+  "error": {
+    "auth": {
+      "failed": "Your session could not be verified. Please re-authenticate."
+    },
+    "directorate": {
+      "mismatch": "Cross-directorate action requires DG approval."
+    },
+    "rateLimited": "Too many requests. Please wait a moment and retry.",
+    "validation": "Some details need correcting before this can proceed.",
+    "notAuthorized": "You do not have authority for this action.",
+    "timeout": "The service took too long to respond. Please retry.",
+    "internal": "Something went wrong on our side. The team has been notified.",
+    "conflict": "This action was already applied."
+  },
   "dispatch": {
+    "failed": "Dispatch failed. You can retry from the dispatch queue.",
     "refresh": "Refresh",
     "queueCount": "{n} in queue",
     "empty": "No references are awaiting dispatch or closure.",
@@ -86,15 +958,71 @@
     "closeBlocked": "Closure blocked — {reasons} prerequisite(s) still open.",
     "closed": "Reference {ref} closed.",
     "sent": "Dispatched {ref}.",
-    "noRef": "No reference selected.",
-    "failed": "Dispatch failed. You can retry from the dispatch queue."
+    "noRef": "No reference selected."
   },
-  "approvals": {
-    "reviewerLocked": "It is not your turn in the reviewer sequence yet.",
-    "reviewerComplete": "The reviewer sequence is already complete.",
-    "reviewerAdvanced": "Your approval is recorded; the next reviewer in sequence has been notified."
+  "info": {
+    "alreadyApplied": "Already applied — no change needed."
   },
-  "assistant": {
-    "routingDetected": "Detected routing"
+  "triage": {
+    "bar": "Triage actions",
+    "acknowledge": "Acknowledge",
+    "acknowledged": "Acknowledged",
+    "tagCategory": "Tag Category",
+    "flagUrgency": "Flag Urgency",
+    "markDuplicate": "Mark Duplicate",
+    "sendToRouting": "Send to Routing",
+    "statusLabel": "Status",
+    "categoryPlaceholder": "Select category…",
+    "urgencyPlaceholder": "Select urgency…",
+    "ackFirst": "Acknowledge the item before sending it to routing.",
+    "noRef": "No correspondence selected to triage.",
+    "noCategories": "No categories loaded.",
+    "ackDone": "{ref} acknowledged — triaged.",
+    "routed": "{ref} sent to routing.",
+    "routeTitle": "Send to routing",
+    "routeSummary": "Complete triage and hand this correspondence to Phase 2 (Routing).",
+    "duplicateHint": "Possible duplicate of {ref} — review before routing.",
+    "duplicateConfirmed": "Marked as duplicate.",
+    "ackTitle": "Acknowledge correspondence",
+    "ackConfirm": "Acknowledge this correspondence and mark it triaged? This runs the triage flow.",
+    "metaCategory": "Category",
+    "metaUrgency": "Urgency",
+    "urgency": {
+      "p1": "P1 · DG Attention (2 WH)",
+      "p2": "P2 · High (6 WH)",
+      "p3": "P3 · Routine (24 WH)",
+      "p4": "P4 · Deferred (72 WH)"
+    },
+    "cascadeApplied": "Applied category defaults — responsible: {dsu}."
+  },
+  "lookups": {
+    "failed": "Reference data failed to load — category and assignee dropdowns may be empty."
+  },
+  "flow": {
+    "confirmTitle": "Confirm action",
+    "done": "Action completed.",
+    "failed": "Action failed ({kind}).",
+    "syncFailed": "Saved locally, but the {action} flow did not confirm — it will be retried."
+  },
+  "reports": {
+    "mgmtTitle": "NITDA Management Report",
+    "print": "Print",
+    "downloadHtml": "Download HTML",
+    "exported": "Report exported.",
+    "keyInsights": "Key Insights",
+    "totalActivities": "Total Activities",
+    "completed": "Completed",
+    "pendingApprovals": "Pending Approvals",
+    "overdue": "Overdue",
+    "activitySummary": "Activity Summary",
+    "activityBody": "{total} records tracked across the fabric; {completed} reached a completed or closed state.",
+    "docTaskSummary": "Document & Task Summary",
+    "docTaskBody": "{docs} documents, {tasks} tasks and {emails} emails currently under management.",
+    "conclusion": "Conclusion",
+    "conclusionBody": "{overdue} item(s) overdue and {pending} approval(s) pending — prioritise these in the next cycle.",
+    "sendEmail": "Send Report Email",
+    "sendTitle": "Send management report",
+    "sendSummary": "Email the current NITDA Management Report to the DG's Office.",
+    "emailSent": "Report email queued for sending."
   }
 }
