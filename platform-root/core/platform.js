@@ -33,6 +33,9 @@ import { AuditLog } from './audit-log.js';
 import { ErrorRouter } from './error-router.js';
 import { Lookups } from '../shared/utils/lookups.js';   // U1: dropdown option-set provider (was never exposed on Platform)
 import { DynamicActions } from '../shared/utils/dynamic-actions.js'; // universal channel for endpoint-less actions
+import { Directory } from '../shared/utils/directory.js';  // directorate email/identity resolver (Dispatch / Q-6 / assistant)
+import { Reviewers } from '../shared/utils/reviewers.js';  // Q-7 sequential reviewer engine
+import { SLA } from './sla.js';                            // D-6 working-time SLA engine
 
 const Platform = {
   Config:AppConfig, Endpoints, Flags:FeatureFlags, Routes:RoutesConfig,
@@ -40,6 +43,7 @@ const Platform = {
   Log, Bus, Storage, State, Errors, Format, A11y, I18n,
   API, BaseService, Modules, Theme, Brand, Persona, Router, Nav, UI, Lifecycle,
   Entities, Context, goToEntity, Idempotency, AuditLog, ErrorRouter, Lookups, Actions:DynamicActions,
+  Directory, Reviewers, SLA,
   extend(obj) { Object.assign(Platform, obj); return Platform; }
 };
 if (typeof window !== 'undefined') window.Platform = Platform;
@@ -73,7 +77,7 @@ ErrorRouter.install();
         return;
       }
       if (!isTyping(e) && gPressed) {
-        const TARGETS = { h:'home', o:'ops-hub', l:'lookup', r:'response-tracking', s:'settings', d:'diagnostics', c:'correspondence', a:'assignment' };
+        const TARGETS = { h:'home', o:'ops-hub', l:'lookup', r:'response-tracking', s:'settings', d:'diagnostics', c:'correspondence', x:'dispatch' };
         const tgt = TARGETS[e.key.toLowerCase()];
         if (tgt) { e.preventDefault(); gPressed = false; Platform.Router?.navigate?.(tgt); return; }
       }

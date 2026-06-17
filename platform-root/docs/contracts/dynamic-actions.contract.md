@@ -41,6 +41,7 @@ auto-attached for writes; every call is recorded in the request log.
 | `prepareMeetingPack` | generate | batch | `refs` | `title`,`period`,`recipients` | yes | `flow.done` |
 | `issueTripClearance` | issue | single | `ref`,`traveller`,`destination` | `startDate`,`endDate`,`purpose` | yes | `flow.done` |
 | `setReminder` | create | single | `dueAt` | `ref`,`taskId`,`note`,`channel` | yes | `flow.done` |
+| `dispatch` | dispatch | single | `ref`, `recipientAddress` | `channel`,`subject`,`bodyHtml`,`directorate`,`attachments`,`reviewers` | yes | `dispatch.sent` |
 
 Required fields are validated before dispatch (`actions.contract-missing` warning if absent); the flow
 remains the server-side authority.
@@ -88,6 +89,24 @@ Request `payload`:
 Response `data`: `{ "reminderId": "<id>", "dueAt": "<ISO>", "channel": "email" }`.
 Errors: `kind ∈ DUEAT_REQUIRED | SCHEDULE_FAILED`.
 
+### `dispatch` — Phase-5 outbound dispatch (DISPATCH_OUTBOUND relay)
+Request `payload`:
+```json
+{ "ref": "REF-…", "recipientAddress": "CS@nitda.gov.ng", "channel": "mailbox | head",
+  "directorate": "CS", "subject": "…", "bodyHtml": "<…>", "attachments": [],
+  "reviewers": [ { "sequence": 1, "userId": "USR-042", "role": "Director", "targetEmail": "DCS@nitda.gov.ng", "status": "approved" } ] }
+```
+Response `data`: `{ "dispatchId": "<id>", "deliveredAt": "<ISO>", "recipient": "…" }`.
+Errors: `kind ∈ RECIPIENT_REQUIRED | NOT_AUTHORIZED | DISPATCH_FAILED`.
+**State machine (Directive 1):** the UI advances the reference `dispatch-pending → dispatch-in-flight`
+*before* the call (so a timeout leaves a recoverable state), then `→ dispatched` on `ok` or `→
+dispatch-failed` on failure (asymmetric fallback: an inline Retry is injected in place). `recipientAddress`
+is resolved from the LIVE directorate directory (`Platform.Directory.recipientFor` → `DSU_Email |
+DSU_HeadEmail`), never hard-coded. Closure (`→ closed`) is gated on `Entities.canClose(ref)`.
+**Note:** no dedicated `DISPATCH_OUTBOUND` PA endpoint is provisioned yet (Q-4/Q-8). Until it lands, the
+dynamic flow relays the dispatch; when `DISPATCH_OUTBOUND` ships, repoint the `dispatch` contract there
+with no UI change (same pattern as `dispatchEmail`).
+
 ## Integration points (UI homes)
 
 - **`dispatchEmail`** — wired: `reports` Management Report → *Send Report Email* (this release). Also the
@@ -98,6 +117,9 @@ Errors: `kind ∈ DUEAT_REQUIRED | SCHEDULE_FAILED`.
 - **`setReminder`** — wired: shared rich-detail workspace (`appendRichSections`) on every record/task
   detail (ops-hub / correspondence / fasttrack) → *Set a reminder* (due picker + note + channel →
   `ref`/`taskId` + `dueAt`, preview + confirm + parsed feedback; this release).
+- **`dispatch`** — wired: `modules/dispatch/` Phase-5 queue → `<pf-dispatch-panel>` *Dispatch* (recipient
+  resolved from the live directory; state machine + asymmetric retry; preview + confirm + parsed feedback;
+  this release).
 
 > Contracts are complete and callable now (`Platform.Actions.run('<action>', { preview, payload })`).
 > The PA-side flow must implement the matching server behaviour for each `action`; until then responses

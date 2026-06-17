@@ -49,5 +49,52 @@
     "500": "Server error",
     "offline": "No internet connection",
     "permission": "You do not have permission to access this"
+  },
+  "module": {
+    "dispatch": {
+      "title": "Dispatch & Closure",
+      "subtitle": "Outbound queue for approved references.",
+      "empty": "No references awaiting dispatch."
+    }
+  },
+  "dispatch": {
+    "refresh": "Refresh",
+    "queueCount": "{n} in queue",
+    "empty": "No references are awaiting dispatch or closure.",
+    "cardDirectorate": "Directorate: {dsu}",
+    "detailMeta": "Status: {status} · Directorate: {dsu}",
+    "panelTitle": "Outbound dispatch",
+    "directorate": "Directorate",
+    "directorateUnknown": "Not derivable",
+    "channel": "Channel",
+    "channelMailbox": "Directorate mailbox",
+    "channelHead": "Directorate head",
+    "recipient": "Recipient",
+    "recipientUnresolved": "No recipient resolved for this directorate",
+    "statusLabel": "Status",
+    "dispatchBtn": "Dispatch",
+    "noDispatchBtn": "Mark no-dispatch",
+    "closeBtn": "Close reference",
+    "retryBtn": "Retry",
+    "confirmTitle": "Confirm dispatch",
+    "confirmSummary": "Dispatch this reference to {recipient}? The flow will be invoked and the outcome recorded.",
+    "noDispatchTitle": "Mark as no-dispatch",
+    "noDispatchSummary": "Record that this reference requires no outbound dispatch. It can then be closed.",
+    "markedNoDispatch": "Reference {ref} marked no-dispatch.",
+    "closeTitle": "Close reference",
+    "closeSummary": "Close this reference. All tasks, approvals and dispatches must be resolved first.",
+    "closeBlocked": "Closure blocked — {reasons} prerequisite(s) still open.",
+    "closed": "Reference {ref} closed.",
+    "sent": "Dispatched {ref}.",
+    "noRef": "No reference selected.",
+    "failed": "Dispatch failed. You can retry from the dispatch queue."
+  },
+  "approvals": {
+    "reviewerLocked": "It is not your turn in the reviewer sequence yet.",
+    "reviewerComplete": "The reviewer sequence is already complete.",
+    "reviewerAdvanced": "Your approval is recorded; the next reviewer in sequence has been notified."
+  },
+  "assistant": {
+    "routingDetected": "Detected routing"
   }
 }

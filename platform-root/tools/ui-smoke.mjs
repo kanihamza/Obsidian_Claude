@@ -126,7 +126,7 @@ const check = (n, ok, d) => { ok ? (pass++, console.log('  PASS  ' + n)) : (fail
 
 // Surfaces to sweep for mount/runtime crashes (admin-visible). Caught the home `host` ReferenceError.
 const SURFACES = ['home', 'correspondence', 'registry', 'ops-hub', 'fasttrack', 'single-item-ops',
-  'bulk-assignment', 'orchestrator', 'response-tracking', 'approvals', 'executive', 'stats', 'reports',
+  'bulk-assignment', 'dispatch', 'orchestrator', 'response-tracking', 'approvals', 'executive', 'stats', 'reports',
   'lookup', 'assistant', 'diagnostics', 'settings'];
 
 try {
@@ -402,6 +402,42 @@ try {
   const emailCall = paCalls.find((c) => c.action === 'dispatchEmail' && c.operation === 'send' && c.client && c.client.app === 'obsidian' && c.payload && c.payload.email);
   check('reports: Send Report Email dispatches the dispatchEmail contract (dynamic flow)', !!emailCall, 'actions=[' + paCalls.map((c) => c.action).join(',') + ']');
   check('reports: no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
+
+  console.log('\n==================== DISPATCH + D-5 REDIRECT DEEP CHECK ====================');
+  consoleErrors.length = 0;
+  // D-5 — #/assignment/* must redirect to the executive dashboard (module deprecated + removed).
+  await page.evaluate(() => { location.hash = '#/assignment/foo'; });
+  await page.waitForTimeout(400);
+  const afterRedirect = await page.evaluate(() => globalThis.Platform.Router.current().id);
+  check('D-5: #/assignment/* redirects to executive', afterRedirect === 'executive', 'landed on ' + afterRedirect);
+  check('D-5: assignment module is unregistered', await page.evaluate(() => !globalThis.Platform.Modules.get('assignment')));
+  // Seed an approved reference in a non-isolated directorate so the dispatch queue has a card to drive.
+  await page.evaluate(() => globalThis.Platform.Entities.upsert('reference', {
+    referenceId: 'R-DX-SMOKE', status: 'approved', AssignedToDSU: 'PROC-DSU', title: 'Dispatch smoke ref', ts: new Date().toISOString() }));
+  await page.evaluate(() => globalThis.Platform.Router.navigate('dispatch'));
+  await page.locator('#module-dispatch').first().waitFor({ timeout: 15000 });
+  await page.waitForTimeout(400);
+  check('dispatch: surface renders', await page.locator('#module-dispatch').count() === 1);
+  const dxCards = await page.locator('#module-dispatch .pf-dx__card').count();
+  check('dispatch: queue lists the approved reference', dxCards >= 1, 'cards=' + dxCards);
+  await page.locator('#module-dispatch .pf-dx__card').first().click();
+  await page.locator('#module-dispatch pf-dispatch-panel').first().waitFor({ timeout: 8000 });
+  await page.waitForTimeout(200);
+  const recip = await page.evaluate(() => { const p = document.querySelector('#module-dispatch pf-dispatch-panel'); const r = p && p.shadowRoot.querySelector('#recip'); return r ? r.textContent : ''; });
+  check('dispatch: recipient resolved from live directory (DSU_Email|DSU_HeadEmail)', /@nitda\.gov\.ng/.test(recip), 'recipient="' + recip + '"');
+  // Dispatch → mandatory preview + confirmation → dynamic flow fires the dispatch contract → state machine advances.
+  paCalls.length = 0;
+  await page.evaluate(() => { const p = document.querySelector('#module-dispatch pf-dispatch-panel'); p.shadowRoot.querySelector('#send').click(); });
+  await page.locator('pf-modal[open] .primary').first().waitFor({ timeout: 8000 });
+  check('dispatch: shows preview + confirmation before the flow', await page.locator('pf-modal[open] .primary').count() >= 1);
+  check('dispatch: no flow fired before confirmation', paCalls.length === 0, 'premature=[' + paCalls.map((c) => c.action).join(',') + ']');
+  await page.locator('pf-modal[open] .primary').first().click();
+  await page.waitForTimeout(500);
+  const dxCall = paCalls.find((c) => c.action === 'dispatch' && c.operation === 'dispatch' && c.payload && c.payload.recipientAddress);
+  check('dispatch: Dispatch dispatches the dispatch contract (dynamic flow)', !!dxCall, 'actions=[' + paCalls.map((c) => c.action).join(',') + ']');
+  const dxStatus = await page.evaluate(() => globalThis.Platform.Entities.byReference('R-DX-SMOKE').reference.status);
+  check('dispatch: state machine advanced dispatch-pending→in-flight→dispatched', dxStatus === 'dispatched', 'status=' + dxStatus);
+  check('dispatch: no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
 
   console.log('\n==================== EXECUTIVE DEEP CHECK ====================');
   consoleErrors.length = 0;

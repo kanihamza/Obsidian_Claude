@@ -15,6 +15,7 @@ import './pf-deprecation-banner.js';
 import './pf-comment-thread.js';
 import './pf-filter-bar.js';
 import './pf-triage-bar.js';
+import './pf-dispatch-panel.js';
 import './pf-attachment.js';
 import './pf-otp-modal.js';
 import './pf-connectivity-banner.js';

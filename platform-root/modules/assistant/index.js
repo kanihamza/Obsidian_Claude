@@ -47,22 +47,44 @@ class AssistantModule extends BaseModule {
     if (!text) return;
     this._messages.push({ role: 'user', content: text });
     this._input.value = ''; this._paint();
+    // Directive 5 — ground the prompt: parse shorthand department text (e.g. "Send draft to CCMR and
+    // then ITPCU") into ordered electronic routing metadata against the LIVE DSU_KEY directory before the
+    // turn executes, surface the detected routing in the workspace, and attach it to the AI payload so the
+    // flow receives resolved targets, not free text.
+    const P = globalThis.Platform || {};
+    const routing = (P.Directory && typeof P.Directory.parsePrompt === 'function') ? P.Directory.parsePrompt(text) : [];
+    if (routing.length) this._renderRouting(routing);
     const pending = el('div', { class: 'pf-asst__msg pf-asst__msg--ai pf-asst__pending', text: this.t('assistant.thinking') });
     this._log.append(pending); this._log.scrollTop = this._log.scrollHeight;
     // K-8b — stamp the active directorate scope + identity onto every AI payload so the flow has the
     // telemetry to enforce role-based compliance. Scope is read from the sealed Context getter; the
     // assistant never reaches the fabric directly.
-    const P = globalThis.Platform || {};
     const scope = {
       directorate: (P.Context && P.Context.directorate && P.Context.directorate()) || 'all',
       persona: (P.Persona && P.Persona.current && P.Persona.current()) || null,
       userEmail: (P.Persona && P.Persona.email && P.Persona.email()) || null
     };
-    const res = await this.call(() => AI.chat(this._messages, { scope, ...scope }));
+    const res = await this.call(() => AI.chat(this._messages, { scope, ...scope, ...(routing.length ? { routing } : {}) }));
     pending.remove();
     const reply = res.ok ? (AI.summaryOf(res) || this.t('assistant.noReply')) : this.t('assistant.failed');
     this._messages.push({ role: 'assistant', content: reply });
     this._paint();
+    if (routing.length) this._renderRouting(routing);   // re-attach after _paint() rebuilds the log
+  }
+
+  /** Render the parsed routing targets as an ordered chip row in the workspace (Directive 5). Each chip
+   *  shows the directorate key/title and its resolved recipient address. */
+  _renderRouting(routing) {
+    if (!this._log || !routing || !routing.length) return;
+    const row = el('div', { class: 'pf-asst__routing' }, [
+      el('span', { class: 'pf-overline', text: this.t('assistant.routingDetected') }),
+      ...routing.map((r) => el('span', {
+        class: 'pf-badge pf-badge--routed pf-asst__route',
+        title: r.recipientAddress || '',
+        text: `${r.sequence}. ${r.key}${r.recipientAddress ? ' → ' + r.recipientAddress : ''}`
+      }))
+    ]);
+    this._log.append(row); this._log.scrollTop = this._log.scrollHeight;
   }
 }
 Modules.register(AssistantModule);

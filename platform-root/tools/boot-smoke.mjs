@@ -76,7 +76,7 @@ globalThis.AbortController = class { constructor() { this.signal = { aborted: fa
 // ─── Load every module ────────────────────────────────────────────────────
 const { Modules } = await import('../core/modules-registry.js');
 const ids = ['home','ops-hub','correspondence','orchestrator','fasttrack','registry','assistant',
-  'response-tracking','approvals','comments','executive','stats','reports','assignment',
+  'response-tracking','approvals','comments','executive','stats','reports','dispatch',
   'single-item-ops','bulk-assignment','diagnostics','lookup','settings'];
 const errs = [];
 for (const id of ids) {

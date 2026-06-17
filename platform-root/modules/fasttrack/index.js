@@ -6,12 +6,17 @@ import { Modules } from '../../core/modules-registry.js';
 import { el, clear } from '../../shared/utils/dom.js';
 import { appendRichSections, skeletonTiles, skeletonTable } from '../../shared/utils/lens.js';
 
-const DAY = 86400000;
-function sla(ts) {
+// K-1 / D-6 — SLA is computed by the decoupled working-time engine (Platform.SLA): WAT working hours
+// (Mon–Fri 08:00–16:00) excluding national holidays, against the record's priority budget (§3.3). The
+// former raw-calendar-day thresholds (>7d / >3d) produced false breaches and ignored priority.
+function sla(rec) {
+  const ts = rec && (rec.ts || rec.createdAt || rec.dueDate);
   if (!ts) return { key: 'unknown', cls: 'archived' };
-  const age = (Date.now() - new Date(ts).getTime()) / DAY;
-  if (age > 7) return { key: 'overdue', cls: 'action' };
-  if (age > 3) return { key: 'dueSoon', cls: 'pending' };
+  const S = globalThis.Platform && globalThis.Platform.SLA;
+  if (!S || typeof S.evaluate !== 'function') return { key: 'unknown', cls: 'archived' };
+  const e = S.evaluate(ts, rec.priority);
+  if (e.state === 'breached') return { key: 'overdue', cls: 'action' };
+  if (e.state === 'due-soon') return { key: 'dueSoon', cls: 'pending' };
   return { key: 'onTrack', cls: 'replied' };
 }
 
@@ -38,7 +43,7 @@ class FastTrackModule extends BaseModule {
     const E = globalThis.Platform.Entities;
     clear(this._region);
     if (!E.isHydrated()) { this._region.append(skeletonTiles(3)); this._region.append(skeletonTable(6, 5)); return; }
-    const items = [...E.all('task'), ...E.all('document')].map((r) => ({ ...r, _sla: sla(r.ts) }));
+    const items = [...E.all('task'), ...E.all('document')].map((r) => ({ ...r, _sla: sla(r) }));
     const counts = { overdue: 0, dueSoon: 0, onTrack: 0 };
     items.forEach((i) => { if (counts[i._sla.key] != null) counts[i._sla.key]++; });
 

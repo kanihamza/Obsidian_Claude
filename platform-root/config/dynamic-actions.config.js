@@ -31,7 +31,13 @@ export const DYNAMIC_ACTIONS = {
   /** Issue a trip-clearance document/approval for a traveller against a reference. */
   issueTripClearance: { operation: 'issue', mode: 'single', required: ['ref', 'traveller', 'destination'], optional: ['startDate', 'endDate', 'purpose'], confirm: true, successKey: 'flow.done' },
   /** Set a reminder against a reference/task, delivered by the chosen channel at dueAt. */
-  setReminder:        { operation: 'create', mode: 'single', required: ['dueAt'], optional: ['ref', 'taskId', 'note', 'channel'], confirm: true, successKey: 'flow.done' }
+  setReminder:        { operation: 'create', mode: 'single', required: ['dueAt'], optional: ['ref', 'taskId', 'note', 'channel'], confirm: true, successKey: 'flow.done' },
+
+  /** Phase-5 outbound dispatch (DISPATCH_OUTBOUND contract). No dedicated PA endpoint is provisioned yet
+   *  (Q-4/Q-8 pending), so — per the standing directive — dispatch is relayed through the Dynamic Global
+   *  Actions flow until DISPATCH_OUTBOUND lands, at which point this contract repoints with no UI change.
+   *  recipientAddress is resolved from the live directorate directory (DSU_Email | DSU_HeadEmail). */
+  dispatch:           { operation: 'dispatch', mode: 'single', required: ['ref', 'recipientAddress'], optional: ['channel', 'subject', 'bodyHtml', 'directorate', 'attachments', 'reviewers'], confirm: true, successKey: 'dispatch.sent' }
 };
 
 export const dynamicActionContract = (action) => DYNAMIC_ACTIONS[action] || null;

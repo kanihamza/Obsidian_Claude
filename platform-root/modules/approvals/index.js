@@ -157,6 +157,25 @@ class ApprovalsModule extends BaseModule {
     const refRow = P.Entities?.byReference?.(ref)?.reference || {};
     const title = refRow.title || refRow.subject || ref;
     const actionName = kind === 'approve' ? 'ACKNOWLEDGE' : 'UPDATE_TASK';
+    const existing = (this._items[this._sel] || {});
+
+    // Q-7 — sequential reviewer engine. When the approval carries an ordered reviewer chain, the active
+    // token may only advance once the prior position has approved (Directive 3). Approve advances the
+    // chain (the record resolves only when the whole chain completes); reject/return breaks it.
+    const R = P.Reviewers;
+    const chain = existing.reviewers || existing.Reviewers || null;
+    let reviewersOut = null, chainComplete = true;
+    if (R && Array.isArray(chain) && chain.length) {
+      const act = R.active(chain);
+      if (!act) { P.UI.toast({ messageKey: 'approvals.reviewerComplete', variant: 'info' }); return; }
+      const adv = R.advance(chain, act.sequence, kind === 'approve' ? 'approve' : 'reject', { comment });
+      if (!adv.ok) { P.UI.toast({ messageKey: 'approvals.reviewerLocked', variant: 'warning' }); return; }
+      reviewersOut = adv.reviewers;
+      // On approve, the record only reaches Approved when the chain is complete; otherwise it stays in
+      // review with the token advanced. On reject the chain breaks and the record resolves immediately.
+      chainComplete = kind === 'approve' ? adv.complete : true;
+    }
+
     const payload = {
       action: actionName, method: 'POST', userEmail,
       AssignmentType: actionName,
@@ -164,17 +183,23 @@ class ApprovalsModule extends BaseModule {
       RefIDD: String(ref),  // legacy flat field — kept for the flow's flat-read branch
       ...(kind === 'approve' ? { decision, comment, signed }
                               : { status: decision, reason: comment }),
+      ...(reviewersOut ? { reviewers: reviewersOut } : {}),
       payload: {
         selection: { single: { ID: ref, RefIDD: String(ref), Title: title }, items: [] },
-        decision: kind === 'approve' ? { value: decision, comment, signed } : { value: decision, reason: comment }
+        decision: kind === 'approve' ? { value: decision, comment, signed } : { value: decision, reason: comment },
+        ...(reviewersOut ? { reviewers: reviewersOut } : {})
       }
     };
     const result = await this.call(submitDecision, payload);
     if (result.ok) {
-      // Mutate the shared fabric so every dependent lens/aggregator reacts immediately.
-      const existing = (this._items[this._sel] || {});
-      globalThis.Platform.Entities.upsert('approval', { ...existing, referenceId: ref, status: decision });
-      globalThis.Platform.UI.actionCompleted(kind === 'approve' ? 'approvals.approved' : 'approvals.rejected', { module: 'approvals', target: existing.__ref || existing.referenceId || ref });
+      // Mutate the shared fabric so every dependent lens/aggregator reacts immediately. When a reviewer
+      // chain is mid-flight (approve but not yet complete), keep the approval pending and persist the
+      // advanced chain so the next reviewer in sequence can act.
+      const nextStatus = (kind === 'approve' && !chainComplete) ? (existing.status || 'pending-review') : decision;
+      globalThis.Platform.Entities.upsert('approval', { ...existing, referenceId: ref, status: nextStatus, ...(reviewersOut ? { reviewers: reviewersOut } : {}) });
+      const doneKey = (kind === 'approve' && !chainComplete) ? 'approvals.reviewerAdvanced'
+        : (kind === 'approve' ? 'approvals.approved' : 'approvals.rejected');
+      globalThis.Platform.UI.actionCompleted(doneKey, { module: 'approvals', target: existing.__ref || existing.referenceId || ref });
     }
   }
 
