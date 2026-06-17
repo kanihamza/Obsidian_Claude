@@ -1,285 +1,130 @@
-# OBSIDIAN v4 Component Library
+# OBSIDIAN v4.0 — Component Library
 
-**Status:** Implementation-Ready  
-**Last Updated:** June 13, 2026
+All reusable UI is built as native **Custom Elements** (`<pf-*>`) on the `PfBaseElement` base class. There
+is no framework and no build step — components are plain ES modules registered with `customElements.define`.
 
----
-
-## Overview
-
-This document describes the OBSIDIAN v4 component system, a Zero-Build ESM architecture using Web Components and Custom Elements.
-
-### Design Principles
-
-1. **No External Dependencies** — All components are native JavaScript
-2. **Accessibility First** — WCAG 2.1 AA compliance built-in
-3. **Mobile-First** — Responsive design from 320px+
-4. **Token-Driven** — Styling through CSS variables/tokens
-5. **Configuration-Driven** — Behavior driven by config, not code
+> Registration: `shared/components/index.js` imports every component (which self-registers). The app shell
+> imports that index once at boot.
 
 ---
 
-## Available Components
+## 1. The base class — `PfBaseElement` (`shared/components/_base.js`)
 
-### Core Shell Components
+Every component extends `PfBaseElement`, which provides:
 
-#### `<pf-app-shell>`
-Main layout container (header, nav, content areas)
-
-**Features:**
-- Responsive grid layout (mobile: stacked → desktop: sidebar)
-- Accessibility landmarks
-- Safe area support (notch devices)
-
-**Usage:**
-```html
-<pf-app-shell>
-  <header slot="header">...</header>
-  <nav slot="nav">...</nav>
-  <main slot="content">...</main>
-</pf-app-shell>
-```
-
-#### `<pf-app-header>`
-Top application header with branding and controls
-
-**Features:**
-- Logo and app name
-- Language switcher with persistence
-- Settings and account menu
-- Touch-safe buttons (44px minimum)
-
-#### `<pf-app-nav>`
-Main navigation with active route tracking
-
-**Features:**
-- `aria-current="page"` for active routes
-- Focus-visible keyboard navigation
-- Responsive (horizontal → vertical)
-- Mobile hamburger support (JS integration)
-
-#### `<pf-breadcrumb>` & `<pf-breadcrumb-item>`
-Breadcrumb navigation trail
-
-**Attributes:**
-- `href` — Link destination
-- `aria-current` — Marks current page
-
-### Feedback Components
-
-#### Toast Notifications (`<pf-toast>`)
-Non-blocking notifications for user feedback
-
-**Attributes:**
-- `data-type` — Type: info, success, warning, error
-- `data-no-dismiss` — Hide dismiss button
-
-**Auto-dismiss:**
-- info, success: 5 seconds
-- warning, error: permanent (user must dismiss)
-
-#### Modal Dialogs (`<pf-modal>`)
-Accessible modal dialogs with focus trap
-
-**Features:**
-- `role="dialog"` and `aria-modal="true"`
-- Focus trap (Tab cycles within modal)
-- Escape key closes
-- Backdrop click closes (if configured)
-- Focus restoration on close
-
-**Usage:**
-```js
-const modal = document.createElement('pf-modal');
-modal.setAttribute('aria-label', 'Confirm Action');
-modal.innerHTML = '<p>Are you sure?</p>';
-document.body.appendChild(modal);
-
-modal.addEventListener('modal-closed', () => console.log('Closed'));
-```
-
-### Feedback System
-
-#### UIFeedback System (`core/ui-feedback.js`)
-Centralized feedback management
-
-**States:**
-- `IDLE` — Default state
-- `LOADING` — Data fetching
-- `SLOW_LOAD` — Taking longer than expected
-- `SUCCESS` — Operation succeeded
-- `ERROR` — Operation failed (with retry)
-- `EMPTY` — No data available
-- `OFFLINE` — User is offline
-
-**Usage:**
-```js
-import { UIFeedbackInstance } from '/core/ui-feedback.js';
-
-// Set loading state
-UIFeedbackInstance.setState(container, 'loading', {
-  message: 'Loading data...'
-});
-
-// Show toast
-UIFeedbackInstance.showToast('Saved successfully', { type: 'success' });
-```
-
----
-
-## Styling System
-
-### CSS Architecture
-
-**Layers (in order):**
-1. `responsive.css` — Breakpoints, grids, flexbox
-2. `components.css` — Component-specific styles
-
-### Responsive Utilities
-
-**Breakpoints:**
-```css
-/* xs: 0px (mobile) */
-/* sm: 480px (mobile landscape) */
-/* md: 640px (tablet) */
-/* lg: 1024px (desktop) */
-/* xl: 1280px (large desktop) */
-```
-
-**Grid Classes:**
-```html
-<!-- Single column on mobile, 3 columns on desktop -->
-<div class="pf-grid col-3">
-  <div>Item 1</div>
-  <div>Item 2</div>
-  <div>Item 3</div>
-</div>
-```
-
-**Flexbox Utilities:**
-```html
-<div class="pf-flex pf-flex-between pf-flex-gap">
-  <!-- Items space-between with gap -->
-</div>
-```
-
----
-
-## Accessibility Features
-
-### Built-In A11y
-
-1. **Semantic HTML**
-   - `<main>` for primary content
-   - `<nav>` for navigation
-   - `<button>` for buttons (not `<div>`)
-   - `<label>` for form inputs
-
-2. **ARIA Labels**
-   - `aria-current="page"` for active nav items
-   - `aria-busy="true"` for loading states
-   - `aria-live="polite"` for non-urgent announcements
-   - `aria-live="assertive"` for errors/alerts
-   - `aria-label` for icon buttons
-
-3. **Focus Management**
-   - `tabindex="-1"` on main content (focus after route change)
-   - Focus trap in modals
-   - Skip link to main content
-   - Visible focus rings (`:focus-visible`)
-
-4. **Touch Targets**
-   - All buttons: minimum 44×44px
-   - All inputs: minimum 44px height
-   - 16px+ font size (prevents iOS zoom)
-
-5. **Color Contrast**
-   - WCAG AA compliant (4.5:1 for normal text)
-   - Focus indicators in high contrast
-
-6. **Reduced Motion**
-   - `@media (prefers-reduced-motion: reduce)` for all animations
-   - Instant transitions for users who prefer reduced motion
-
-### A11y Testing
-
-**Runtime Monitor:**
-```js
-import UIAccessibilityMonitor from '/modules/ui-a11y-monitor.js';
-
-const monitor = new UIAccessibilityMonitor({ enabled: true });
-const issues = monitor.scan();
-```
-
----
-
-## State Management
-
-### Module State with Feedback
+- **Shadow DOM** attached in the constructor, with a single shared, cached `CSSStyleSheet` adopted into every
+  shadow root. Design tokens (`var(--*)`) pierce the boundary, so themes apply inside the shadow tree.
+- **Lifecycle hooks:** `onConnect()`, `onDisconnect()`, `onAttrChange(name, old, new)` (override these rather
+  than the raw `connectedCallback` etc.).
+- **Auto-cleanup listeners:** `this.on(target, event, handler)` and `this.bus(event, handler)` push disposers
+  that run on disconnect — no manual teardown, no leaks.
+- **Scoped queries:** `this.$(sel)` / `this.$$(sel)` query the shadow root.
+- **Rendering:** `this.render(html)` sets shadow innerHTML; `this.emit(name, detail)` dispatches a bubbling,
+  composed `CustomEvent`.
+- **i18n:** `this.t(key, vars)` resolves through `Platform.I18n`.
+- **`observedAttributes`** comes from `static attrs = [...]`.
 
 ```js
-import { BaseModule } from '/core/base-module.js';
+import { PfBaseElement } from './_base.js';
 
-class MyModule extends BaseModule {
-  async loadData() {
-    const container = document.getElementById('content');
-    
-    try {
-      this.setLoading(true, container);
-      const data = await fetch('/api/data').then(r => r.json());
-      
-      if (data.length === 0) {
-        this.setEmpty(container, {
-          message: 'No items yet',
-          actionLabel: 'Create New',
-          onAction: () => this.createNew()
-        });
-      } else {
-        container.innerHTML = renderData(data);
-      }
-    } catch (error) {
-      this.setError(error, container, () => this.loadData());
-    }
+class PfExample extends PfBaseElement {
+  static attrs = ['label'];
+  onConnect() {
+    this.render(`<style>:host{ display:block; }</style>
+      <button id="go">${this.t('example.action')}</button>`);
+    this.on(this.$('#go'), 'click', () => this.emit('pf-example:go', { at: Date.now() }));
   }
+  onAttrChange(name, _old, val) { if (name === 'label') this.$('#go').textContent = val; }
 }
+customElements.define('pf-example', PfExample);
+export default PfExample;
 ```
 
----
-
-## Internationalization
-
-### Supported Languages
-
-- English (en)
-- French (fr)
-- Hausa (ha)
-
-### Using Translations
-
-```js
-import { i18n } from '/core/i18n.js';
-const message = i18n.t('feedback.loading');
-```
+### Conventions
+- Read the platform lazily at call time (`globalThis.Platform.…`) — never capture singletons at module load.
+- Style with tokens only (`var(--token)`); literal hex is gate-blocked outside `themes/`.
+- Bind data via JS **properties** (e.g. `el.reference = refId`), not stringly-typed attributes, for objects.
+- Emit `pf-<name>:<event>` custom events for host modules to listen to.
 
 ---
 
-## Browser Support
+## 2. Shell & chrome
 
-**Minimum Versions:**
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
-
-**Features Required:**
-- ES6 modules
-- Fetch API
-- Custom Elements
-- CSS Grid/Flexbox
-- CSS Variables
-
-Internet Explorer 11 is **not** supported.
+| Element | Purpose |
+|---|---|
+| `<pf-app-shell>` | Top-level layout: header + nav + main outlet + footer. Hosts the router outlet. |
+| `<pf-app-header>` | App bar — brand, utility actions (palette/notifications/theme/persona), menu toggle. |
+| `<pf-app-nav>` | Renders the audience-filtered nav model from `Platform.Nav`; reflects the active route. |
+| `<pf-app-footer>` | Footer / endorsement line. |
+| `<pf-breadcrumb>` | Breadcrumb trail for the active surface. |
+| `<pf-skip-link>` | Accessibility skip-to-content link. |
+| `<pf-persona-switcher>` | Switches the local persona (UX/audit only — not auth) via `Platform.Persona`. |
+| `<pf-icon>` | Inline SVG icon by `name` + `size`. |
 
 ---
 
-**Questions?** Refer to ARCHITECTURE.md or TESTING.md for more details.
+## 3. Feedback & overlays
+
+| Element | Purpose |
+|---|---|
+| `<pf-toast>` | Transient notifications; danger toasts use assertive `aria-live`. Driven by `Platform.UI.toast`. |
+| `<pf-modal>` | Modal dialog with focus trap. Backs `Platform.UI.modal` / `UI.confirm` (preview + confirm). |
+| `<pf-side-panel>` | Slide-in panel for secondary detail; Escape-to-close with cleaned-up listeners. |
+| `<pf-connectivity-banner>` | Three-band connectivity status (loading / warning / error). |
+| `<pf-deprecation-banner>` | Surfaced on deprecated modules; links to the replacement. |
+
+`Platform.UI.confirm({ titleKey, summaryKey | summary, details, confirmKey, danger })` resolves `true` only on
+explicit confirm — the mandatory preview gate before any write or flow trigger.
+
+---
+
+## 4. Workflow surface components
+
+| Element | Phase | Purpose |
+|---|---|---|
+| `<pf-triage-bar>` | INTAKE | Chip row: Acknowledge / Tag Category / Flag Urgency / Mark Duplicate / Send to Routing. Advances `registered → triaged → triage_complete` via `Entities.transitionStatus`, then stages `Context.handoff` and navigates to ROUTING. Bind `el.item` or `el.reference`. |
+| `<pf-rich-picker>` | ROUTING | Searchable single/multi/tab picker for assignees, categories, departments (from `Platform.Lookups`). |
+| `<pf-otp-modal>` | ROUTING | Thin UI over the PA OTP handshake (`OTP_GENERATE` / `OTP_VERIFY`); the server validates the code. |
+| `<pf-comment-thread>` | ACTION | Threaded comments with reply / edit / delete; immutable after closure. Backs `UI.openComments`. |
+| `<pf-dispatch-panel>` | DISPATCH | Drives `dispatch-pending → dispatch-in-flight → dispatched \| dispatch-failed`. Resolves the recipient from the live directory (`Platform.Directory` → `DSU_Email \| DSU_HeadEmail`), shows a preview + confirm, dispatches via the `dispatch` contract, injects an inline **Retry** on failure (asymmetric fallback), and offers **Close** gated on `Entities.canClose`. Bind `el.reference`. Emits `pf-dispatch:dispatched` / `:failed` / `:closed`. |
+
+---
+
+## 5. Content & data components
+
+| Element | Purpose |
+|---|---|
+| `<pf-attachment>` | Inline preview of email/document attachments (image / PDF / text), fetched via `FETCH_EMAIL_ATTACHMENTS`. |
+| `<pf-sandboxed-iframe>` | XSS-hardened sandboxed iframe for rendering untrusted HTML/PDF, with `cid:` image mapping. |
+| `<pf-filter-bar>` | Status/keyword filter chips emitting filter-change events for list lenses. |
+
+---
+
+## 6. Shared render utilities (`shared/utils/`)
+
+Components and modules compose UI through these helpers (not a component, but the rendering toolkit):
+
+- **`lens.js`** — `mountMasterDetail`, `mountListLens`, `mountAggregator`, `renderFabricTable`,
+  `renderActivityTimeline`, `appendRichSections`, `breakdownBars`, `attentionList`, `renderHeatmap`.
+  These read the fabric and render the standard table / master-detail / aggregator surfaces, including the
+  shared rich-detail workspace (comments + activity timeline + reminder).
+- **`dom.js`** — `el(tag, attrs, children)`, `clear`, `firstArray` — the tiny DOM builder used everywhere.
+- **`render.js`** — `emptyState`, skeleton helpers.
+- **`lookups.js`** — `Platform.Lookups`: users / categories / departments option-sets + the category routing
+  cascade (`resolveCategory`).
+- **`directory.js`** — `Platform.Directory`: DSU_KEY → routing addresses + the assistant prompt parser.
+- **`reviewers.js`** — `Platform.Reviewers`: the sequential reviewer engine.
+- **`dynamic-actions.js`** — `Platform.Actions`: the Dynamic Global Actions client.
+- **`filter-cache.js`** — LRU + debounce for list filtering.
+- **`ai.js`** — the assistant's AI-flow client.
+
+---
+
+## 7. Authoring a new component — checklist
+
+1. Extend `PfBaseElement`; render in `onConnect`; use `this.on` / `this.bus` so cleanup is automatic.
+2. Tokens only for colour/spacing; no literal hex outside `themes/`.
+3. Expose data via JS properties; emit `pf-*` events for the host.
+4. Add any new i18n keys to `config/i18n/en.json` (every `this.t(...)` key must resolve there).
+5. Register with `customElements.define('pf-…', Class)` and add the import to `shared/components/index.js`.
+6. Run `bash tools/verify.sh` (imports, hex-lock, i18n, console-purity, syntax) and `tools/ui-smoke.mjs`.

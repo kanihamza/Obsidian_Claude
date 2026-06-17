@@ -1,231 +1,151 @@
-# OBSIDIAN v4 Testing Guide
+# OBSIDIAN v4.0 — Testing & Verification Guide
 
-**Last Updated:** June 13, 2026
+OBSIDIAN has no build step, so verification is done directly against the source with three layers:
 
----
+1. **Static gate** — `tools/verify.sh` (12 checks + an optional browser smoke).
+2. **Boot smoke** — `tools/boot-smoke.mjs` (every module registers cleanly in Node).
+3. **Browser smoke** — `tools/ui-smoke.mjs` (real-browser, Playwright; mocks the PA flows).
 
-## Testing Strategy
-
-OBSIDIAN v4 uses a multi-layer testing approach:
-
-1. **Manual Testing** — User-focused validation
-2. **A11y Testing** — Accessibility compliance
-3. **Component Testing** — Unit tests for components
-4. **Integration Testing** — Module interactions
-5. **E2E Testing** — Full user flows
+> **Static green ≠ delivered.** A green gate plus `ui-smoke` is the shipping bar; a user browser
+> walkthrough is the final proof of "delivered" (CLAUDE.md §11.8).
 
 ---
 
-## Accessibility Testing
-
-### Automated A11y Scan
-
-```js
-import UIAccessibilityMonitor from '/modules/ui-a11y-monitor.js';
-
-const monitor = new UIAccessibilityMonitor();
-const issues = monitor.scan();
-```
-
-### Manual A11y Testing
-
-#### Keyboard Navigation
-1. Tab through entire page
-2. Shift+Tab to go backward
-3. Tab should be logical (top-to-bottom)
-4. Focus ring must be visible
-5. Modal should trap focus
-6. Escape should close modal
-
-#### Screen Reader (NVDA/JAWS/VoiceOver)
-1. Page title announces correctly
-2. Navigation landmarks announced
-3. Form labels associated
-4. Active nav item marked with `aria-current`
-5. Loading states announced
-6. Error messages announced
-7. Success messages announced
-8. Toast notifications announced
-
-#### Color Contrast
-- Normal text: 4.5:1 (WCAG AA)
-- Large text (18pt+): 3:1 (WCAG AA)
-- Focus indicators: Clearly visible
-
-#### Reduced Motion
-1. Enable "Reduce motion" in OS settings
-2. Animations should be disabled or instant
-3. Page should be fully usable without motion
-
----
-
-## Component Testing
-
-### Focus Management
-- [ ] Focus moves to main content after route change
-- [ ] Focus trap works in modals
-- [ ] Focus restoration on modal close
-- [ ] Visible focus ring on all interactive elements
-
-### Loading States
-- [ ] Spinner shows after 300ms delay
-- [ ] "Slow load" message shows after 2 seconds
-- [ ] aria-busy="true" set during loading
-- [ ] aria-live region announces status
-
-### Error Handling
-- [ ] Error message displays clearly
-- [ ] Retry button appears and works
-- [ ] Error doesn't block UI
-- [ ] Retry is accessible via keyboard
-
-### Toast Notifications
-- [ ] Success toast auto-dismisses after 5 seconds
-- [ ] Error toast doesn't auto-dismiss
-- [ ] Toast is announced to screen readers
-- [ ] Close button is accessible
-
-### Empty States
-- [ ] Empty icon displays
-- [ ] Message is clear and helpful
-- [ ] Action button (if provided) works
-- [ ] No scroll/overflow issues
-
----
-
-## Responsive Design Testing
-
-### Device Breakpoints
-- [ ] **Mobile (320px)**: Single column, no overflow
-- [ ] **Mobile (480px)**: Adjusted spacing
-- [ ] **Tablet (640px)**: 2-column layout
-- [ ] **Desktop (1024px)**: Full layout
-- [ ] **Large (1280px+)**: Max-width applies
-
-### Orientations
-- [ ] Portrait: Correct layout
-- [ ] Landscape: Correct layout
-- [ ] Notch devices: Safe area respected
-
-### Touch Interactions
-- [ ] All buttons >= 44×44px
-- [ ] Touch targets have adequate spacing
-- [ ] No hover-only interactions
-- [ ] Inputs don't zoom on focus (font-size: 16px)
-
----
-
-## Performance Testing
-
-### Metrics
-- [ ] First Contentful Paint: < 1.5s
-- [ ] Largest Contentful Paint: < 2.5s
-- [ ] Cumulative Layout Shift: < 0.1
-- [ ] Time to Interactive: < 3.5s
-
-### Optimization Checklist
-- [ ] CSS minified
-- [ ] No render-blocking resources
-- [ ] No console warnings/errors
-- [ ] Debounced resize/scroll handlers
-- [ ] Lazy load images if needed
-
----
-
-## Validation Checklist
-
-### Functionality
-- [ ] All features work as documented
-- [ ] No console errors
-- [ ] Forms submit correctly
-- [ ] Navigation works
-- [ ] Errors are recoverable
-
-### Accessibility
-- [ ] WCAG 2.1 AA compliant
-- [ ] Keyboard navigable
-- [ ] Screen reader friendly
-- [ ] Color contrast verified
-- [ ] Touch targets 44px+
-- [ ] Reduced motion respected
-
-### Responsive
-- [ ] Mobile layout correct
-- [ ] Tablet layout correct
-- [ ] Desktop layout correct
-- [ ] No horizontal scroll
-- [ ] Landscape works
-
-### Cross-Browser
-- [ ] Chrome: Pass
-- [ ] Firefox: Pass
-- [ ] Safari: Pass
-- [ ] Edge: Pass
-- [ ] Mobile Safari: Pass
-- [ ] Android Chrome: Pass
-
-### Internationalization
-- [ ] All languages render correctly
-- [ ] No missing translation keys
-- [ ] Language switching works
-- [ ] Persistence works
-
----
-
-## Offline Testing
-
-1. Open DevTools → Network tab
-2. Check "Offline"
-3. Try to navigate
-4. See offline banner
-5. Check offline state on pages
-6. Turn offline off
-7. Banner disappears
-8. Features restore
-
----
-
-## Browser DevTools Checks
-
-**Console:**
-- [ ] No errors
-- [ ] No warnings
-- [ ] No 404s
-
-**Network:**
-- [ ] All requests succeed
-- [ ] No failed resources
-- [ ] Response times acceptable
-
-**Elements:**
-- [ ] Semantic HTML used
-- [ ] ARIA attributes correct
-- [ ] No duplicate IDs
-- [ ] Proper nesting
-
-**Accessibility:**
-- [ ] Lighthouse score 90+
-- [ ] No a11y violations
-- [ ] Contrast checker passes
-- [ ] Labels associated
-
----
-
-## Before Deployment
+## 1. Static gate — `tools/verify.sh`
 
 ```bash
-✓ All manual tests pass
-✓ No console errors
-✓ Keyboard navigation works
-✓ Screen reader friendly
-✓ Mobile layouts correct
-✓ Touch targets 44px+
-✓ Color contrast verified
-✓ All languages work
-✓ Offline handling works
-✓ Performance metrics met
+cd platform-root
+bash tools/verify.sh            # must end with: STATIC VERIFICATION: PASS
+```
+
+The 12 checks:
+
+| # | Check | What it enforces |
+|---|---|---|
+| 1 | `imports` | No unresolved imports in the ESM graph (no broken/circular imports). |
+| 2 | `named-exports` | Every imported name is actually exported by its module. |
+| 3 | `no-CDN` | No external `https://` script / font / style references anywhere. |
+| 4 | `console-purity` | Only `core/log.js` calls `console.*`; everything else uses `Log.*`. |
+| 5 | `hex-lock` | Literal hex colours only in `themes/` (and brand assets); everywhere else uses `var(--token)`. |
+| 6 | `json-valid` | Every JSON config parses. |
+| 7 | `js-syntax` | Every `.js` passes `node --check`. |
+| 8 | `i18n-static-keys` | Static `data-i18n` attributes resolve in `en.json`. |
+| 9 | `placeholder-scan` | No `lorem / sample / seed / demo / placeholder` strings (advisory). |
+| 10 | `embedded-url-scan` | No embedded URLs outside `config/endpoints.config.js`. |
+| 11 | `i18n-runtime-keys` | Every literal `t('...')` key in JS resolves in `en.json`. |
+| 12 | `boot-smoke` | Every module registers cleanly (runs `tools/boot-smoke.mjs`). |
+
+`ui-smoke` is listed too but **SKIPPED** unless `RUN_UI_SMOKE=1` is set (it needs a browser).
+
+### Reading failures
+Each check prints the offending files/keys. Common cases:
+- **`i18n-runtime-keys` FAIL** → a `t('x.y')` key is missing from `config/i18n/en.json`. Add it.
+- **`hex-lock` FAIL** → a literal hex colour leaked into a component/style; replace with a token.
+- **`named-exports` / `imports` FAIL** → an import name/path is wrong (e.g. importing `EventBus` when the
+  module exports `Bus`, or `i18n` when it exports `I18n`).
+
+---
+
+## 2. Boot smoke — `tools/boot-smoke.mjs`
+
+```bash
+node tools/boot-smoke.mjs       # BOOT SMOKE: PASS — 19 modules registered
+```
+
+Loads every module in a minimal Node DOM shim and asserts:
+- all 19 modules import and register without error,
+- the expected module count (19),
+- the 6-phase nav groups are populated for the admin persona,
+- hidden-but-routable modules (e.g. `comments`) remain registered.
+
+Update the hardcoded id list in this file when adding/removing a module.
+
+---
+
+## 3. Browser smoke — `tools/ui-smoke.mjs`
+
+A real-browser harness (Playwright/Chromium) that boots the app against a local static server, switches to
+the admin persona, and runs **assertions across every surface**. PA flows are mocked by intercepting requests
+to `powerplatform.com` and returning canned envelopes, so no live endpoints are touched.
+
+```bash
+RUN_UI_SMOKE=1 node tools/ui-smoke.mjs     # ends with: --- RESULT ---  N passed, 0 failed
+# or via the gate:
+RUN_UI_SMOKE=1 bash tools/verify.sh
+```
+
+What it covers (current suite: **170 assertions**):
+- **Per-surface render** of all 19 surfaces with **zero console errors**.
+- **Theme matrix** (light / dark / high-contrast) + **dark-contrast scan** (no near-invisible text).
+- **Responsive sweeps** — tablet + phone (390px) — assert no horizontal overflow on data-heavy surfaces.
+- **Reduced-motion** render pass.
+- **Deep interaction checks** per surface, e.g.:
+  - ops-hub: routing scope toggle, bulk select → bulk-assignment handoff, **Prepare Meeting Pack** and
+    **Set reminder** dynamic-action contracts (preview → confirm → flow fires).
+  - reports: Management Report + **Send Report Email** (`dispatchEmail` contract).
+  - correspondence/registry triage: acknowledge → preview → confirmed flow via Dynamic Global Actions.
+  - **dispatch + D-5 redirect:** `#/assignment/*` redirects to `#/executive`; the dispatch queue lists an
+    approved reference; recipient resolves from the live directory; preview + confirm; the `dispatch`
+    contract fires; the state machine advances `dispatch-pending → in-flight → dispatched`.
+
+### Mocking model
+`mockBody(action)` returns the canned envelope per `action`; `paCalls[]` captures every intercepted request
+body so assertions can verify the exact contract envelope a UI action dispatched.
+
+---
+
+## 4. Engine unit checks (Node, no browser)
+
+The pure engines are directly testable with `node --input-type=module`. Examples used during development:
+
+```bash
+# SLA working-time (WAT Mon–Fri 08:00–16:00, holidays excluded)
+node --input-type=module -e '
+  import { workingMinutesBetween, SLA } from "./core/sla.js";
+  console.log(workingMinutesBetween(Date.parse("2026-06-19T14:00:00Z"), Date.parse("2026-06-22T08:00:00Z"))); // 120
+  console.log(SLA.evaluate("2026-06-22T07:00:00Z","P1", Date.parse("2026-06-22T13:00:00Z")).breached);        // true
+'
+
+# Sequential reviewer engine (token advances only on verified approval at N)
+node --input-type=module -e '
+  import { Reviewers } from "./shared/utils/reviewers.js";
+  const c=[{sequence:1,userId:"A",targetEmail:"x"},{sequence:2,userId:"B",targetEmail:"y"}];
+  console.log(Reviewers.advance(c,2,"approve").ok);            // false (not active position)
+  console.log(Reviewers.advance(c,1,"approve").active.sequence); // 2
+'
+```
+
+The fabric's directorate isolation can be checked end-to-end by ingesting records with a stub
+`globalThis.Platform = { Persona, Context:{ directorate:()=>"all" } }` and asserting `Entities.all('document')`
+hides isolated-directorate records for a non-elevated persona and reveals them for `executive`.
+
+---
+
+## 5. Fabric ingest smoke (manual)
+
+After any change to `core/entity-store.js`, verify ingest against a real `FETCH_ALL` response (if available
+at `/tmp/real-response.json`):
+
+```bash
+echo '{"type":"module"}' > package.json
+node --input-type=module -e '
+  import { Entities } from "./core/entity-store.js";
+  import { readFileSync } from "node:fs";
+  globalThis.fetch = async () => ({ ok:true, status:200,
+    headers:{ forEach:(cb)=>cb("application/json","content-type") },
+    text: async () => readFileSync("/tmp/real-response.json","utf8") });
+  await Entities.bootstrap(true);
+  console.log("counts:", Entities.counts());
+'
+rm -f package.json
 ```
 
 ---
 
-**Questions?** Refer to COMPONENTS.md or ARCHITECTURE.md.
+## 6. Pre-ship checklist
+
+1. `bash tools/verify.sh` → `STATIC VERIFICATION: PASS`.
+2. `RUN_UI_SMOKE=1 node tools/ui-smoke.mjs` → `N passed, 0 failed`.
+3. New i18n keys added to `en.json`; new modules added to `modules/index.js` + `tools/boot-smoke.mjs`.
+4. New components registered in `shared/components/index.js`.
+5. User browser walkthrough of any new/changed surface (the only proof of "delivered").
