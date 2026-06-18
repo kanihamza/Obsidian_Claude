@@ -295,10 +295,11 @@ Endpoint-less actions (dispatch, reminders, meeting-pack …)
 - **Risk of Inaction:** Wasted/incorrect work, mis-prioritization, erosion of trust in governance artifacts.
 - **Compounding Factors:** GOV-02/03, INFRA-01.
 
-#### GOV-02 — A governance conflict was resolved *in code* without the required sign-off
-- **Severity:** MODERATE
-- **Evidence:** `config/routes.config.js:12` redirects `assignment → executive`, contradicting `CLAUDE.md:645` (J-4: redirect to single-item-ops/bulk). `CLAUDE.md:689` explicitly flags this conflict as "pending an explicit user ruling," yet the code picked the *other* doc's side. [Confirmed Fact / Unresolved Ambiguity]
-- **Impact:** A flagged decision was silently made; the routing of a deprecated surface may not match operator expectation.
+#### GOV-02 — A governance conflict was resolved *in code* without the required sign-off — RESOLVED 2026-06-18
+- **Severity:** MODERATE (closed)
+- **Original evidence:** `config/routes.config.js:12` redirected `assignment → executive`, contradicting `CLAUDE.md:645` (J-4: redirect to single-item-ops/bulk). `CLAUDE.md:689` explicitly flagged this as "pending an explicit user ruling," yet the code had picked the *other* doc's side. [Confirmed Fact]
+- **Resolution:** Per explicit user ruling during this audit, CLAUDE.md J-4 is authoritative. `routes.config.js` now redirects `assignment → single-item-ops` (the single-assignment surface; bulk-assignment is reached via the ops-hub selection flow). The original `→ executive` redirect (which followed the external upload's D-5) is superseded.
+- **Residual:** the *systemic* root cause — a flagged decision being settled in code without sign-off, with no validator to catch it — remains; see GOV-03.
 
 #### GOV-03 — The anti-drift controls are themselves stale, deleted, or advisory
 - **Severity:** MODERATE

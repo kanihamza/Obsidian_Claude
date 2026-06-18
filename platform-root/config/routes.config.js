@@ -6,9 +6,10 @@ export const RoutesConfig = {
   notFoundRoute:'diagnostics', // unknown route falls to diagnostics
   sunsetRoute:'diagnostics',   // sunset modules route here (§3.12)
   deniedRoute:'home',          // audience-denied routes redirect here
-  // D-5 deprecation pipeline (ratified): the standalone assignment module is removed; its workload
-  // aggregations are absorbed by the executive + stats views. Any deep-link to #/assignment/* is
-  // transparently redirected to the executive dashboard so old links never dead-end.
-  redirects:{ assignment:'executive' }
+  // D-5 deprecation pipeline (ratified): the standalone assignment module is removed; its assignment
+  // workflow is absorbed by single-item-ops (single assignment) and bulk-assignment (reached via the
+  // ops-hub selection flow). Per CLAUDE.md J-4, any deep-link to #/assignment/* is transparently
+  // redirected to single-item-ops so old links land on the single-assignment surface and never dead-end.
+  redirects:{ assignment:'single-item-ops' }
 };
 export default RoutesConfig;
