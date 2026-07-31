@@ -1,0 +1,111 @@
+.
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+├── DGO Design System v2.1 - Standalone.html
+├── GOVERNANCE.md
+├── INTEGRATION.md
+├── LICENSE
+├── MIGRATION.md
+├── README.md
+├── assets
+│   ├── icons
+│   │   └── sprite.svg
+│   └── logo
+│       ├── horizontal.svg
+│       ├── mark.svg
+│       ├── nitda-endorsed.svg
+│       ├── stacked.svg
+│       └── white-out.svg
+├── docs
+│   ├── 00-foundations.md
+│   ├── 01-tokens.md
+│   ├── 02-color.md
+│   ├── 03-typography.md
+│   ├── 04-spacing-grid.md
+│   ├── 05-iconography.md
+│   ├── 06-motion.md
+│   ├── 07-elevation.md
+│   ├── 08-accessibility.md
+│   ├── 09-i18n-rtl.md
+│   ├── 10-content-voice.md
+│   ├── 11-component-template.md
+│   ├── 12-anti-patterns.md
+│   └── components
+│       ├── alert.md
+│       ├── avatar.md
+│       ├── badge.md
+│       ├── breadcrumb.md
+│       ├── button.md
+│       ├── card.md
+│       ├── checkbox-radio.md
+│       ├── command-palette.md
+│       ├── empty-state.md
+│       ├── filter-bar.md
+│       ├── input.md
+│       ├── kbd-code.md
+│       ├── menu.md
+│       ├── metric.md
+│       ├── modal.md
+│       ├── progress.md
+│       ├── search.md
+│       ├── select.md
+│       ├── sidebar.md
+│       ├── skeleton.md
+│       ├── stepper-pagination.md
+│       ├── switch.md
+│       ├── table.md
+│       ├── tabs.md
+│       ├── toast.md
+│       ├── tooltip-popover.md
+│       └── topbar.md
+├── index.html
+├── project_context_20260611_152831\015\015\015
+├── project_context_20260611_153820
+│   ├── complete_project_context.md
+│   └── manifest.txt
+├── scaffold.sh
+├── styles
+│   ├── base.css
+│   ├── components
+│   │   ├── _index.css
+│   │   ├── _utilities.css
+│   │   ├── alert.css
+│   │   ├── avatar.css
+│   │   ├── badge.css
+│   │   ├── breadcrumb.css
+│   │   ├── button.css
+│   │   ├── card.css
+│   │   ├── checkbox-radio.css
+│   │   ├── command-palette.css
+│   │   ├── empty-state.css
+│   │   ├── filter-bar.css
+│   │   ├── input.css
+│   │   ├── kbd-code.css
+│   │   ├── menu.css
+│   │   ├── metric.css
+│   │   ├── modal.css
+│   │   ├── progress.css
+│   │   ├── search.css
+│   │   ├── select.css
+│   │   ├── sidebar.css
+│   │   ├── skeleton.css
+│   │   ├── stepper-pagination.css
+│   │   ├── switch.css
+│   │   ├── table.css
+│   │   ├── tabs.css
+│   │   ├── toast.css
+│   │   ├── tooltip-popover.css
+│   │   └── topbar.css
+│   ├── components.css
+│   ├── layout.css
+│   └── reset.css
+└── tokens
+    ├── tokens.component.css
+    ├── tokens.density.css
+    ├── tokens.primitive.css
+    ├── tokens.semantic.css
+    ├── tokens.theme-dark.css
+    ├── tokens.theme-hc.css
+    └── tokens.theme-light.css
+
+11 directories, 98 files
